@@ -1,0 +1,82 @@
+body {
+    background-color: #f4f4f4;
+  }
+
+  form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn-orange {
+    background-color: orange;
+    color: white;
+  }
+
+  .btn-orange:hover {
+    background-color: #e69500;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: #410690;
+    padding: 10px 20px;
+}
+nav img {
+    margin: 1rem;
+}
+nav ul {
+    margin-left: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    list-style: none;
+}
+nav li {
+    margin: 1rem;
+    list-style: none;
+    transition: .1s all ease;
+}
+li a {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    font-size: 22px;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
+    transition: .1s all ease;
+}
+
+nav li:hover {
+    transform: scale(1.04);
+}
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    nav {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+    }
+    nav li {
+        width: 100%;
+        text-align: center;
+    }
+    li a {
+        font-size: 22px;
+    }
+}

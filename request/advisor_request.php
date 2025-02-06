@@ -1,9 +1,8 @@
 <?php
-include("connect_db.php");
+
+include("../server.php");
+
 session_start();
-// if (!isset($_SESSION[''])) {
-//     die('');
-// }
 
 $academic_year = mysqli_real_escape_string($conn, $_POST['academic_year']);
 $semester = mysqli_real_escape_string($conn, $_POST['semester']);

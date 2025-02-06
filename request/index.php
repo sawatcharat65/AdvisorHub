@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
+  die(header("location:http://localhost/AdvisorHub/login"));
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 
@@ -6,114 +15,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>กรอกข้อมูล สมน.1</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background-color: #f4f4f4;
-    }
-
-    form {
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-orange {
-      background-color: orange;
-      color: white;
-    }
-
-    .btn-orange:hover {
-      background-color: #e69500;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      background-color: #410690;
-      padding: 10px 20px;
-    }
-
-    nav img {
-      margin: 1rem;
-    }
-
-    nav ul {
-      margin-left: 50px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-      list-style: none;
-    }
-
-    nav li {
-      margin: 1rem;
-      list-style: none;
-      transition: .1s all ease;
-    }
-
-    li a {
-      text-decoration: none;
-      color: rgb(255, 255, 255);
-      font-weight: bold;
-      font-size: 22px;
-      text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
-      transition: .1s all ease;
-    }
-
-    nav li:hover {
-      transform: scale(1.04);
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-      }
-
-      nav {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      nav ul {
-        flex-direction: column;
-        width: 100%;
-        padding: 0;
-      }
-
-      nav li {
-        width: 100%;
-        text-align: center;
-      }
-
-      li a {
-        font-size: 22px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
   <nav>
     <div class="logo">
-      <img src="CSIT.png" alt="" width="250px">
+      <img src="../CSIT.png" alt="" width="250px">
     </div>
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href='#'>Login</a></li>
-      <li><a href='#'>Advisor</a></li>
-      <li><a href='#'>Inbox</a></li>
-      <li><a href='#'>Thesis</a></li>
-      <li><a href='#'>Statistics</a></li>
+      <li><a href="/AdvisorHub/home">Home</a></li>
+
+      <?php
+      if (isset($_SESSION['username'])) {
+        echo
+          "
+                    <li><a href='/AdvisorHub/advisor'>Advisor</a></li>
+                    <li><a href='/AdvisorHub/inbox'>Inbox</a></li>
+                    <li><a href='/AdvisorHub/thesis/thesis.php'>Thesis</a></li>
+                    <li><a href='/AdvisorHub/statistics'>Statistics</a></li>
+                    <li><a href='/AdvisorHub/thesis_resource_list/thesis_resource_list.php'>File</a></li>
+                    ";
+      } else {
+        echo "<li><a href='/AdvisorHub/login'>Login</a></li>";
+      }
+      ?>
     </ul>
+
+    <div class="userProfile">
+      <?php
+      if (isset($_SESSION['username'])) {
+        echo '<h2>' . $_SESSION['username'] . '<h2/>';
+        echo "<i class='bx bxs-user-circle' ></i>";
+        echo "<div class='dropdown'>
+                            <form action='' method='post'>
+                                <button name='profile'>Profile</button>
+                                <button name='logout'>Logout</button>
+                            </form>
+                        </div>";
+      }
+      ?>
+    </div>
   </nav>
 
   <div class="container my-5">
@@ -123,7 +65,8 @@
 
         <div class="col-auto">
           <label for="academic_year">ปีการศึกษา:</label>
-          <input type="text" class="form-control" id="academic_year" name="academic_year" required style="width: 100px;">
+          <input type="text" class="form-control" id="academic_year" name="academic_year" required
+            style="width: 100px;">
         </div>
 
         <div class="col-auto">
@@ -267,8 +210,8 @@
       </div>
 
       <div class="mb-3">
-      <label for="advisorName" class="form-label">อาจารย์ที่ปรึกษาวิทยานิพนธ์:</label>
-      <input type="text" class="form-control" id="advisorName" name="advisorName" required value="ผศ.ดร. xxxxx xxxxx">
+        <label for="advisorName" class="form-label">อาจารย์ที่ปรึกษาวิทยานิพนธ์:</label>
+        <input type="text" class="form-control" id="advisorName" name="advisorName" required value="ผศ.ดร. xxxxx xxxxx">
       </div>
 
       <!-- ข้อมูล -->
