@@ -180,13 +180,14 @@ footer p {
     line-height: 1.6;
 }
 
-.chat-form{
+.nav-form{
     display: flex;
     justify-content: end;
     align-items: center;
 }
 
-.chat-form button{
+.nav-form button{
+    
     margin: 3px;
     border: none;
     border-radius: 16px;
@@ -200,9 +201,18 @@ footer p {
 
 .bxs-message-dots{
     font-size: 30px;
+    
 }
 
-.chat-form button:hover{
+.nav-form button:hover{
     transform: scale(1.02);
     box-shadow: 4px 1px 8px rgba(0, 0, 0, 0.086);
 }
+.nav-form .bx-history{
+    font-size: 30px;
+}
+
+.nav-form .bx-highlight{
+    font-size: 30px;
+}
+

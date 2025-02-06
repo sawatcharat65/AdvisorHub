@@ -19,6 +19,16 @@
         $_SESSION['receiver_id'] = $_POST['chat'];
         header('location: /AdvisorHub/topic_chat/topic_chat.php');
     }
+
+    if(isset($_POST['advisor_request'])){
+        $_SESSION['advisor_id'] = $_POST['advisor_request'];
+        header('location: /AdvisorHub/advisor_request/request.php');
+    }
+
+    if(isset($_POST['thesis'])){
+        $_SESSION['advisor_id'] = $_POST['thesis'];
+        header('location: /AdvisorHub/thesis/thesis.php');
+    }
 ?>
 
 <!DOCTYPE html>
@@ -105,7 +115,9 @@
                         <p>" . nl2br($interests) . "</p>
                         <h3>Number of advising students: $student_count</h3>
                     </div>
-                    <form action='' method='post' class='chat-form'>
+                    <form action='' method='post' class='nav-form'>
+                        <button name = 'advisor_request' value='$advisor_id'><i class='bx bx-highlight'></i></button> 
+                        <button name = 'thesis' value='$advisor_id'><i class='bx bx-history'></i></button>
                         <button name='chat' value='$advisor_id'><i class='bx bxs-message-dots'></i></button>
                     </form>
                 </div>

@@ -176,6 +176,7 @@
                             <p>Tel : $tel</p>
                             <form action='../info/index.php' method='post'>
                                 <button name='info' value='$advisor_id'><i class='bx bx-info-circle'></i></button>
+                                
                             </form>
                         </div>
                     </div>
@@ -185,7 +186,7 @@
                 echo "<p>No advisors found matching your search criteria.</p>";
             }
         ?>
-    </div><button name = "advisor_request">Request</button>
+    </div>
     
 </body>
 </html>
