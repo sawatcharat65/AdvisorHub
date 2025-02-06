@@ -3,6 +3,7 @@
     if(isset($_SESSION['username'])){
         header('location: /AdvisorHub/home');
     }
+    include('../components/navbar.php');
 ?>
 
 <!DOCTYPE html>
@@ -18,15 +19,8 @@
 
 </head>
 <body>
-    <nav>
-        <div class="logo">
-            <img src="../CSIT.png" alt="" width="250px">
-        </div>
-        <ul>
-            <li><a href="/AdvisorHub/home">Home</a></li>
-            <li><a href='/AdvisorHub/login'>Login</a></li>
-        </ul>
-    </nav>
+
+    <?php renderNavbar(['home', 'login'])?>
     
     <div class="wrap">
         <form action="" method="post">

@@ -1,0 +1,169 @@
+<?php
+function renderNavbar($allowedPages) {
+
+    ?>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" href="../Logo.png">
+    <nav>
+        <div class="logo">
+            <img src="../CSIT.png" alt="" width="250px">
+        </div>
+        <ul>
+            <?php
+            // รายการเมนูทั้งหมด
+            $menuItems = [
+                "home" => "/AdvisorHub/home",
+                "advisor" => "/AdvisorHub/advisor",
+                "inbox" => "/AdvisorHub/inbox",
+                "thesis" => "/AdvisorHub/thesis/thesis.php",
+                "statistics" => "/AdvisorHub/statistics",
+                "file" => "/AdvisorHub/thesis_resource_list/thesis_resource_list.php",
+                "login" => "/AdvisorHub/login"
+            ];
+
+            // วนลูปแสดงเฉพาะเมนูที่อยู่ใน $allowedPages
+            foreach ($allowedPages as $key) {
+                if (isset($menuItems[$key])) {
+                    echo "<li><a href='{$menuItems[$key]}'>" . ucfirst($key) . "</a></li>";
+                }
+            }
+            ?>
+        </ul>
+
+        <div class="userProfile">
+            <?php
+            if (isset($_SESSION['username'])) {
+                echo '<h2>' . $_SESSION['username'] . '</h2>';
+                echo "<i class='bx bxs-user-circle'></i>";
+                echo "<div class='dropdown'>
+                        <form action='' method='post'>
+                            <button name='profile'>Profile</button>
+                            <button name='logout'>Logout</button>
+                        </form>
+                      </div>";
+            }
+            ?>
+        </div>
+    </nav>
+<?php } ?>
+
+<style>
+body{
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+}
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: #410690;
+    padding: 10px 20px;
+}
+nav img {
+    margin: 1rem;
+}
+nav ul {
+    margin-left: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    list-style: none;
+}
+nav li {
+    margin: 1rem;
+    list-style: none;
+    transition: .1s all ease;
+}
+li a {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    font-size: 22px;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
+    transition: .1s all ease;
+}
+
+nav li:hover {
+    transform: scale(1.04);
+}
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    nav {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+    }
+    nav li {
+        width: 100%;
+        text-align: center;
+    }
+    li a {
+        font-size: 22px;
+    }
+}
+.userProfile {
+    color: rgb(255, 255, 255);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-weight: bold;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
+    margin-left: auto; 
+    margin-right: 5rem; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.bxs-user-circle{
+    font-size: 60px;
+    margin: 15px;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+}
+
+.dropdown{
+    width: 100px;
+    height: 80px;
+    background-color: rgb(255, 255, 255);
+    position: absolute;
+    top: 60%;
+    right: 30%;
+    border: 1px solid rgba(0, 0, 0, 0.107);
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.4);
+    border-radius: 1rem;
+    text-align: center;
+    display: none;
+
+}
+
+.dropdown button{
+    margin-top: 12px;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: .1s all ease;
+}
+
+.dropdown button:hover{
+    transform: scale(1.02);
+    color: red;
+}
+
+.userProfile:hover .dropdown{
+    display: block;
+}
+
+</style>

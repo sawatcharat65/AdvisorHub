@@ -1,6 +1,7 @@
 <?php
 session_start();
 require('../server.php');
+include('../components/navbar.php');
 
 if (isset($_POST['logout'])) {
     session_destroy();
@@ -33,35 +34,9 @@ if (isset($_POST['profile'])) {
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav >
-        <div class="logo">
-            <img src="../CSIT.png" alt="" width="250px">
-        </div>
-        <ul>
-            <li><a href="/AdvisorHub/home">Home</a></li>
-            <li><a href='/AdvisorHub/advisor'>Advisor</a></li>
-            <li><a href='/AdvisorHub/inbox'>Inbox</a></li>
-            <li><a href='/AdvisorHub/thesis/thesis.php'>Thesis</a></li>
-            <li><a href='/AdvisorHub/statistics'>Statistics</a></li>
-            <li><a href='/AdvisorHub/thesis_resource_list/thesis_resource_list.php'>File</a></li>
-        </ul>
-        <div class="userProfile">
-            <?php
-                if(isset($_SESSION['username'])){
-                    echo '<h2>'.$_SESSION['username'].'<h2/>';
-                    echo "<i class='bx bxs-user-circle' ></i>";
-                    echo "<div class='dropdown'>
-                            <form action='' method='post'>
-                                <button name='profile'>Profile</button>
-                                <button name='logout'>Logout</button>
-                            </form>
-                        </div>";
-                }
-            ?>
-        </div>
-    </nav>
-    
+
+<?php renderNavbar(['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
+
     <div class="container my-4">
         <h1 class="mb-4">CS Student Files</h1>
         <div class="row mb-3">

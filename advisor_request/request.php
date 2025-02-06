@@ -1,3 +1,17 @@
+<?php
+    session_start();
+    include('../components/navbar.php');
+    if(isset($_POST['logout'])){
+        session_destroy();
+        header('location: /AdvisorHub/login');
+    }
+
+    if(isset($_POST['profile'])){
+        header('location: /AdvisorHub/profile');
+    }
+
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -11,18 +25,8 @@
     <link rel="icon" href="../Logo.png">
 </head>
 <body>
-    <nav>
-        <div class="logo">
-            <img src="../CSIT.png" alt="" width="200px">
-        </div>
-        <ul>
-            <li><a href="#">Home</a></li>           
-            <li><a href="#">Advisor</a></li>
-            <li><a href="#">Inbox</a></li>
-            <li><a href="#">Thesis</a></li>
-            <li><a href="#">Statistics</a></li>
-        </ul>
-    </nav>
+
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
     <div class="container">
         <?php
         date_default_timezone_set("Asia/Bangkok");
