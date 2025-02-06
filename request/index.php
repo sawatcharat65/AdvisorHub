@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+if(isset($_POST['logout'])){
+  session_destroy();
+  header('location: /AdvisorHub/login');
+}
+
 if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
   die(header("location:http://localhost/AdvisorHub/login"));
 }
@@ -65,7 +70,7 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
 
         <div class="col-auto">
           <label for="academic_year">ปีการศึกษา:</label>
-          <input type="text" class="form-control" id="academic_year" name="academic_year" required
+          <input type="number" class="form-control" id="academic_year" name="academic_year" required
             style="width: 100px;">
         </div>
 
@@ -133,24 +138,22 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
       <div id="pairFields" class="hidden">
         <h5>ข้อมูลนิสิต (คนที่ 1)</h5>
 
-
-
         <div class="row align-items-center mb-3">
           <div class="col-md-7">
             <label for="pairName1" class="form-label">ชื่อ-สกุล:</label>
             <input type="text" class="form-control" id="pairName1" name="pairName1" placeholder="ไม่ต้องระบุคำนำหน้า"
-              required>
+              >
           </div>
           <div class="col-md-5">
             <label for="pairStudentID1" class="form-label">รหัสนิสิต:</label>
-            <input type="text" class="form-control" id="pairStudentID1" name="pairStudentID1" required>
+            <input type="text" class="form-control" id="pairStudentID1" name="pairStudentID1" >
           </div>
         </div>
 
         <div class="row align-items-center mb-3">
           <div class="col-md-4">
             <label for="pairBranch1" class="form-label">สาขา:</label>
-            <select id="pairBranch1" class="form-select" name="pairBranch1" required>
+            <select id="pairBranch1" class="form-select" name="pairBranch1" >
               <option value="CS">วิทยาการคอมพิวเตอร์</option>
               <option value="IT">เทคโนโลยีสารสนเทศ</option>
             </select>
@@ -158,12 +161,12 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
           <div class="col-md-4">
             <label for="pairPhone1" class="form-label">เบอร์มือถือ:</label>
             <input type="tel" class="form-control" id="pairPhone1" name="pairPhone1" pattern="\d{10}"
-              placeholder="08xxxxxxxx" required>
+              placeholder="08xxxxxxxx" >
           </div>
           <div class="col-md-4">
             <label for="pairEmail1" class="form-label">อีเมล:</label>
             <input type="email" class="form-control" id="pairEmail1" name="pairEmail1" placeholder="email@nu.ac.th"
-              required>
+              >
           </div>
         </div>
 
@@ -177,18 +180,18 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
           <div class="col-md-7">
             <label for="pairName2" class="form-label">ชื่อ-สกุล:</label>
             <input type="text" class="form-control" id="pairName2" name="pairName2" placeholder="ไม่ต้องระบุคำนำหน้า"
-              required>
+              >
           </div>
           <div class="col-md-5">
             <label for="pairStudentID2" class="form-label">รหัสนิสิต:</label>
-            <input type="text" class="form-control" id="pairStudentID2" name="pairStudentID2" required>
+            <input type="text" class="form-control" id="pairStudentID2" name="pairStudentID2" >
           </div>
         </div>
 
         <div class="row align-items-center mb-3">
           <div class="col-md-4">
             <label for="pairBranch2" class="form-label">สาขา:</label>
-            <select id="pairBranch2" class="form-select" name="pairBranch2" required>
+            <select id="pairBranch2" class="form-select" name="pairBranch2" >
               <option value="CS">วิทยาการคอมพิวเตอร์</option>
               <option value="IT">เทคโนโลยีสารสนเทศ</option>
             </select>
@@ -196,12 +199,12 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
           <div class="col-md-4">
             <label for="pairPhone2" class="form-label">เบอร์มือถือ:</label>
             <input type="tel" class="form-control" id="pairPhone2" name="pairPhone2" pattern="\d{10}"
-              placeholder="08xxxxxxxx" required>
+              placeholder="08xxxxxxxx" >
           </div>
           <div class="col-md-4">
             <label for="pairEmail2" class="form-label">อีเมล:</label>
             <input type="email" class="form-control" id="pairEmail2" name="pairEmail2" placeholder="email@nu.ac.th"
-              required>
+              >
           </div>
         </div>
 
@@ -211,7 +214,7 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
 
       <div class="mb-3">
         <label for="advisorName" class="form-label">อาจารย์ที่ปรึกษาวิทยานิพนธ์:</label>
-        <input type="text" class="form-control" id="advisorName" name="advisorName" required value="ผศ.ดร. xxxxx xxxxx">
+        <input type="text" class="form-control" id="advisorName" name="advisorName" required value="ผศ.ดร. xxxxx xxxxx" readonly>
       </div>
 
       <!-- ข้อมูล -->
