@@ -22,7 +22,7 @@
 
     if(isset($_POST['advisor_request'])){
         $_SESSION['advisor_id'] = $_POST['advisor_request'];
-        header('location: /AdvisorHub/advisor_request/request.php');
+        header('location: /AdvisorHub/request/advisor_request.php');
     }
 
     if(isset($_POST['thesis'])){
