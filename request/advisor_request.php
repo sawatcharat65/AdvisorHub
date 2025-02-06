@@ -4,6 +4,19 @@ include("../server.php");
 
 session_start();
 
+if(isset($_POST['logout'])){
+    session_destroy();
+    header('location: /AdvisorHub/login');
+}
+
+if(empty($_SESSION['username'])){
+    header('location: /AdvisorHub/login');
+}
+
+if(isset($_POST['profile'])){
+    header('location: /AdvisorHub/profile');
+}
+
 $academic_year = (int) mysqli_real_escape_string($conn, $_POST['academic_year']);
 $semester = (int) mysqli_real_escape_string($conn, $_POST['semester']);
 
