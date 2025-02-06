@@ -1,0 +1,110 @@
+body {
+    background-color: #f4f4f4;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.card {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-orange {
+    background-color: orange;
+    color: white;
+    border: none;
+}
+
+.btn-orange:hover {
+    background-color: #410690;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: #410690;
+    padding: 10px 20px;
+}
+
+nav img {
+    margin: 1rem;
+}
+
+nav ul {
+    margin-left: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    list-style: none;
+}
+
+nav li {
+    margin: 1rem;
+    transition: 0.3s;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+}
+
+nav li:hover {
+    transform: scale(1.1);
+}
+.details p {
+    font-size: 18px;
+    color: #34495e;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+.details strong {
+    color: #2c3e50;
+}
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.button-accept {
+    background-color: #28a745;
+    color: white;
+}
+.button-reject {
+    background-color: #dc3545;
+    color: white;
+}
+.button-back {
+    background-color: #6c757d;
+    color: white;
+    display: block;
+    margin: 20px auto 0;
+    text-align: center;
+}
+.button-chat {
+    background-color: #f19f68;
+    color: white;
+    display: block;
+    margin: 10px auto;
+}
+.details {
+    background-color: #ecf0f1;
+    border-radius: 10px;
+    padding: 20px;
+}

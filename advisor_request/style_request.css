@@ -1,0 +1,63 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+.container {
+    margin-top: 20px;
+}
+.card {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.btn-orange {
+    background-color: orange;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+}
+.btn-orange:hover {
+    background-color: #410690;
+}
+.timestamp {
+    margin-left: 10px;
+    font-size: 14px;
+    color: gray;
+}
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: #410690;
+    padding: 10px 20px;
+}
+nav img {
+    margin: 1rem;
+}
+nav ul {
+    margin-left: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    list-style: none;
+}
+nav li {
+    margin: 1rem;
+    list-style: none;
+    transition: .1s all ease;
+}
+li a {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    font-size: 22px;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
+    transition: .1s all ease;
+}
+nav li:hover {
+    transform: scale(1.04);
+}
