@@ -50,7 +50,7 @@
 </head>
 <body>
 
-<?php renderNavbar(['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
+<?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
     <div class="inbox-container">
         <div class="inbox-head">
             <h2>Inbox</h2>

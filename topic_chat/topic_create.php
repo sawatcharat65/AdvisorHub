@@ -52,7 +52,7 @@ if (isset($_POST['profileInbox'])) {
 
 <body>
 
-<?php renderNavbar(['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
+<?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
 
     <div class="consultation-form-container">
         <div class="form-header">

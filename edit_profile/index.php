@@ -139,7 +139,7 @@
 </head>
 <body>
     
-    <?php renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
+    <?php renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'statistics', 'file'])?>
 
     <?php
         $username = $_SESSION['username'];

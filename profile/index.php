@@ -164,7 +164,7 @@
 </head>
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
     
     <?php
         $username = $_SESSION['username'];

@@ -26,7 +26,7 @@
 </head>
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
     <div class="container">
         <?php
         date_default_timezone_set("Asia/Bangkok");

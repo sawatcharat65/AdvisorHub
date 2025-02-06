@@ -35,7 +35,7 @@ if (isset($_POST['profile'])) {
 </head>
 <body>
 
-<?php renderNavbar(['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
+<?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
 
     <div class="container my-4">
         <h1 class="mb-4">CS Student Files</h1>

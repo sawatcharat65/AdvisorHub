@@ -27,7 +27,7 @@
 <body>
     <?php 
         if(isset($_SESSION['username'])){
-            renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file']);
+            renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'statistics', 'file']);
         }else{
             renderNavbar(allowedPages: ['home', 'login']);
         }

@@ -30,7 +30,7 @@
 </head>
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'thesis', 'statistics', 'file'])?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
 
     <div class="container">
         <h1>รายละเอียดคำร้องขอแต่งตั้งอาจารย์ที่ปรึกษา</h1>
