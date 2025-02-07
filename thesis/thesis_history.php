@@ -43,7 +43,7 @@ if (isset($_POST['profile'])) {
             <strong>Abstract:</strong> This thesis explores AI-driven techniques to improve audio quality, making unintelligible sound clear and comprehensible.
         </div>
         <div class="info"><strong>URI:</strong> <a href="#">http://example.com/thesis/123</a></div>
-        <a href="thesis.pdf" class="download">Download Thesis File</a>
+        <a href="thesis.pdf" class="download">Download Thesis Fileandwaiodjwaoijdiowajiodjawiodjwaio</a>
     </div>
 </body>
 
