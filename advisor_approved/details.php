@@ -11,6 +11,10 @@
         header('location: /AdvisorHub/profile');
     }
 
+    if(empty($_SESSION['username'])){
+        header('location: /AdvisorHub/login');
+    }
+
 
     date_default_timezone_set("Asia/Bangkok"); 
 
@@ -30,7 +34,7 @@
 </head>
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
 
     <div class="container">
         <h1>รายละเอียดคำร้องขอแต่งตั้งอาจารย์ที่ปรึกษา</h1>
