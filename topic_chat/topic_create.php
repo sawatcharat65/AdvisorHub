@@ -4,20 +4,19 @@ require('../server.php');
 include('../components/navbar.php');
 if (isset($_POST['logout'])) {
     session_destroy();
-    header('location: /ThesisAdvisorHub/login');
+    header('location: /AdvisorHub/login');
 }
 
 if (empty($_SESSION['username'])) {
-    header('location: /ThesisAdvisorHub/login');
+    header('location: /AdvisorHub/login');
 }
 
 if (isset($_POST['profile'])) {
-    header('location: /ThesisAdvisorHub/profile');
+    header('location: /AdvisorHub/profile');
 }
 
-if (isset($_POST['chat'])) {
-    $_SESSION['receiver_id'] = $_POST['chat'];
-    header('location: /ThesisAdvisorHub/chat');
+if(empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['id']){
+    header('location: /AdvisorHub/advisor');
 }
 
 if (isset($_POST['profileInbox'])) {
@@ -29,9 +28,9 @@ if (isset($_POST['profileInbox'])) {
     $row = $result->fetch_assoc();
 
     if ($row['role'] == 'advisor') {
-        header('location: /ThesisAdvisorHub/advisor_profile');
+        header('location: /AdvisorHub/advisor_profile');
     } else {
-        header('location: /ThesisAdvisorHub/student_profile');
+        header('location: /AdvisorHub/student_profile');
     }
 }
 ?>
