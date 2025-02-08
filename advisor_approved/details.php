@@ -29,11 +29,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>อนุมัติคำร้อง</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="../Logo.png">
     <link rel="stylesheet" href="style_details.css">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="icon" href="../Logo.png">
 </head>
 <body>
 
@@ -75,11 +74,15 @@
             ?>
         </div>
         <div class="button-container">
-            <button class="button-accept">ยอมรับ</button>
-            <button class="button-reject">ปฏิเสธ</button>
+            <button class="button-accept"><i class='bx bx-check' ></i></button>
+            <button class="button-reject"><i class='bx bx-x' ></i></button>
         </div>
-        <button class="button-chat">Chat</button>
         <a href="request.php">
-            <button class="button-back">กลับไปหน้าคำร้องขอ</button>
+            <button class="button-back"><i class='bx bx-arrow-back' ></i></button>
         </a>
-       
+        <button class="button-chat"><i class='bx bxs-message-dots'></i></button>
+        
+    </div>
+
+</body>
+</html>
