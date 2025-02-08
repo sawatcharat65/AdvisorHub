@@ -10,6 +10,10 @@
         header('location: /AdvisorHub/profile');
     }
 
+    if(empty($_SESSION['username'])){
+        header('location: /AdvisorHub/login');
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -27,6 +31,7 @@
 <body>
 
     <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
+    
     <div class="container">
         <?php
         date_default_timezone_set("Asia/Bangkok");

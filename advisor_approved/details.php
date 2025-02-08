@@ -11,6 +11,10 @@
         header('location: /AdvisorHub/profile');
     }
 
+    if(empty($_SESSION['username'])){
+        header('location: /AdvisorHub/login');
+    }
+
 
     date_default_timezone_set("Asia/Bangkok"); 
 

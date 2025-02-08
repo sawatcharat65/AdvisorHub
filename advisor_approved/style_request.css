@@ -26,38 +26,3 @@ body {
     font-size: 14px;
     color: gray;
 }
-nav {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    background-color: #410690;
-    padding: 10px 20px;
-}
-nav img {
-    margin: 1rem;
-}
-nav ul {
-    margin-left: 50px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    list-style: none;
-}
-nav li {
-    margin: 1rem;
-    list-style: none;
-    transition: .1s all ease;
-}
-li a {
-    text-decoration: none;
-    color: rgb(255, 255, 255);
-    font-weight: bold;
-    font-size: 22px;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
-    transition: .1s all ease;
-}
-nav li:hover {
-    transform: scale(1.04);
-}
