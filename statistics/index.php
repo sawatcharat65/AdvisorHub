@@ -36,8 +36,8 @@
         <table>
             <thead>
                 <tr>
-                    <th>Research Topic</th>
-                    <th>Number of Studies</th>
+                    <th>Thesis Topic</th>
+                    <th>Number of Thesis</th>
                 </tr>
             </thead>
             <tbody>
@@ -74,5 +74,6 @@
             </tbody>
         </table>
     </div>
+
 </body>
 </html>
