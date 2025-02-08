@@ -15,6 +15,9 @@
         header('location: /AdvisorHub/login');
     }
 
+    if(isset($_SESSION['username']) && $_SESSION['role'] == 'student' || $_SESSION['role'] == 'admin'){
+        header('location: /AdvisorHub/advisor');
+    }
 
     date_default_timezone_set("Asia/Bangkok"); 
 
