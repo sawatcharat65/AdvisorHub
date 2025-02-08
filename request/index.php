@@ -42,50 +42,13 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>กรอกข้อมูล สมน.1</title>
+  <title>แบบฟอร์มส่งคำร้อง</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <nav>
-    <div class="logo">
-      <img src="../CSIT.png" alt="" width="250px">
-    </div>
-    <ul>
-      <li><a href="/AdvisorHub/home">Home</a></li>
-
-      <?php
-      if (isset($_SESSION['username'])) {
-        echo
-          "
-                    <li><a href='/AdvisorHub/advisor'>Advisor</a></li>
-                    <li><a href='/AdvisorHub/inbox'>Inbox</a></li>
-                    <li><a href='/AdvisorHub/thesis/thesis.php'>Thesis</a></li>
-                    <li><a href='/AdvisorHub/statistics'>Statistics</a></li>
-                    <li><a href='/AdvisorHub/thesis_resource_list/thesis_resource_list.php'>File</a></li>
-                    ";
-      } else {
-        echo "<li><a href='/AdvisorHub/login'>Login</a></li>";
-      }
-      ?>
-    </ul>
-
-    <div class="userProfile">
-      <?php
-      if (isset($_SESSION['username'])) {
-        echo '<h2>' . $_SESSION['username'] . '<h2/>';
-        echo "<i class='bx bxs-user-circle' ></i>";
-        echo "<div class='dropdown'>
-                            <form action='' method='post'>
-                                <button name='profile'>Profile</button>
-                                <button name='logout'>Logout</button>
-                            </form>
-                        </div>";
-      }
-      ?>
-    </div>
-  </nav>
+  <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
 
   <div class="container my-5">
     <form action="advisor_request.php" method="POST">
@@ -94,7 +57,8 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 
         <div class="col-auto">
           <label for="academic_year">ปีการศึกษา:</label>
-          <input type="number" class="form-control" id="academic_year" name="academic_year" value="<?php echo date("Y")+542 ?>" style="width: 100px;">
+          <input type="number" class="form-control" id="academic_year" name="academic_year"
+            value="<?php echo date("Y") + 542 ?>" style="width: 100px;">
         </div>
 
         <div class="col-auto">
@@ -185,8 +149,8 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           </div>
           <div class="col-md-4">
             <label for="pairPhone1" class="form-label">เบอร์มือถือ:</label>
-            <input type="tel" class="form-control" id="pairPhone1" name="pairPhone1"
-              placeholder="08xxxxxxxx" value="<?php echo $row['tel']; ?>">
+            <input type="tel" class="form-control" id="pairPhone1" name="pairPhone1" placeholder="08xxxxxxxx"
+              value="<?php echo $row['tel']; ?>">
           </div>
           <div class="col-md-4">
             <label for="pairEmail1" class="form-label">อีเมล:</label>
@@ -218,8 +182,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           </div>
           <div class="col-md-4">
             <label for="pairPhone2" class="form-label">เบอร์มือถือ:</label>
-            <input type="tel" class="form-control" id="pairPhone2" name="pairPhone2"
-              placeholder="08xxxxxxxx">
+            <input type="tel" class="form-control" id="pairPhone2" name="pairPhone2" placeholder="08xxxxxxxx">
           </div>
           <div class="col-md-4">
             <label for="pairEmail2" class="form-label">อีเมล:</label>
@@ -230,8 +193,8 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 
       <div class="mb-3">
         <label for="advisorName" class="form-label">อาจารย์ที่ปรึกษาวิทยานิพนธ์:</label>
-        <input type="text" class="form-control" id="advisorName" name="advisorName" value="<?php echo $advisor_row['first_name'] . ' ' . $advisor_row['last_name']; ?>"
-          readonly>
+        <input type="text" class="form-control" id="advisorName" name="advisorName"
+          value="<?php echo $advisor_row['first_name'] . ' ' . $advisor_row['last_name']; ?>" readonly>
       </div>
 
       <!-- ข้อมูล -->
@@ -249,7 +212,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
       </div>
 
       <input type="text" hidden name="advisor_id" id="advisor_id" value="<?php echo $_SESSION['advisor_id'] ?>">
-      
+
       <!-- submit -->
       <div class="text-start mt-4">
         <button type="submit" class="btn" style="color:white; background-color: #ff9300;">ส่งคำร้อง</button>
