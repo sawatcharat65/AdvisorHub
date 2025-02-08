@@ -47,6 +47,7 @@
         }else{
             $_SESSION['error'] = 'Username or password is incorrect';
             header('location: /AdvisorHub/login');
+            exit();
         }
 
         
