@@ -52,11 +52,20 @@ if (isset($_POST['profileInbox'])) {
 
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']);
+    $receiver_id = $_SESSION['receiver_id'];
+    $sql = "SELECT first_name FROM advisor WHERE id = '$receiver_id' UNION SELECT first_name FROM student WHERE id = '$receiver_id'";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+    echo 
+    "
+    <div class='topic-container'>
+        <div class='topic-head'>
+            <h2>{$row['first_name']}</h2>
+    ";
+    
+    ?>
 
-    <div class="topic-container">
-        <div class="topic-head">
-            <h2>ชื่อคน</h2>
             <a href="topic_create.php" class="fa-solid fa-circle-plus"></a>
         </div>
         <div class="topic-search">
@@ -67,121 +76,40 @@ if (isset($_POST['profileInbox'])) {
             <button class="active">กำลังดำเนินการ</button>
             <button>เสร็จสิ้น</button>
         </div>
-
-        <div class="divider"></div>
-
+        
         <?php
-        $user_id = $_SESSION['id'];
-
-        $sql = "SELECT DISTINCT receiver_id FROM messages WHERE sender_id = $user_id UNION
-                    SELECT DISTINCT sender_id FROM messages WHERE receiver_id = $user_id ";
-        $result = $conn->query($sql);
-
-        while ($row = $result->fetch_assoc()) {
-
-            if (isset($row['receiver_id'])) {
-                $receiver_id = $row['receiver_id'];
-                $sql = "SELECT * FROM advisor WHERE id = '$receiver_id'";
-                $result2 = $conn->query($sql);
-                $row2 = $result2->fetch_assoc();
-
-                if (empty($row2['username'])) {
-                    $sql = "SELECT * FROM student WHERE id = '$receiver_id'";
-                    $result4 = $conn->query($sql);
-                    $row4 = $result4->fetch_assoc();
-
-                    $username = $row4['username'];
-                    $chat_id = $row4['id'];
-                } else {
-                    $username = $row2['username'];
-                    $chat_id = $row2['id'];
-                }
-
-                echo
+            $id = $_SESSION['id'];
+            $receiver_id = $_SESSION['receiver_id'];
+            $sql = "
+                    SELECT title, MAX(time_stamp) AS latest_time
+                    FROM messages
+                    WHERE (sender_id = '$id' AND receiver_id = '$receiver_id') 
+                    OR (sender_id = '$receiver_id' AND receiver_id = '$id')
+                    GROUP BY title
+                    ORDER BY latest_time DESC
+                ";
+            $result = $conn->query($sql);
+            
+            while($row = $result->fetch_assoc()){
+                $title = $row['title'];
+                $timestamp = $row['latest_time'];
+                echo 
                 "
-                    <div class='message'>
-                        <div>
-                            <div class='sender'>ชื่อหัวข้อ</div>
-                            <div class='message-date'>2024-12-10 07:40:16</div>
-                        </div>
-                            <form action='' method='post' class='form-chat'>
-                                <button name='chat' class='chat-button' value='$chat_id'><i class='bx bxs-message-dots'></i></button>
-                    ";
-
-                $sqlReadCheck = "SELECT DISTINCT * FROM messages WHERE receiver_id = '$user_id' AND is_read = 0 AND sender_id = '$chat_id'";
-                $resultReadCheck = $conn->query($sqlReadCheck);
-                $rowReadCheck = $resultReadCheck->fetch_assoc();
-
-                if (isset($rowReadCheck['id'])) {
-                    echo "<i class='bx bxs-circle'></i>";
-                }
-
-                echo
-                "
-                            </form>
-                        </div>
-                    ";
-            } elseif (isset($row['sender_id'])) {
-                $sender_id = $row['sender_id'];
-                $sql = "SELECT * FROM student WHERE id = '$sender_id'";
-                $result3 = $conn->query($sql);
-                $row3 = $result3->fetch_assoc();
-
-                $username = $row3['username'];
-                $chat_id = $row3['id'];
-
-                echo
-                "
-                    <div class='message'>
-                        <div class='sender'>$username</div>
-                            <form action='' method='post' class='form-chat'>
-                                <button name='chat' class='chat-button' value='$chat_id'><i class='bx bxs-message-dots'></i></button>
-                                <button name='profileInbox' value='$chat_id'><i class='bx bxs-user-pin'></i></button>
-                    ";
-
-                $sqlReadCheck = "SELECT DISTINCT * FROM messages WHERE receiver_id = '$user_id' AND is_read = 0 AND sender_id = '$chat_id'";
-                $resultReadCheck = $conn->query($sqlReadCheck);
-                $rowReadCheck = $resultReadCheck->fetch_assoc();
-
-                if (isset($rowReadCheck['id'])) {
-                    echo "<i class='bx bxs-circle'></i>";
-                }
-
-                echo
-                "
-                            </form>
-                        </div>
-                    ";
+                <div class='divider'></div>
+                <div class='message'>
+                    <div>
+                        <div class='sender'>$title</div>
+                        <div class='message-date'>$timestamp</div>
+                    </div>
+                <form action='' method='post' class='form-chat'>
+                    <button name='chat' class='chat-button' value='$receiver_id'><i class='bx bxs-message-dots'></i></button>
+                </form>
+                </div>
+            ";
             }
-        }
 
         ?>
+        
     </div>
-
-    
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const buttons = document.querySelectorAll(".topic-status button");
-
-            buttons.forEach(button => {
-                button.addEventListener("click", function() {
-                    // ลบ class 'active' ออกจากปุ่มทั้งหมด
-                    buttons.forEach(btn => btn.classList.remove("active"));
-
-                    // เพิ่ม class 'active' ให้ปุ่มที่ถูกคลิก
-                    this.classList.add("active");
-
-                    // เพิ่ม animation เล็กน้อย
-                    this.style.animation = "none"; // รีเซ็ต animation ก่อน
-                    setTimeout(() => {
-                        this.style.animation = "fadeIn 0.3s ease-in-out";
-                    }, 10);
-                });
-            });
-        });
-    </script>
-
 </body>
-
 </html>
