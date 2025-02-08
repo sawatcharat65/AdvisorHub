@@ -1,5 +1,6 @@
 <?php
     session_start();
+    require('../server.php');
     include('../components/navbar.php');
     if(isset($_POST['logout'])){
         session_destroy();
@@ -40,83 +41,38 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Artificial Intelligence (AI)</td>
-                    <td>120</td>
-                </tr>
-                <tr>
-                    <td>Machine Learning</td>
-                    <td>95</td>
-                </tr>
-                <tr>
-                    <td>Data Science</td>
-                    <td>80</td>
-                </tr>
-                <tr>
-                    <td>Cybersecurity</td>
-                    <td>60</td>
-                </tr>
-                <tr>
-                    <td>Internet of Things (IoT)</td>
-                    <td>50</td>
-                </tr>
+                <?php
+                    $sql = "SELECT keywords FROM thesis";
+                    $result = $conn->query($sql);
+                    
+                    $keyword_counts = [];
+                    
+                    if ($result->num_rows > 0) {  // ตรวจสอบว่ามีข้อมูลหรือไม่
+                        while ($row = $result->fetch_assoc()) {  // วนลูปดึงข้อมูลแต่ละแถวจากฐานข้อมูล
+                            $keywords = json_decode($row['keywords'], true); // แปลง JSON เป็น Array
+                            foreach ($keywords as $keyword) {  // วนลูปอ่านค่าแต่ละ keyword
+                                if (!isset($keyword_counts[$keyword])) {  // ถ้ายังไม่มี keyword นี้ใน array
+                                    $keyword_counts[$keyword] = 0;  // ตั้งค่าเริ่มต้นเป็น 0
+                                }
+                                $keyword_counts[$keyword]++;  // เพิ่มค่าขึ้น 1
+                            }
+                        }
+                    }
+                    
+                    $conn->close();
+
+                    foreach ($keyword_counts as $topic => $count) {
+                        echo "
+                        <tr>
+                            <td>$topic</td>
+                            <td>$count</td>
+                        </tr>
+                        
+                        ";
+                    }
+                ?>
             </tbody>
         </table>
-
-        <!-- Chart -->
-        <div id="chart-container">
-            <canvas id="researchChart"></canvas>
-        </div>
     </div>
-
-    <script>
-        // Chart Data
-        const data = {
-            labels: ["AI", "Machine Learning", "Data Science", "Cybersecurity", "IoT"],
-            datasets: [{
-                label: "Number of Studies",
-                data: [120, 95, 80, 60, 50],
-                backgroundColor: [
-                    "rgba(75, 192, 192, 0.6)",
-                    "rgba(153, 102, 255, 0.6)",
-                    "rgba(255, 159, 64, 0.6)",
-                    "rgba(255, 99, 132, 0.6)",
-                    "rgba(54, 162, 235, 0.6)"
-                ],
-                borderColor: [
-                    "rgba(75, 192, 192, 1)",
-                    "rgba(153, 102, 255, 1)",
-                    "rgba(255, 159, 64, 1)",
-                    "rgba(255, 99, 132, 1)",
-                    "rgba(54, 162, 235, 1)"
-                ],
-                borderWidth: 1
-            }]
-        };
-
-        // Chart Configuration
-        const config = {
-            type: "bar",
-            data: data,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: "top",
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        };
-
-        // Render Chart
-        const ctx = document.getElementById("researchChart").getContext("2d");
-        new Chart(ctx, config);
-    </script>
 </body>
 </html>
