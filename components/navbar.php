@@ -18,7 +18,7 @@ function renderNavbar($allowedPages) {
                 "inbox" => "/AdvisorHub/inbox",
                 "thesis" => "/AdvisorHub/thesis/thesis.php",
                 "statistics" => "/AdvisorHub/statistics",
-                "file" => "/AdvisorHub/thesis_resource_list/thesis_resource_list.php",
+                "Teams" => "/AdvisorHub/thesis_resource_list/thesis_resource_list.php",
                 "login" => "/AdvisorHub/login"
             ];
 
@@ -28,7 +28,13 @@ function renderNavbar($allowedPages) {
                     echo "<li><a href='{$menuItems[$key]}'>" . ucfirst($key) . "</a></li>";
                 }
             }
+
+            if(isset($_SESSION['username']) && $_SESSION['role'] == 'advisor' ){
+                echo "<li><a href='/AdvisorHub/advisor_approved/request.php'>Request</a></li>";
+            }
             ?>
+
+            
         </ul>
 
         <div class="userProfile">

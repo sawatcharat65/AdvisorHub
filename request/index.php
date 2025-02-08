@@ -39,7 +39,7 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
                     <li><a href='/AdvisorHub/inbox'>Inbox</a></li>
                     <li><a href='/AdvisorHub/thesis/thesis.php'>Thesis</a></li>
                     <li><a href='/AdvisorHub/statistics'>Statistics</a></li>
-                    <li><a href='/AdvisorHub/thesis_resource_list/thesis_resource_list.php'>File</a></li>
+                    <li><a href='/AdvisorHub/thesis_resource_list/thesis_resource_list.php'>Teams</a></li>
                     ";
       } else {
         echo "<li><a href='/AdvisorHub/login'>Login</a></li>";

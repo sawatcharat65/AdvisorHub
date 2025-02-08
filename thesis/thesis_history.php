@@ -41,7 +41,7 @@ if (isset($_POST['chat'])) {
 
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file']) ?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
 
     <?php
     if (isset($_SESSION['advisor_id'])) {

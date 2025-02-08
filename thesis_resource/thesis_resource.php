@@ -33,7 +33,7 @@ if (isset($_POST['profile'])) {
 </head>
 <body>
     <!-- Navbar -->
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
 
     <div class="container my-4">
         <div class="row">

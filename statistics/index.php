@@ -28,7 +28,7 @@
 </head>
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'file'])?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
     <div class="container">
         <h1>Research Topic Statistics</h1>
 
