@@ -15,9 +15,8 @@ if (isset($_POST['profile'])) {
     header('location: /AdvisorHub/profile');
 }
 
-if (isset($_POST['chat'])) {
-    $_SESSION['receiver_id'] = $_POST['chat'];
-    header('location: /AdvisorHub/chat');
+if(empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['id']){
+    header('location: /AdvisorHub/advisor');
 }
 
 if (isset($_POST['profileInbox'])) {
