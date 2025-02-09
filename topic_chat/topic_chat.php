@@ -105,7 +105,7 @@ if (isset($_POST['profileInbox'])) {
                     <button name='chat' class='chat-button' value='$receiver_id'><i class='bx bxs-message-dots'></i></button>
                     ";
 
-                    $query = "SELECT DISTINCT is_read FROM messages WHERE receiver_id = $id AND sender_id AND is_read = 0 AND title = '$title'";
+                    $query = "SELECT DISTINCT is_read FROM messages WHERE receiver_id = '$id' AND sender_id AND is_read = 0 AND title = '$title'";
                     $result_is_read = $conn->query($query);
                     $row_is_read = $result_is_read->fetch_assoc();
 
