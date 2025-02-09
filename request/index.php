@@ -20,16 +20,19 @@ if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
 $id = $_SESSION['id'];
 $username = $_SESSION['username'];
 
+// sql สำหรับเช็คว่าอยู่ใน role อะไร (advisor, student, admin)
 $check_sql = "SELECT role FROM account WHERE id = '{$id}'";
 $check_result = mysqli_query($conn, $check_sql);
 $check_row = mysqli_fetch_array($check_result);
 
+// condition สำหรับ sql ดึงข้อมูลนิสิต
 if ($check_row['role'] == 'student') {
   $sql = "SELECT * FROM student WHERE id = '{$id}'";
   $result = mysqli_query($conn, $sql);
   $row = mysqli_fetch_array($result);
 }
 
+// sql สำหรับเรียกข้อมูลอาจารย์
 $advisor_sql = "SELECT first_name, last_name FROM advisor WHERE id = '{$_SESSION["advisor_id"]}'";
 $advisor_result = mysqli_query($conn, $advisor_sql);
 $advisor_row = mysqli_fetch_array($advisor_result);
@@ -75,7 +78,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 
       <!-- Dropdown -->
       <div class="mb-3 d-flex align-items-center">
-        <label for="thesisType">ทำวิทยานิพนธ์ประเภท:</label>
+        <label for="thesisType" class="me-2">ทำวิทยานิพนธ์ประเภท: </label>
         <select id="thesisType" name="thesisType" class="form-select w-auto" onchange="toggleFields()">
           <option value="single" selected>เดี่ยว</option>
           <option value="pair">คู่</option>
@@ -90,12 +93,12 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           <div class="col-md-7">
             <label for="singleName" class="form-label">ชื่อ-สกุล:</label>
             <input type="text" class="form-control" id="singleName" name="singleName" placeholder="ไม่ต้องระบุคำนำหน้า"
-              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>">
+              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>" readonly>
           </div>
           <div class="col-md-5">
             <label for="singleStudentID" class="form-label">รหัสนิสิต:</label>
             <input type="text" class="form-control" id="singleStudentID" name="singleStudentID"
-              value="<?php echo $row['id']; ?>">
+              value="<?php echo $row['id']; ?>" readonly>
           </div>
         </div>
 
@@ -103,19 +106,31 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           <div class="col-md-4">
             <label for="singleBranch" class="form-label">สาขา:</label>
             <select id="singleBranch" class="form-select" name="singleBranch">
-              <option value="CS">วิทยาการคอมพิวเตอร์</option>
-              <option value="IT">เทคโนโลยีสารสนเทศ</option>
+              <option value="CS" 
+              <?php
+              if ($row['department'] == 'Computer Science') {
+                echo 'selected';
+              }
+              ?>
+              >วิทยาการคอมพิวเตอร์</option>
+              <option value="IT" 
+              <?php
+              if ($row['department'] == 'Information Technology') {
+                echo 'selected';
+              }
+              ?>
+              >เทคโนโลยีสารสนเทศ</option>
             </select>
           </div>
           <div class="col-md-4">
             <label for="singlePhone" class="form-label">เบอร์มือถือ:</label>
             <input type="tel" class="form-control" id="singlePhone" name="singlePhone" placeholder="08xxxxxxxx"
-              value="<?php echo $row['tel']; ?>">
+              value="<?php echo $row['tel']; ?>" readonly>
           </div>
           <div class="col-md-4">
             <label for="singleEmail" class="form-label">อีเมล:</label>
             <input type="email" class="form-control" id="singleEmail" name="singleEmail" placeholder="email@nu.ac.th"
-              value="<?php echo $row['email']; ?>">
+              value="<?php echo $row['email']; ?>" readonly>
           </div>
         </div>
 
@@ -130,12 +145,12 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           <div class="col-md-7">
             <label for="pairName1" class="form-label">ชื่อ-สกุล:</label>
             <input type="text" class="form-control" id="pairName1" name="pairName1" placeholder="ไม่ต้องระบุคำนำหน้า"
-              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>">
+              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>" readonly>
           </div>
           <div class="col-md-5">
             <label for="pairStudentID1" class="form-label">รหัสนิสิต:</label>
             <input type="text" class="form-control" id="pairStudentID1" name="pairStudentID1"
-              value="<?php echo $row['id']; ?>">
+              value="<?php echo $row['id']; ?>" readonly>
           </div>
         </div>
 
@@ -143,19 +158,31 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           <div class="col-md-4">
             <label for="pairBranch1" class="form-label">สาขา:</label>
             <select id="pairBranch1" class="form-select" name="pairBranch1">
-              <option value="CS">วิทยาการคอมพิวเตอร์</option>
-              <option value="IT">เทคโนโลยีสารสนเทศ</option>
+            <option value="CS" 
+              <?php
+              if ($row['department'] == 'Computer Science') {
+                echo 'selected';
+              }
+              ?>
+              >วิทยาการคอมพิวเตอร์</option>
+              <option value="IT" 
+              <?php
+              if ($row['department'] == 'Information Technology') {
+                echo 'selected';
+              }
+              ?>
+              >เทคโนโลยีสารสนเทศ</option>
             </select>
           </div>
           <div class="col-md-4">
             <label for="pairPhone1" class="form-label">เบอร์มือถือ:</label>
             <input type="tel" class="form-control" id="pairPhone1" name="pairPhone1" placeholder="08xxxxxxxx"
-              value="<?php echo $row['tel']; ?>">
+              value="<?php echo $row['tel']; ?>" readonly>
           </div>
           <div class="col-md-4">
             <label for="pairEmail1" class="form-label">อีเมล:</label>
             <input type="email" class="form-control" id="pairEmail1" name="pairEmail1" placeholder="email@nu.ac.th"
-              value="<?php echo $row['email']; ?>">
+              value="<?php echo $row['email']; ?>" readonly>
           </div>
         </div>
 
