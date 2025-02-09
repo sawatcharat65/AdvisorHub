@@ -20,6 +20,7 @@
 
     if(isset($_POST['chat'])){
         $_SESSION['receiver_id'] = $_POST['chat'];
+        $_SESSION['title'] = $_POST['title'];
         header('location: /AdvisorHub/chat');
         exit();
     }
@@ -44,6 +45,7 @@
     <?php
         if(isset($_SESSION['receiver_id'])){
             $receiver_id = $_SESSION['receiver_id'];
+            $title = $_SESSION['title'];
             $sender_id = $_SESSION['id'];
 
             // เมื่ออ่านแล้วเอาเครื่องหมายยังไม่อ่านออก
@@ -74,7 +76,7 @@
                 if (!empty($message)) {
                     // ป้องกัน SQL Injection โดยใช้ mysqli_real_escape_string
                     $message = $conn->real_escape_string($message);
-                    $sql = "INSERT INTO messages(sender_id, receiver_id, title, message) VALUES('$sender_id', '$receiver_id', '$message')";
+                    $sql = "INSERT INTO messages(sender_id, receiver_id, title, message) VALUES('$sender_id', '$receiver_id','$title', '$message')";
                     $result = $conn->query($sql);
                 } else {
                     
@@ -89,9 +91,9 @@
                     <div class='chat-box'>
                         <div class='message-container'>
             ";
-
-            $sql = "SELECT * FROM messages WHERE receiver_id = '$receiver_id' AND sender_id = '$sender_id' UNION
-                    SELECT * FROM messages WHERE receiver_id = '$sender_id' AND sender_id = '$receiver_id'
+            //แสดง messages
+            $sql = "SELECT * FROM messages WHERE receiver_id = '$receiver_id' AND sender_id = '$sender_id' AND title = '$title' UNION
+                    SELECT * FROM messages WHERE receiver_id = '$sender_id' AND sender_id = '$receiver_id' AND title = '$title'
                     ORDER BY time_stamp ASC";
             $result = $conn->query($sql);
 

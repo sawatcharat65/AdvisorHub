@@ -100,7 +100,8 @@ if (isset($_POST['profileInbox'])) {
                         <div class='sender'>$title</div>
                         <div class='message-date'>$timestamp</div>
                     </div>
-                <form action='' method='post' class='form-chat'>
+                <form action='../chat/index.php' method='post' class='form-chat'>
+                    <input type='hidden' name='title' value='$title'>
                     <button name='chat' class='chat-button' value='$receiver_id'><i class='bx bxs-message-dots'></i></button>
                 </form>
                 </div>
