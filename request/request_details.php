@@ -1,0 +1,78 @@
+<?php
+include("../server.php");
+session_start();
+// if ($_SESSION['previous_page'] != "advisor_requset.php") {
+//     header("location:http://localhost/AdvisorHub/request/");
+// }
+
+// ดึงข้อมูลจาก db
+$sql = "SELECT * FROM advisor_request WHERE JSON_CONTAINS(student_id, '\"{$_SESSION["id"]}\"')";
+$result = mysqli_query($conn, $sql);
+if (mysqli_num_rows($result) > 0) {
+    $row = mysqli_fetch_array($result);
+    $student_ids = json_decode($row['student_id'], true);
+} else {
+    header('location:http://localhost/AdvisorHub/home/');
+}
+
+
+?>
+
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียด</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="container text-center w-50 shadow-lg p-5">
+            <h1 class="">สำเร็จ!</h1>
+            <p>การส่งคำร้องของคุณเสร็จสมบูรณ์</p>
+            <p>รหัสนิสิต 
+                <?php
+                if (count($student_ids) > 1) {
+                    echo $student_ids[0] .' และ '. $student_ids[1] ;
+                } else {
+                    echo $student_ids[0];
+                }
+                ?>
+            </p>
+            <p>อาจารย์ที่ปรึกษา: 
+                <?php
+                $sql_advisor = "SELECT first_name, last_name FROM advisor WHERE id = '{$row["advisor_id"]}'";
+                $result_advisor = mysqli_query($conn, $sql_advisor);
+                if (mysqli_num_rows($result_advisor) > 0) {
+                    $row_advisor = mysqli_fetch_array($result_advisor);
+                    echo $row_advisor["first_name"] ." ". $row_advisor["last_name"];
+                } else {
+                    echo "ไม่พบข้อมูล";
+                }
+                ?>
+            </p>
+            <p> ชื่อเรื่องภาษาไทย:
+                <?php
+                echo $row['thesis_topic_thai'];
+                ?>
+            </p>
+            <p> ชื่อเรื่องภาษาอังกฤษ: 
+                <?php
+                echo $row['thesis_topic_eng'];
+                ?>
+            </p>
+            <p>
+                รายละเอียดวิทยานิพนธ์โดยสังเขป: 
+                <?php
+                echo $row['thesis_description'];
+                ?>
+            </p>
+            <a href="../home"><button class="btn" style="color:white; background-color: #ff9300;">กลับสู่หน้าหลัก</button></a>
+        </div>
+    </div>
+</body>
+
+</html>

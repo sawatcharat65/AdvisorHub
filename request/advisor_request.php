@@ -43,23 +43,28 @@ $result = $conn->query($sql);
 
 // เช็คว่าส่งคำร้องซ้ำไหม
 if ($result->num_rows > 0) {
-    echo "ไม่สามารถส่งคำร้องซ้ำได้";
+    $_SESSION['previous_page'] = "advisor_requset.php";
+    $_SESSION["notify_message"] = "ไม่สามารถส่งคำร้องซ้ำได้";
 } else {
     if ($thesisType == 'single') {
         $is_even = 0;
+        $student_id = [$singleStudentID];
+        $student_id_json = json_encode($student_id);
         $sql = "INSERT INTO advisor_request (student_id, advisor_id, thesis_topic_thai, 
                                              thesis_topic_eng, thesis_description, is_even, 
                                              semester, academic_year, is_advisor_approved, 
                                              is_admin_approved, time_stamp) 
-                VALUES('{$singleStudentID}', '{$_POST["advisor_id"]}', '{$thesisTitleThai}', 
+                VALUES('{$student_id_json}', '{$_POST["advisor_id"]}', '{$thesisTitleThai}', 
                        '{$thesisTitleEnglish}', '{$thesisDescription}', {$is_even}, 
                        {$semester}, {$academic_year}, 
                        0, 0, NOW())";
                        
         if ($query = mysqli_query($conn, $sql)) {
-            echo"success";
+            $_SESSION['previous_page'] = "advisor_requset.php";
+            $_SESSION["notify_message"] = "ส่งคำร้องสำเร็จ";
         } else {
-            echo "failed";
+            $_SESSION['previous_page'] = "advisor_requset.php";
+            $_SESSION["notify_message"] = "ส่งคำร้องไม่สำเร็จ";
         }
     } else {
         $is_even = 1;
@@ -75,9 +80,11 @@ if ($result->num_rows > 0) {
                        0, 0, NOW())";
     
         if ($query = mysqli_query($conn, $sql)) {
-            echo"success";
+            $_SESSION['previous_page'] = "advisor_requset.php";
+            $_SESSION["notify_message"] = "ส่งคำร้องสำเร็จ";
         } else {
-            echo "failed";
+            $_SESSION['previous_page'] = "advisor_requset.php";
+            $_SESSION["notify_message"] = "ส่งคำร้องไม่สำเร็จ";
         }
     }
 }
