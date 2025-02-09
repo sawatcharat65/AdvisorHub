@@ -54,7 +54,7 @@
             $sender_id = $_SESSION['id'];
 
             // เมื่ออ่านแล้วเอาเครื่องหมายยังไม่อ่านออก
-            $sql = "UPDATE messages SET is_read = 1 WHERE receiver_id = '$sender_id' AND sender_id = '$receiver_id' AND is_read = 0";
+            $sql = "UPDATE messages SET is_read = 1 WHERE receiver_id = '$sender_id' AND sender_id = '$receiver_id' AND is_read = 0 AND title = '$title'";
             $result = $conn->query($sql);
 
             $sql = "SELECT * FROM advisor WHERE id = '$receiver_id'";

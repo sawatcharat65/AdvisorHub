@@ -105,13 +105,14 @@ if (isset($_POST['profileInbox'])) {
                     <button name='chat' class='chat-button' value='$receiver_id'><i class='bx bxs-message-dots'></i></button>
                     ";
 
-                    $query = "SELECT DISTINCT is_read FROM messages WHERE receiver_id = '$id' AND sender_id AND is_read = 0 AND title = '$title'";
+                    $query = "SELECT DISTINCT is_read FROM messages WHERE receiver_id = '$id' AND sender_id = '$receiver_id' AND is_read = 0 AND title = '$title'";
                     $result_is_read = $conn->query($query);
-                    $row_is_read = $result_is_read->fetch_assoc();
 
-                    if(isset($row_is_read['is_read'])){
-                        echo "<i class='bx bxs-circle'></i>";
+                    // ตรวจสอบว่ามีการส่งข้อความที่ยังไม่ได้อ่าน
+                    if ($result_is_read && $result_is_read->num_rows > 0) {
+                        echo "<i class='bx bxs-circle'></i>"; // วงกลมสีที่บ่งบอกว่ามีข้อความใหม่
                     }
+
                     
                     echo"
                 </form>
