@@ -25,6 +25,11 @@
         exit();
     }
 
+    if(empty($_SESSION['title'])){
+        header('location: /AdvisorHub/advisor');
+        exit();
+    }
+
 ?>
 
 <!DOCTYPE html>
