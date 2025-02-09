@@ -21,7 +21,7 @@
 
     if(isset($_POST['chat'])){
         $_SESSION['receiver_id'] = $_POST['chat'];
-        header('location: /AdvisorHub/chat');
+        header('location: /AdvisorHub/topic_chat/topic_chat.php');
     }
 
     if(isset($_POST['profileInbox'])){
