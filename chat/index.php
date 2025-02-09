@@ -126,7 +126,7 @@
                     <form action='' method='post' class='form-send'>
                         <div class='chat-input'>
                             <input type='text' class='input-message' name='message' placeholder='Type a message...' />
-                            <button class='send-button' name='send'>Send</button>
+                            <button class='send-button' name='send'><i class='bx bx-send' ></i></i></button>
                         </div>
                     </form>
             ";
