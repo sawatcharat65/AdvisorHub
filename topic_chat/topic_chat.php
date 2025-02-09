@@ -53,14 +53,14 @@ if (isset($_POST['profileInbox'])) {
 
     <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']);
     $receiver_id = $_SESSION['receiver_id'];
-    $sql = "SELECT first_name FROM advisor WHERE id = '$receiver_id' UNION SELECT first_name FROM student WHERE id = '$receiver_id'";
+    $sql = "SELECT first_name, last_name FROM advisor WHERE id = '$receiver_id' UNION SELECT first_name, last_name FROM student WHERE id = '$receiver_id'";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
     echo 
     "
     <div class='topic-container'>
         <div class='topic-head'>
-            <h2>{$row['first_name']}</h2>
+            <h2>{$row['first_name']} {$row['last_name']}</h2>
     ";
     
     ?>
@@ -69,11 +69,11 @@ if (isset($_POST['profileInbox'])) {
         </div>
         <div class="topic-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="ค้นหาหัวข้อ">
+            <input type="text" placeholder="Search topic">
         </div>
         <div class="topic-status">
-            <button class="active">กำลังดำเนินการ</button>
-            <button>เสร็จสิ้น</button>
+            <button class="active">In progress</button>
+            <button>Completed</button>
         </div>
         
         <?php

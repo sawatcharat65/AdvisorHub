@@ -2,36 +2,52 @@
 session_start();
 require('../server.php');
 include('../components/navbar.php');
+
+// ตรวจสอบสถานะของ session
+if (empty($_SESSION['username'])) {
+    header('location: /AdvisorHub/login');
+    exit;
+}
+
 if (isset($_POST['logout'])) {
     session_destroy();
     header('location: /AdvisorHub/login');
-}
-
-if (empty($_SESSION['username'])) {
-    header('location: /AdvisorHub/login');
+    exit;
 }
 
 if (isset($_POST['profile'])) {
     header('location: /AdvisorHub/profile');
+    exit;
 }
 
-if(empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['id']){
+// ตรวจสอบการเข้าถึงแชท
+if (empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['id']) {
     header('location: /AdvisorHub/advisor');
+    exit;
 }
 
-if (isset($_POST['profileInbox'])) {
-    $user_id = $_POST['profileInbox'];
-    $_SESSION['profileInbox'] = $user_id;
-
-    $sql = "SELECT role FROM advisor WHERE id = '$user_id'";
-    $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
-
-    if ($row['role'] == 'advisor') {
-        header('location: /AdvisorHub/advisor_profile');
-    } else {
-        header('location: /AdvisorHub/student_profile');
+// ฟังก์ชันสำหรับการตรวจสอบและส่งข้อความ
+function sendMessage($conn, $sender_id, $receiver_id, $title, $message) {
+    // ตรวจสอบว่า message ไม่ใช่ค่าว่าง
+    if (!empty($message)) {
+        // ใช้ prepared statement เพื่อลดความเสี่ยงจาก SQL Injection
+        $stmt = $conn->prepare("INSERT INTO messages (sender_id, receiver_id, title, message) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $sender_id, $receiver_id, $title, $message);
+        $stmt->execute();
+        $stmt->close();
     }
+}
+
+// ตรวจสอบว่า user กดปุ่มส่งข้อความหรือไม่
+if (isset($_POST['submit'])) {
+    $message = $_POST['message'];
+    $title = $_POST['title'];
+    $sender_id = $_SESSION['id'];
+    $receiver_id = $_SESSION['receiver_id'];
+
+    sendMessage($conn, $sender_id, $receiver_id, $title, $message);
+    header('location: /AdvisorHub/topic_chat/topic_chat.php');
+    exit();
 }
 ?>
 
@@ -53,26 +69,23 @@ if (isset($_POST['profileInbox'])) {
 
 <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
 
-    <div class="consultation-form-container">
+    <form method='post' class="consultation-form-container">
         <div class="form-header">
             <a href="topic_chat.php" class="fa-solid fa-arrow-left"></a>
-            <h1 class="form-title">สร้างหัวข้อที่ต้องการปรึกษา</h1>
+            <h1 class="form-title">Create Topic</h1>
         </div>
         <div class="form-field">
-            <label for="consultation-topic" class="form-label">หัวข้อที่ต้องการปรึกษา</label>
-            <input type="text" id="consultation-topic" class="form-input" placeholder="กรอกหัวข้อที่ต้องการปรึกษา">
+            <label for="consultation-topic" class="form-label">Topic</label>
+            <input type="text" id="consultation-topic" class="form-input" name='title' placeholder="Fill your topic here" required>
         </div>
         <div class="form-field">
-            <label for="consultation-details" class="form-label">รายละเอียด</label>
-            <textarea id="consultation-details" class="form-textarea" placeholder="กรอกรายละเอียด"></textarea>
+            <label for="consultation-details" class="form-label">Details</label>
+            <textarea id="consultation-details" class="form-textarea" name='message' placeholder="Fill your details here" required></textarea>
         </div>
         <div class="form-button-container">
-            <button type="submit" class="form-submit-btn">ส่งข้อความ</button>
+            <button type="submit" name='submit' class="form-submit-btn"><i class='bx bx-mail-send'></i></button>
         </div>
-    </div>
-
-    
-
+    </form>
 </body>
 
 </html>
