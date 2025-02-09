@@ -90,15 +90,15 @@ $advisor_row = mysqli_fetch_array($advisor_result);
         <h5>ข้อมูลนิสิต (ทำเดี่ยว)</h5>
 
         <div class="row align-items-center mb-3">
-          <div class="col-md-7">
-            <label for="singleName" class="form-label">ชื่อ-สกุล:</label>
-            <input type="text" class="form-control" id="singleName" name="singleName" placeholder="ไม่ต้องระบุคำนำหน้า"
-              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>" readonly>
-          </div>
           <div class="col-md-5">
             <label for="singleStudentID" class="form-label">รหัสนิสิต:</label>
             <input type="text" class="form-control" id="singleStudentID" name="singleStudentID"
               value="<?php echo $row['id']; ?>" readonly>
+          </div>
+          <div class="col-md-7">
+            <label for="singleName" class="form-label">ชื่อ-สกุล:</label>
+            <input type="text" class="form-control" id="singleName" name="singleName" placeholder="ไม่ต้องระบุคำนำหน้า"
+              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>" readonly>
           </div>
         </div>
 
@@ -106,20 +106,18 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           <div class="col-md-4">
             <label for="singleBranch" class="form-label">สาขา:</label>
             <select id="singleBranch" class="form-select" name="singleBranch">
-              <option value="CS" 
-              <?php
-              if ($row['department'] == 'Computer Science') {
-                echo 'selected';
-              }
-              ?>
-              >วิทยาการคอมพิวเตอร์</option>
-              <option value="IT" 
-              <?php
-              if ($row['department'] == 'Information Technology') {
-                echo 'selected';
-              }
-              ?>
-              >เทคโนโลยีสารสนเทศ</option>
+              <option value="CS"
+                <?php
+                if ($row['department'] == 'Computer Science') {
+                  echo 'selected';
+                }
+                ?>>วิทยาการคอมพิวเตอร์</option>
+              <option value="IT"
+                <?php
+                if ($row['department'] == 'Information Technology') {
+                  echo 'selected';
+                }
+                ?>>เทคโนโลยีสารสนเทศ</option>
             </select>
           </div>
           <div class="col-md-4">
@@ -142,15 +140,15 @@ $advisor_row = mysqli_fetch_array($advisor_result);
         <h5>ข้อมูลนิสิต (คนที่ 1)</h5>
 
         <div class="row align-items-center mb-3">
-          <div class="col-md-7">
-            <label for="pairName1" class="form-label">ชื่อ-สกุล:</label>
-            <input type="text" class="form-control" id="pairName1" name="pairName1" placeholder="ไม่ต้องระบุคำนำหน้า"
-              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>" readonly>
-          </div>
           <div class="col-md-5">
             <label for="pairStudentID1" class="form-label">รหัสนิสิต:</label>
             <input type="text" class="form-control" id="pairStudentID1" name="pairStudentID1"
               value="<?php echo $row['id']; ?>" readonly>
+          </div>
+          <div class="col-md-7">
+            <label for="pairName1" class="form-label">ชื่อ-สกุล:</label>
+            <input type="text" class="form-control" id="pairName1" name="pairName1" placeholder="ไม่ต้องระบุคำนำหน้า"
+              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>" readonly>
           </div>
         </div>
 
@@ -158,20 +156,18 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           <div class="col-md-4">
             <label for="pairBranch1" class="form-label">สาขา:</label>
             <select id="pairBranch1" class="form-select" name="pairBranch1">
-            <option value="CS" 
-              <?php
-              if ($row['department'] == 'Computer Science') {
-                echo 'selected';
-              }
-              ?>
-              >วิทยาการคอมพิวเตอร์</option>
-              <option value="IT" 
-              <?php
-              if ($row['department'] == 'Information Technology') {
-                echo 'selected';
-              }
-              ?>
-              >เทคโนโลยีสารสนเทศ</option>
+              <option value="CS"
+                <?php
+                if ($row['department'] == 'Computer Science') {
+                  echo 'selected';
+                }
+                ?>>วิทยาการคอมพิวเตอร์</option>
+              <option value="IT"
+                <?php
+                if ($row['department'] == 'Information Technology') {
+                  echo 'selected';
+                }
+                ?>>เทคโนโลยีสารสนเทศ</option>
             </select>
           </div>
           <div class="col-md-4">
@@ -189,13 +185,13 @@ $advisor_row = mysqli_fetch_array($advisor_result);
         <h5>ข้อมูลนิสิต (คนที่ 2)</h5>
 
         <div class="row align-items-center mb-3">
-          <div class="col-md-7">
-            <label for="pairName2" class="form-label">ชื่อ-สกุล:</label>
-            <input type="text" class="form-control" id="pairName2" name="pairName2" placeholder="ไม่ต้องระบุคำนำหน้า">
-          </div>
           <div class="col-md-5">
             <label for="pairStudentID2" class="form-label">รหัสนิสิต:</label>
-            <input type="text" class="form-control" id="pairStudentID2" name="pairStudentID2">
+            <input type="text" class="form-control" id="pairStudentID2" name="pairStudentID2" placeholder="กรุณากรอกรหัสนิสิต" onblur="fetchStudentData()">
+          </div>
+          <div class="col-md-7">
+            <label for="pairName2" class="form-label">ชื่อ-สกุล:</label>
+            <input type="text" class="form-control" id="pairName2" name="pairName2" readonly>
           </div>
         </div>
 
@@ -209,11 +205,11 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           </div>
           <div class="col-md-4">
             <label for="pairPhone2" class="form-label">เบอร์มือถือ:</label>
-            <input type="tel" class="form-control" id="pairPhone2" name="pairPhone2" placeholder="08xxxxxxxx">
+            <input type="tel" class="form-control" id="pairPhone2" name="pairPhone2" readonly>
           </div>
           <div class="col-md-4">
             <label for="pairEmail2" class="form-label">อีเมล:</label>
-            <input type="email" class="form-control" id="pairEmail2" name="pairEmail2" placeholder="email@nu.ac.th">
+            <input type="email" class="form-control" id="pairEmail2" name="pairEmail2" readonly>
           </div>
         </div>
       </div>
@@ -264,6 +260,42 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 
     // ตั้งค่าเริ่มต้นให้แสดงฟิลด์สำหรับ ทำเดี่ยว
     window.onload = toggleFields;
+  </script>
+
+  <script>
+    function fetchStudentData() {
+      let studentID = document.getElementById('pairStudentID2').value.trim();
+
+      if (studentID === '') {
+        clearStudentFields();
+        return;
+      }
+
+      fetch(`fetch_student.php?studentID=${studentID}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('pairName2').value = data.name;
+            document.getElementById('pairBranch2').value = data.branch;
+            document.getElementById('pairPhone2').value = data.phone;
+            document.getElementById('pairEmail2').value = data.email;
+          } else {
+            clearStudentFields();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          clearStudentFields();
+        });
+    }
+
+    // ฟังก์ชันสำหรับเคลียร์ช่องข้อมูล
+    function clearStudentFields() {
+      document.getElementById('pairName2').value = '';
+      document.getElementById('pairBranch2').value = '';
+      document.getElementById('pairPhone2').value = '';
+      document.getElementById('pairEmail2').value = '';
+    }
   </script>
 </body>
 
