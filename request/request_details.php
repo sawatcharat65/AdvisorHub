@@ -31,8 +31,7 @@ if (mysqli_num_rows($result) > 0) {
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="container text-center w-50 shadow-lg p-5">
-            <h1 class="">สำเร็จ!</h1>
-            <p>การส่งคำร้องของคุณเสร็จสมบูรณ์</p>
+            <h2 class="mb-3">รายละเอียดการส่งคำร้อง</h2>
             <p>รหัสนิสิต 
                 <?php
                 if (count($student_ids) > 1) {
@@ -70,7 +69,7 @@ if (mysqli_num_rows($result) > 0) {
                 echo $row['thesis_description'];
                 ?>
             </p>
-            <a href="../home"><button class="btn" style="color:white; background-color: #ff9300;">กลับสู่หน้าหลัก</button></a>
+            <a href="../home"><button class="btn mt-3" style="color:white; background-color: #ff9300;">กลับสู่หน้าหลัก</button></a>
         </div>
     </div>
 </body>

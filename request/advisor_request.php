@@ -43,7 +43,6 @@ $result = $conn->query($sql);
 
 // เช็คว่าส่งคำร้องซ้ำไหม
 if ($result->num_rows > 0) {
-    $_SESSION['previous_page'] = "advisor_requset.php";
     $_SESSION["notify_message"] = "ไม่สามารถส่งคำร้องซ้ำได้";
 } else {
     if ($thesisType == 'single') {
@@ -60,11 +59,9 @@ if ($result->num_rows > 0) {
                        0, 0, NOW())";
                        
         if ($query = mysqli_query($conn, $sql)) {
-            $_SESSION['previous_page'] = "advisor_requset.php";
-            $_SESSION["notify_message"] = "ส่งคำร้องสำเร็จ";
+            header("location:http://localhost/AdvisorHub/request/request_details.php");
         } else {
-            $_SESSION['previous_page'] = "advisor_requset.php";
-            $_SESSION["notify_message"] = "ส่งคำร้องไม่สำเร็จ";
+            echo"ส่งคำร้องไม่สำเร็จ";
         }
     } else {
         $is_even = 1;
@@ -80,11 +77,9 @@ if ($result->num_rows > 0) {
                        0, 0, NOW())";
     
         if ($query = mysqli_query($conn, $sql)) {
-            $_SESSION['previous_page'] = "advisor_requset.php";
-            $_SESSION["notify_message"] = "ส่งคำร้องสำเร็จ";
+            header("location:http://localhost/AdvisorHub/request/request_details.php");
         } else {
-            $_SESSION['previous_page'] = "advisor_requset.php";
-            $_SESSION["notify_message"] = "ส่งคำร้องไม่สำเร็จ";
+            echo"ส่งคำร้องไม่สำเร็จ";
         }
     }
 }
