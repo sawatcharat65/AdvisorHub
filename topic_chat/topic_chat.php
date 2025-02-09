@@ -2,6 +2,7 @@
 session_start();
 require('../server.php');
 include('../components/navbar.php');
+
 if (isset($_POST['logout'])) {
     session_destroy();
     header('location: /AdvisorHub/login');
@@ -33,6 +34,11 @@ if (isset($_POST['profileInbox'])) {
         header('location: /AdvisorHub/student_profile');
     }
 }
+
+$search_query = "";
+if (isset($_POST['search'])) {
+    $search_query = $_POST['search'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -62,15 +68,16 @@ if (isset($_POST['profileInbox'])) {
         <div class='topic-head'>
             <h2>{$row['first_name']} {$row['last_name']}</h2>
     ";
-    
     ?>
 
             <a href="topic_create.php" class="fa-solid fa-circle-plus"></a>
         </div>
-        <div class="topic-search">
+        <form method="POST" class="topic-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search topic">
-        </div>
+            <input type="text" name="search" placeholder="Search topic" value="<?php echo $search_query; ?>" />
+            <button type="submit"><i class='bx bx-search'></i></button>
+        </form>
+
         <div class="topic-status">
             <button class="active">In progress</button>
             <button>Completed</button>
@@ -79,13 +86,26 @@ if (isset($_POST['profileInbox'])) {
         <?php
             $id = $_SESSION['id'];
             $receiver_id = $_SESSION['receiver_id'];
+
+            // ถ้ามีการค้นหาก็จะใช้คำค้นหานั้นในการกรอง
+            $search_condition = "";
+            if (!empty($search_query)) {
+                $search_condition = " AND title LIKE '%$search_query%' ";
+            }
+
             $sql = "
                     SELECT title, MAX(time_stamp) AS latest_time
                     FROM messages
                     WHERE (sender_id = '$id' AND receiver_id = '$receiver_id') 
                     OR (sender_id = '$receiver_id' AND receiver_id = '$id')
+                    $search_condition
                     GROUP BY title
-                    ORDER BY latest_time DESC
+                    ORDER BY 
+                        CASE 
+                            WHEN title LIKE '%$search_query%' THEN 1 
+                            ELSE 2 
+                        END,
+                        latest_time DESC
                 ";
             $result = $conn->query($sql);
             
@@ -112,14 +132,12 @@ if (isset($_POST['profileInbox'])) {
                     if ($result_is_read && $result_is_read->num_rows > 0) {
                         echo "<i class='bx bxs-circle'></i>"; // วงกลมสีที่บ่งบอกว่ามีข้อความใหม่
                     }
-
                     
                     echo"
                 </form>
                 </div>
             ";
             }
-
         ?>
         
     </div>

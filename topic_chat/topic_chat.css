@@ -319,3 +319,19 @@ color: #777;
     left: 60%;
 }
 
+.topic-search button{
+    border-radius: 3rem;
+    border: none;
+    width: 30px;
+    height: 30px;
+    transition: all .2s ease;
+    background-color: #a764ff;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.041);
+}
+
+.topic-search button:hover{
+    background-color: #913cff;
+    transform: scale(1.05);
+
+}
+
