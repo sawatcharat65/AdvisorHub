@@ -6,7 +6,7 @@ session_start();
 // }
 
 // ดึงข้อมูลจาก db
-$sql = "SELECT * FROM advisor_request WHERE JSON_CONTAINS(student_id, '\"{$_SESSION["id"]}\"')";
+$sql = "SELECT * FROM advisor_request WHERE JSON_CONTAINS(student_id, '\"{$_SESSION["id"]}\"') AND is_advisor_approved != 2";
 $result = mysqli_query($conn, $sql);
 if (mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_array($result);
@@ -40,16 +40,20 @@ if (mysqli_num_rows($result) > 0) {
 
             <p class="badge
             <?php
-            if ($_SESSION['notify_message'] == 'ส่งคำร้องสำเร็จ') {
-                echo 'text-bg-primary';
-            } else {
-                echo 'text-bg-warning';
+            if (isset($_SESSION['notify_message'])) {
+                if ($_SESSION['notify_message'] == 'ส่งคำร้องสำเร็จ') {
+                    echo 'text-bg-primary';
+                } else {
+                    echo 'text-bg-warning';
+                }
             }
             ?> 
             text-wrap">
                 สถานะการส่งคำร้อง:
                 <?php
-                echo $_SESSION['notify_message'];
+                if (isset($_SESSION['notify_message'])) {
+                    echo $_SESSION['notify_message'];
+                }
                 // เคลียร์ข้อความแจ้งเตือน
                 unset($_SESSION['notify_message']);
                 ?>
