@@ -28,7 +28,15 @@ if (isset($_POST['start_date'], $_POST['end_date'], $_POST['search_query'], $_PO
             $thesis_link = "thesis_info.php?id=" . $row['id'];
             $issue_date = date('d M, Y', strtotime($row['issue_date']));
             $title = htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8');
-            $keywords = isset($row['keywords']) ? htmlspecialchars($row['keywords'], ENT_QUOTES, 'UTF-8') : '';
+            $keywords = isset($row['keywords']) ? $row['keywords'] : '';
+            // ตรวจสอบว่าเป็น JSON หรือไม่
+            if (!empty($keywords) && json_decode($keywords) !== null) {
+                $decoded_keywords = json_decode($keywords, true); // แปลง JSON เป็นอาร์เรย์
+                if (is_array($decoded_keywords)) {
+                    $keywords = implode(', ', $decoded_keywords); // รวมเป็นสตริง
+                }
+            }
+            $keywords = htmlspecialchars($keywords, ENT_QUOTES, 'UTF-8');
 
             if ($view_mode === 'grid') {
                 echo "<div class='col-md-4 thesis-item'>";
