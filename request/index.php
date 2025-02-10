@@ -30,6 +30,8 @@ if ($check_row['role'] == 'student') {
   $sql = "SELECT * FROM student WHERE id = '{$id}'";
   $result = mysqli_query($conn, $sql);
   $row = mysqli_fetch_array($result);
+} else {
+  header('location: /AdvisorHub/advisor');
 }
 
 // sql สำหรับเรียกข้อมูลอาจารย์
