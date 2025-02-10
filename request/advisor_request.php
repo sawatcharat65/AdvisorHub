@@ -64,6 +64,7 @@ if ($result->num_rows > 0) {
             header("location:http://localhost/AdvisorHub/request/request_details.php");
         } else {
             $_SESSION["notify_message"] = "ส่งคำร้องไม่สำเร็จ";
+            header("location:http://localhost/AdvisorHub/request/request_details.php");
         }
     } else {
         $is_even = 1;
@@ -83,6 +84,7 @@ if ($result->num_rows > 0) {
             header("location:http://localhost/AdvisorHub/request/request_details.php");
         } else {
             $_SESSION["notify_message"] = "ส่งคำร้องไม่สำเร็จ";
+            header("location:http://localhost/AdvisorHub/request/request_details.php");
         }
     }
 }
