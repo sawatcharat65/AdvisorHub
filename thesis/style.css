@@ -437,3 +437,37 @@ nav li:hover {
     text-overflow: ellipsis; /* แสดง ... เมื่อข้อความล้น */
     max-height: 4.5em; /* ปรับให้ตรงกับจำนวนบรรทัดที่ต้องการ */
 }
+
+.downloadf {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.downloadf a {
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    display: inline-block; /* ให้เหมือนปุ่ม */
+    border: none;
+    text-align: center;
+}
+
+.downloadf a:hover {
+    background-color: #218838;
+}
+
+.downloadf a:focus {
+    outline: none;
+}
+
+.info a {
+    color: #428bca;
+    text-decoration: none;
+}
