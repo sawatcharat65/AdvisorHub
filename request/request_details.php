@@ -30,46 +30,76 @@ if (mysqli_num_rows($result) > 0) {
 
 <body>
     <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="container text-center w-50 shadow-lg p-5">
+        <div class="container text-center w-65 shadow-lg rounded-2 p-5">
             <h2 class="mb-3">รายละเอียดการส่งคำร้อง</h2>
-            <p>รหัสนิสิต 
+
+            <p class="badge
+            <?php
+            if ($_SESSION['notify_message'] == 'ส่งคำร้องสำเร็จ') {
+                echo 'text-bg-primary';
+            } else {
+                echo 'text-bg-warning';
+            }
+            ?> 
+            text-wrap">
+                สถานะการส่งคำร้อง:
                 <?php
-                if (count($student_ids) > 1) {
-                    echo $student_ids[0] .' และ '. $student_ids[1] ;
-                } else {
-                    echo $student_ids[0];
-                }
+                echo $_SESSION['notify_message'];
                 ?>
             </p>
-            <p>อาจารย์ที่ปรึกษา: 
-                <?php
-                $sql_advisor = "SELECT first_name, last_name FROM advisor WHERE id = '{$row["advisor_id"]}'";
-                $result_advisor = mysqli_query($conn, $sql_advisor);
-                if (mysqli_num_rows($result_advisor) > 0) {
-                    $row_advisor = mysqli_fetch_array($result_advisor);
-                    echo $row_advisor["first_name"] ." ". $row_advisor["last_name"];
-                } else {
-                    echo "ไม่พบข้อมูล";
-                }
-                ?>
+
+            <div class="container rounded-2 p-3" style="background-color: #f1f1f1;">
+                <p>รหัสนิสิต
+                    <?php
+                    if (count($student_ids) > 1) {
+                        echo $student_ids[0] . ' และ ' . $student_ids[1];
+                    } else {
+                        echo $student_ids[0];
+                    }
+                    ?>
+                </p>
+
+                <p>อาจารย์ที่ปรึกษา:
+                    <?php
+                    $sql_advisor = "SELECT first_name, last_name FROM advisor WHERE id = '{$row["advisor_id"]}'";
+                    $result_advisor = mysqli_query($conn, $sql_advisor);
+                    if (mysqli_num_rows($result_advisor) > 0) {
+                        $row_advisor = mysqli_fetch_array($result_advisor);
+                        echo $row_advisor["first_name"] . " " . $row_advisor["last_name"];
+                    } else {
+                        echo "ไม่พบข้อมูล";
+                    }
+                    ?>
+                </p>
+
+                <p> ชื่อเรื่องภาษาไทย:
+                    <?php
+                    echo $row['thesis_topic_thai'];
+                    ?>
+                </p>
+
+                <p> ชื่อเรื่องภาษาอังกฤษ:
+                    <?php
+                    echo $row['thesis_topic_eng'];
+                    ?>
+                </p>
+
+                <p>
+                    รายละเอียดวิทยานิพนธ์โดยสังเขป:
+                    <?php
+                    echo $row['thesis_description'];
+                    ?>
+                </p>
+            </div>
+
+            <p class="text-danger mt-2">
+                หากข้อมูลส่งคำร้องของคุณไม่ถูกต้อง โปรดติดต่อเจ้าหน้าที่
             </p>
-            <p> ชื่อเรื่องภาษาไทย:
-                <?php
-                echo $row['thesis_topic_thai'];
-                ?>
-            </p>
-            <p> ชื่อเรื่องภาษาอังกฤษ: 
-                <?php
-                echo $row['thesis_topic_eng'];
-                ?>
-            </p>
-            <p>
-                รายละเอียดวิทยานิพนธ์โดยสังเขป: 
-                <?php
-                echo $row['thesis_description'];
-                ?>
-            </p>
-            <a href="../home"><button class="btn mt-3" style="color:white; background-color: #ff9300;">กลับสู่หน้าหลัก</button></a>
+            <a href="../home">
+                <button class="btn mt-3" style="color:white; background-color: #ff9300;">
+                    กลับสู่หน้าหลัก
+                </button>
+            </a>
         </div>
     </div>
 </body>

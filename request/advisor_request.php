@@ -38,12 +38,13 @@ $thesisTitleThai = mysqli_real_escape_string($conn, $_POST['thesisTitleThai']);
 $thesisTitleEnglish = mysqli_real_escape_string($conn, $_POST['thesisTitleEnglish']);
 $thesisDescription = mysqli_real_escape_string($conn, $_POST['thesisDescription']);
 
-$sql = "SELECT * FROM advisor_request WHERE student_id = '$singleStudentID'";
+$sql = "SELECT * FROM advisor_request WHERE JSON_CONTAINS(student_id, '\"{$_SESSION["id"]}\"')";
 $result = $conn->query($sql);
 
 // เช็คว่าส่งคำร้องซ้ำไหม
 if ($result->num_rows > 0) {
     $_SESSION["notify_message"] = "ไม่สามารถส่งคำร้องซ้ำได้";
+    header("location:http://localhost/AdvisorHub/request/request_details.php");
 } else {
     if ($thesisType == 'single') {
         $is_even = 0;
@@ -59,9 +60,10 @@ if ($result->num_rows > 0) {
                        0, 0, NOW())";
                        
         if ($query = mysqli_query($conn, $sql)) {
+            $_SESSION["notify_message"] = "ส่งคำร้องสำเร็จ";
             header("location:http://localhost/AdvisorHub/request/request_details.php");
         } else {
-            echo"ส่งคำร้องไม่สำเร็จ";
+            $_SESSION["notify_message"] = "ส่งคำร้องไม่สำเร็จ";
         }
     } else {
         $is_even = 1;
@@ -77,11 +79,13 @@ if ($result->num_rows > 0) {
                        0, 0, NOW())";
     
         if ($query = mysqli_query($conn, $sql)) {
+            $_SESSION["notify_message"] = "ส่งคำร้องสำเร็จ";
             header("location:http://localhost/AdvisorHub/request/request_details.php");
         } else {
-            echo"ส่งคำร้องไม่สำเร็จ";
+            $_SESSION["notify_message"] = "ส่งคำร้องไม่สำเร็จ";
         }
     }
 }
 
+mysqli_close($conn);
 ?>
