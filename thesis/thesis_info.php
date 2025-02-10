@@ -15,45 +15,6 @@ if (isset($_POST['profile'])) {
     header('location: /ThesisAdvisorHub/profile');
 }
 
-// if (isset($_SESSION['advisor_id'])) {
-//     $advisor_id = $_SESSION['advisor_id'];
-//     $sql = "SELECT * FROM advisor_profile WHERE advisor_id = '$advisor_id'";
-//     $result = $conn->query($sql);
-//     $row = $result->fetch_assoc();
-
-//     $advisor_id = $row['advisor_id'];
-//     $interests = $row['interests'];
-//     $img = $row['img'];
-
-//     $sql = "SELECT * FROM advisor WHERE id = '$advisor_id'";
-//     $result_advisor = $conn->query($sql);
-//     $row_advisor = $result_advisor->fetch_assoc();
-
-//     $first_name = $row_advisor['first_name'];
-//     $last_name = $row_advisor['last_name'];
-//     $email = $row_advisor['email'];
-
-//     $sql = "SELECT * FROM thesis WHERE advisor_id = '$advisor_id' ORDER BY issue_date DESC";
-//     $result_thesis = $conn->query($sql);
-//     $thesis_count = $result_thesis->num_rows;
-
-//     if ($thesis_count > 0) {
-//         $row_thesis = $result_thesis->fetch_assoc();
-//         $title = $row_thesis['title'];
-//         $authors = nl2br(implode("\n", explode(',', $row_thesis['authors'])));
-//         $keywords = str_replace(['[', ']'], '', $row_thesis['keywords']);
-//         $issue_date = $row_thesis['issue_date'];
-//         $publisher = $row_thesis['publisher'];
-//         $abstract = $row_thesis['abstract'];
-//         $uri = $row_thesis['uri'];
-//         $thesis_file = $row_thesis['thesis_file'];
-//     } else {
-//         $title = "ไม่พบข้อมูลวิทยานิพนธ์";
-//     }
-// } else {
-//     echo "ไม่พบข้อมูล";
-// }
-
 if (isset($_SESSION['advisor_id'])) {
     $advisor_id = $_SESSION['advisor_id'];
 
@@ -75,6 +36,15 @@ if (isset($_SESSION['advisor_id'])) {
     } else {
         echo "ไม่พบข้อมูลวิทยานิพนธ์";
     }
+
+    // ลบเครื่องหมาย " และเพิ่มช่องว่างหลังจุลภาค
+    $keyword_array = explode(',', str_replace('"', '', $keywords));
+
+    // ใช้ Regular Expression แยกภาษาไทย และภาษาอังกฤษ
+    $title_parts = preg_split('/(?=[A-Z])/', $title, 2); // แยกเมื่อเจออักษรภาษาอังกฤษตัวใหญ่
+
+    $thai_title = trim($title_parts[0]); // ส่วนของภาษาไทย
+    $english_title = isset($title_parts[1]) ? trim($title_parts[1]) : ""; // ส่วนของภาษาอังกฤษ (ถ้ามี)
 
     // ดึงข้อมูลของที่ปรึกษา (ชื่อ-นามสกุล)
     $sql_advisor = "SELECT first_name, last_name FROM advisor WHERE id = '$advisor_id'";
@@ -112,20 +82,22 @@ $uri = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
     <div class="container">
         <h1>Thesis Information</h1>
-        <div class="info"><strong>Title:</strong> <?php echo $title; ?> </div>
-        <div class="info"><strong>Authors:</strong> <?php echo $authors ?> </div>
-        <div class="info"><strong>Advisor Name:</strong> <?php echo $advisor_name; ?> </div>
-        <div class="info"><strong>Keywords:</strong> <?php echo $keywords; ?> </div>
-        <div class="info"><strong>Issue Date:</strong> <?php echo $issue_date; ?> </div>
-        <div class="info"><strong>Publisher:</strong> <?php echo $publisher; ?> </div>
-        <div class="info abstract">
-            <strong>Abstract:</strong> <?php echo $abstract; ?>
+        <div class="info">Title: <span><?php echo $thai_title; ?></span><br>
+            <span><?php echo $english_title; ?></span>
         </div>
-        <div class="info"><strong>URI:</strong> <a href="<?php echo $uri; ?>"> <?php echo $uri; ?> </a> </div>
+        <div class="info">Authors: <span><?php echo $authors; ?></span></div>
+        <div class="info">Advisor Name: <span><?php echo $advisor_name; ?></span></div>
+        <div class="info">Keywords:<br>
+            <span><?php echo implode('<br>', $keyword_array); ?></span>
+        </div>
+        <div class="info">Issue Date: <span><?php echo $issue_date; ?></span></div>
+        <div class="info">Publisher: <span><?php echo $publisher; ?></span></div>
+        <div class="info">Abstract: <span><?php echo $abstract; ?></span></div>
+        <div class="info">URI: <span><a href="<?php echo $uri; ?>"><?php echo $uri; ?></a></span></div>
 
-        <div class="downloadf button">
+        <div class="downloadf button mt-4">
             <a href="download.php?id=<?php echo $row_thesis['id']; ?>" class="btn">
-                <strong>Download Thesis File</strong>
+                Download Thesis File
             </a>
         </div>
     </div>

@@ -13,13 +13,7 @@ h1 {
     color: #333;
     text-align: center;
 }
-.info {
-    margin-bottom: 15px;
-}
-.info strong {
-    display: block;
-    color: #555;
-}
+
 .abstract {
     background: #eef;
     padding: 10px;
@@ -376,18 +370,6 @@ nav li:hover {
     padding-left: 10px;
 }
 
-/* .thesis-list .col-12 {
-    width: 100%;
-}
-
-.thesis-grid .col-md-4 {
-    width: 33.333%;
-}
-
-.thesis-grid .card {
-    height: 100%;
-} */
-
 /* ปรับแต่ง List View */
 .thesis-list .card {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -443,6 +425,7 @@ nav li:hover {
     justify-content: start;
     align-items: center;
     margin-top: 20px;
+    margin-bottom: 50px;
 }
 
 .downloadf a {
@@ -467,7 +450,22 @@ nav li:hover {
     outline: none;
 }
 
+.info {
+    display: grid;
+    grid-template-columns: 130px auto; /* คอลัมน์ซ้ายกว้าง 130px ส่วนขวายืดตามเนื้อหา */
+    align-items: start;
+    padding: 10px 0;
+    line-height: 1.5;
+    border-top: 1px solid #ddd;
+    color: #333333;
+}
+
+.info strong {
+    text-align: left;
+    font-weight: bold;
+}
+
 .info a {
-    color: #428bca;
     text-decoration: none;
+    color: #428bca;
 }

@@ -47,21 +47,28 @@ if (isset($_POST['profile'])) {
                 <select id="select-tags" multiple data-placeholder="Filter Keywords" class="form-control">
                     <optgroup label="Keywords">
                         <?php
-                        $sql = "SELECT DISTINCT JSON_UNQUOTE(JSON_EXTRACT(keywords, '$[*]')) AS keyword FROM thesis";
-                        $result = $conn->query($sql);
                         $keywords = [];
+
+                        // ดึงข้อมูล keyword จากฐานข้อมูล
+                        $sql = "SELECT keywords FROM thesis";
+                        $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
-                                $keywords = array_merge($keywords, json_decode($row['keyword'], true));
+                                $decoded_keywords = json_decode($row['keywords'], true); // แปลง JSON เป็นอาร์เรย์
+                                if (is_array($decoded_keywords)) {
+                                    $keywords = array_merge($keywords, $decoded_keywords); // รวมข้อมูล
+                                }
                             }
                         }
 
+                        // ลบค่าที่ซ้ำกัน และเรียงตามตัวอักษร (ไม่สนตัวพิมพ์ใหญ่/เล็ก)
                         $unique_keywords = array_unique($keywords);
-                        sort($unique_keywords);
+                        natcasesort($unique_keywords);
 
+                        // แสดงผลลัพธ์
                         foreach ($unique_keywords as $keyword) {
-                            echo "<option value='$keyword'>$keyword</option>";
+                            echo "<option value='" . htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8') . "'>$keyword</option>";
                         }
                         ?>
                     </optgroup>
@@ -72,8 +79,8 @@ if (isset($_POST['profile'])) {
             <table class="table mt-2">
                 <thead>
                     <tr>
-                        <th>Thesis Topic</th>
-                        <th>Number of Thesis</th>
+                        <th>Keywords Topic</th>
+                        <th>Number of Keywords</th>
                     </tr>
                 </thead>
                 <tbody id="thesisTableBody">
@@ -177,7 +184,6 @@ if (isset($_POST['profile'])) {
                 plugins: {
                     legend: {
                         onClick: (e) => e.stopPropagation(), // ปิดการคลิกที่ Legend
-                        onHover: (e) => e.native.target.style.cursor = 'pointer' // เปลี่ยน cursor เป็น pointer เมื่อชี้
                     }
                 }
             }
