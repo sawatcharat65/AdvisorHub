@@ -55,7 +55,7 @@ if (mysqli_num_rows($result) > 0) {
                     echo $_SESSION['notify_message'];
                 }
                 // เคลียร์ข้อความแจ้งเตือน
-                unset($_SESSION['notify_message']);
+                // unset($_SESSION['notify_message']);
                 ?>
             </p>
 
