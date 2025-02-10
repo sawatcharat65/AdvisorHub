@@ -1,31 +1,32 @@
 <?php
-    session_start();
-    
-    require('../server.php');
-    include('../components/navbar.php');
-    if(isset($_POST['logout'])){
-        session_destroy();
-        header('location: /AdvisorHub/login');
-    }
+session_start();
 
-    if(empty($_SESSION['username'])){
-        header('location: /AdvisorHub/login');
-    }
+require('../server.php');
+include('../components/navbar.php');
+if (isset($_POST['logout'])) {
+    session_destroy();
+    header('location: /AdvisorHub/login');
+}
 
-    if(isset($_POST['profile'])){
-        header('location: /AdvisorHub/profile');
-    }
+if (empty($_SESSION['username'])) {
+    header('location: /AdvisorHub/login');
+}
 
-    // ถ้ามีการค้นหา
-    $search_query = "";
+if (isset($_POST['profile'])) {
+    header('location: /AdvisorHub/profile');
+}
 
-    if (isset($_POST['search'])) {
-        $search_query = $_POST['search'];  // รับค่าคำค้นจากฟอร์ม
-        
-    }
+// ถ้ามีการค้นหา
+$search_query = "";
+
+if (isset($_POST['search'])) {
+    $search_query = $_POST['search'];  // รับค่าคำค้นจากฟอร์ม
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,95 +34,56 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
     <link rel="icon" href="../Logo.png">
 </head>
+
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
-    
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
+
     <form action="" method="post">
         <div class="search">
             <input type="text" name="search" placeholder="Search Advisor..." value="<?php echo htmlspecialchars($search_query); ?>">
             <button><i class='bx bx-search'></i></button>
         </div>
     </form>
-    
-    
+
+
     <div class="filter-wrap">
         <!-- Filter Section -->
-        <form method='post' class='filter-container'>
-        
-
-        <label for='ai'>Artificial Intelligence (AI)</label>
-        <input type='checkbox' id='ai' class='filter-checkbox' name='expertise[]' value='Artificial Intelligence (AI)'>
-        
-        <label for='ml'>Machine Learning</label>
-        <input type='checkbox' id='ml' class='filter-checkbox' name='expertise[]' value='Machine Learning'>
-
-        <label for='dl'>Deep Learning</label>
-        <input type='checkbox' id='dl' class='filter-checkbox' name='expertise[]' value='Deep Learning'>
-
-        <label for='nlp'>Natural Language Processing (NLP)</label>
-        <input type='checkbox' id='nlp' class='filter-checkbox' name='expertise[]' value='Natural Language Processing (NLP)'>
-
-        <label for='cv'>Computer Vision</label>
-        <input type='checkbox' id='cv' class='filter-checkbox' name='expertise[]' value='Computer Vision'>
-
-        <label for='ds'>Data Science</label>
-        <input type='checkbox' id='ds' class='filter-checkbox' name='expertise[]' value='Data Science'>
-
-        <label for='bigdata'>Big Data</label>
-        <input type='checkbox' id='bigdata' class='filter-checkbox' name='expertise[]' value='Big Data'>
-
-        <label for='cyber'>Cybersecurity</label>
-        <input type='checkbox' id='cyber' class='filter-checkbox' name='expertise[]' value='Cybersecurity'>
-
-        <label for='blockchain'>Blockchain Technology</label>
-        <input type='checkbox' id='blockchain' class='filter-checkbox' name='expertise[]' value='Blockchain Technology'>
-
-        <label for='iot'>Internet of Things (IoT)</label>
-        <input type='checkbox' id='iot' class='filter-checkbox' name='expertise[]' value='Internet of Things (IoT)'>
-
-        <label for='cloud'>Cloud Computing</label>
-        <input type='checkbox' id='cloud' class='filter-checkbox' name='expertise[]' value='Cloud Computing'>
-
-        <label for='edge'>Edge Computing</label>
-        <input type='checkbox' id='edge' class='filter-checkbox' name='expertise[]' value='Edge Computing'>
-
-        <label for='quantum'>Quantum Computing</label>
-        <input type='checkbox' id='quantum' class='filter-checkbox' name='expertise[]' value='Quantum Computing'>
-
-        <label for='hci'>Human-Computer Interaction (HCI)</label>
-        <input type='checkbox' id='hci' class='filter-checkbox' name='expertise[]' value='Human-Computer Interaction (HCI)'>
-
-        <label for='robotics'>Robotics</label>
-        <input type='checkbox' id='robotics' class='filter-checkbox' name='expertise[]' value='Robotics'>
-
-        <label for='software'>Software Engineering</label>
-        <input type='checkbox' id='software' class='filter-checkbox' name='expertise[]' value='Software Engineering'>
-
-        <label for='arvr'>Augmented Reality (AR) and Virtual Reality (VR)</label>
-        <input type='checkbox' id='arvr' class='filter-checkbox' name='expertise[]' value='Augmented Reality (AR) and Virtual Reality (VR)'>
-
-        <label for='digitwin'>Digital Twin</label>
-        <input type='checkbox' id='digitwin' class='filter-checkbox' name='expertise[]' value='Digital Twin'>
-
-        <label for='compbio'>Computational Biology</label>
-        <input type='checkbox' id='compbio' class='filter-checkbox' name='expertise[]' value='Computational Biology'>
-
-        <label for='ethicalai'>Ethical AI</label>
-        <input type='checkbox' id='ethicalai' class='filter-checkbox' name='expertise[]' value='Ethical AI'>
-            
-        <div class="wrapFilterButton">
-            <button name="filter" class="filterButton">Filter</button>
-        </div>
+        <form method="post" class="filter-container">
+            <label for="expertise">Expertise input</label>
+            <select id="expertise" name="expertise[]" multiple data-placeholder="Filter Expertise">
+                <option value="Artificial Intelligence (AI)">Artificial Intelligence (AI)</option>
+                <option value="Machine Learning">Machine Learning</option>
+                <option value="Deep Learning">Deep Learning</option>
+                <option value="Natural Language Processing (NLP)">Natural Language Processing (NLP)</option>
+                <option value="Computer Vision">Computer Vision</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Big Data">Big Data</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Blockchain Technology">Blockchain Technology</option>
+                <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
+                <option value="Cloud Computing">Cloud Computing</option>
+                <option value="Edge Computing">Edge Computing</option>
+                <option value="Quantum Computing">Quantum Computing</option>
+                <option value="Human-Computer Interaction (HCI)">Human-Computer Interaction (HCI)</option>
+                <option value="Robotics">Robotics</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Augmented Reality (AR) and Virtual Reality (VR)">Augmented Reality (AR) and Virtual Reality (VR)</option>
+                <option value="Digital Twin">Digital Twin</option>
+                <option value="Computational Biology">Computational Biology</option>
+                <option value="Ethical AI">Ethical AI</option>
+            </select>
         </form>
+
     </div>
 
     <div class="advisorList">
-    <?php
+        <?php
         // ป้องกัน SQL Injection ด้วย prepared statement
-        if ($search_query != ""){
+        if ($search_query != "") {
             $sql = "SELECT *
                     FROM advisor a
                     JOIN advisor_profile ap ON a.id = ap.advisor_id
@@ -135,39 +97,38 @@
 
             $stmt->execute();
             $result = $stmt->get_result();
-            }elseif(isset($_POST['filter']) && isset($_POST['expertise'])){
-                $expertise = json_encode($_POST['expertise']);
-                $sql = "
+        } elseif (isset($_POST['filter']) && isset($_POST['expertise'])) {
+            $expertise = json_encode($_POST['expertise']);
+            $sql = "
                     SELECT * 
                     FROM advisor a 
                     JOIN advisor_profile ap ON a.id = ap.advisor_id 
                     WHERE JSON_CONTAINS(ap.expertise, '$expertise');
                 ";
-                $result = $conn->query($sql);
-            }
-            else {
-                // หากไม่มีคำค้นหาให้ดึงข้อมูลทั้งหมด
-                $sql = "SELECT * FROM advisor_profile";
-                $result = $conn->query($sql);
-            }
+            $result = $conn->query($sql);
+        } else {
+            // หากไม่มีคำค้นหาให้ดึงข้อมูลทั้งหมด
+            $sql = "SELECT * FROM advisor_profile";
+            $result = $conn->query($sql);
+        }
 
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()){
-                    $advisor_id = $row['advisor_id'];
-                    $expertise = $row['expertise'];
-                    $interests = $row['interests'];
-                    $img = $row['img'];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $advisor_id = $row['advisor_id'];
+                $expertise = $row['expertise'];
+                $interests = $row['interests'];
+                $img = $row['img'];
 
-                    $sql = "SELECT * FROM advisor WHERE id = '$advisor_id'";
-                    $result_advisor = $conn->query($sql);
-                    $row_advisor = $result_advisor->fetch_assoc();
-                    
-                    $first_name = $row_advisor['first_name'];
-                    $last_name = $row_advisor['last_name'];
-                    $tel = $row_advisor['tel'];
-                    $email = $row_advisor['email'];
+                $sql = "SELECT * FROM advisor WHERE id = '$advisor_id'";
+                $result_advisor = $conn->query($sql);
+                $row_advisor = $result_advisor->fetch_assoc();
 
-                    echo "
+                $first_name = $row_advisor['first_name'];
+                $last_name = $row_advisor['last_name'];
+                $tel = $row_advisor['tel'];
+                $email = $row_advisor['email'];
+
+                echo "
                     <div class='advisorCard'>
                         <img src='$img' alt=''>
                         <div class='details'>
@@ -181,12 +142,40 @@
                         </div>
                     </div>
                     ";
-                }
-            } else {
-                echo "<p>No advisors found matching your search criteria.</p>";
             }
+        } else {
+            echo "<p>No advisors found matching your search criteria.</p>";
+        }
         ?>
     </div>
-    
+
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let select = new TomSelect("#expertise", {
+                plugins: ['remove_button'],
+                persist: false,
+                create: false,
+                onChange: function(values) {
+                    fetch('filter_advisors.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                expertise: values
+                            })
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            document.querySelector('.advisorList').innerHTML = data; // อัปเดตรายชื่ออาจารย์
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+            });
+        });
+    </script>
+
 </body>
+
 </html>
