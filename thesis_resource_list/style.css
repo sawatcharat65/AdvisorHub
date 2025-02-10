@@ -125,12 +125,12 @@ nav li:hover {
 .card {
     border: none;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease-in-out;
 }
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 60px 60px rgba(0, 0, 0, 0.2);
 }
 .card-title {
     color: #1a1a2e;
@@ -159,4 +159,20 @@ nav li:hover {
 }
 .card-link:hover {
     color: inherit;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/* ปรับขนาดและเงาของการ์ด */
+.card {
+    max-width: 50rem;
+    width: 100%;
+}
+
+/* H1 ให้อยู่กลางและสวยงามขึ้น */
+h1 {
+    font-weight: bold;
+    color: #410690;
 }
