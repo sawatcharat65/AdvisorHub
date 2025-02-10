@@ -19,12 +19,9 @@ if (isset($_POST['profile'])) {
 // ดึงข้อมูลโดย JOIN ตาราง Advisor และ Student
 $sql = "SELECT ar.*, 
                COALESCE(a.first_name, 'N/A') AS advisor_fname, 
-               COALESCE(a.last_name, 'N/A') AS advisor_lname, 
-               COALESCE(s.first_name, 'N/A') AS student_fname, 
-               COALESCE(s.last_name, 'N/A') AS student_lname 
+               COALESCE(a.last_name, 'N/A') AS advisor_lname
         FROM advisor_request ar
         LEFT JOIN Advisor a ON ar.advisor_id = a.id
-        LEFT JOIN Student s ON ar.student_id = s.id
         WHERE ar.is_advisor_approved = 1 AND ar.is_admin_approved = 1";
 
 $result = $conn->query($sql);
@@ -35,24 +32,21 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advisor Requests</title>
+    <title>CS Student Files</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="../Logo.png">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <style>
-        .card { cursor: pointer; }
-    </style>
 </head>
 <body>
 
 <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
 
-<div class="container my-3">
-    <h1>CS Student Files</h1>
-    <div class="row row-cols-xs-1 row-cols-md-2 row-cols-lg-2 g-4 ">
+<div class="container my-3 mt-5">
+    <h1 class="text-center mb-4">CS Student Files</h1>
+    <div class="row justify-content-center">
         <?php
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -62,9 +56,11 @@ $result = $conn->query($sql);
 
                 if (is_array($student_ids)) {
                     foreach ($student_ids as $student_id) {
-                        // ดึงข้อมูลนักศึกษาจากฐานข้อมูล
-                        $student_query = "SELECT first_name, last_name FROM Student WHERE id = '$student_id'";
-                        $student_result = $conn->query($student_query);
+                        $student_query = "SELECT first_name, last_name FROM Student WHERE id = ?";
+                        $stmt = $conn->prepare($student_query);
+                        $stmt->bind_param("s", $student_id);
+                        $stmt->execute();
+                        $student_result = $stmt->get_result();
                         if ($student_row = $student_result->fetch_assoc()) {
                             $student_names[] = "$student_id {$student_row['first_name']} {$student_row['last_name']}";
                         }
@@ -73,38 +69,41 @@ $result = $conn->query($sql);
                     $student_names[] = "Unknown Student";
                 }
 
-                // รวมชื่อของนักศึกษาทุกคนเป็นข้อความเดียว
                 $student_list = implode('<br>', $student_names);
 
-                echo "<div class='col d-flex justify-content-center'>
-                        <a href='/AdvisorHub/thesis_resource/thesis_resource.php?id={$row['id']}' class='card-link text-decoration-none'>
-                            <div class='card h-100 shadow'>
-                                <div class='card-body'>
-                                    <h5 class='card-title'>{$row['thesis_topic_thai']}</h5>
-                                    <h6 class='card-subtitle mb-2 text-muted'>{$row['thesis_topic_eng']}</h6>
-                                    <p class='card-text'><strong>Students:</strong> <br> $student_list</p>
-                                    <p class='card-text'><strong>Advisor:</strong> {$row['advisor_fname']} {$row['advisor_lname']}</p>
-                                    <p class='card-text'><strong>Semester:</strong> {$row['semester']}</p>
-                                    <p class='card-text'><strong>Description:</strong> {$row['thesis_description']}</p>
+                echo "<div class='col-12 mb-4'>
+                        <form action='../thesis_resource/thesis_resource.php' method='POST'>
+                            <input type='hidden' name='thesis_id' value='{$row['id']}'>
+                            <button type='submit' class='card-link w-100' style='border: none; background: none; padding: 0;'>
+                                <div class='card'>
+                                    <div class='card-body'>
+                                        <h5 class='card-title'>{$row['thesis_topic_thai']}</h5>
+                                        <h6 class='card-subtitle mb-2 text-muted'>{$row['thesis_topic_eng']}</h6>
+                                        <p class='card-text'><strong>Students:</strong><br>{$student_list}</p>
+                                        <p class='card-text'><strong>Advisor:</strong><br>{$row['advisor_fname']} {$row['advisor_lname']}</p>
+                                        <p class='card-text'><strong>Semester:</strong> {$row['semester']}</p>
+                                        <p class='card-text'><strong>Description:</strong><br>{$row['thesis_description']}</p>
+                                    </div>
+                                    <div class='card-footer bg-transparent border-0 text-end'>
+                                        <small class='text-muted'>Submitted on: {$row['time_stamp']}</small>
+                                        <i class='bi bi-eye view-icon fs-4 ms-2'></i>
+                                    </div>
                                 </div>
-                                <div class='card-footer bg-transparent border-0 text-end'>
-                                    <small class='text-muted'>Submitted on: {$row['time_stamp']}</small>
-                                    <i class='bi bi-eye view-icon fs-4 ms-2'></i>
-                                </div>
-                            </div>
-                        </a>
-                      </div>";
+                            </button>
+                        </form>
+                    </div>";
             }
         } else {
-            echo "<div class='col-12 text-center'><p>No approved requests found</p></div>";
+            echo "<div class='col-12'>
+                    <div class='alert alert-info'>
+                        No approved requests found
+                    </div>
+                  </div>";
         }
         ?>
     </div>
 </div>
 
-
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
