@@ -27,11 +27,12 @@
     if(isset($_POST['profileInbox'])){
         $id = $_POST['profileInbox'];
         $_SESSION['profileInbox'] = $id;
-        
+        $_SESSION['advisor_info_id'] = $id;
         $role = getUserRole($id); // Use helper function to get user role
 
         if($role == 'advisor'){
-            header('location: /AdvisorHub/advisor_profile');
+
+            header('location: /AdvisorHub/info');
         } else {
             header('location: /AdvisorHub/student_profile');
         }
