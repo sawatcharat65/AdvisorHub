@@ -15,13 +15,7 @@ if (mysqli_num_rows($result) > 0) {
     header('location:http://localhost/AdvisorHub/home/');
 }
 
-
 ?>
-
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="th">
