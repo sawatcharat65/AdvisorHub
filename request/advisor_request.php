@@ -38,7 +38,7 @@ $thesisTitleThai = mysqli_real_escape_string($conn, $_POST['thesisTitleThai']);
 $thesisTitleEnglish = mysqli_real_escape_string($conn, $_POST['thesisTitleEnglish']);
 $thesisDescription = mysqli_real_escape_string($conn, $_POST['thesisDescription']);
 
-$sql = "SELECT * FROM advisor_request WHERE JSON_CONTAINS(student_id, '\"{$_SESSION["id"]}\"')";
+$sql = "SELECT * FROM advisor_request WHERE JSON_CONTAINS(student_id, '\"{$_SESSION["id"]}\"') AND is_advisor_approved != 2";
 $result = $conn->query($sql);
 
 // เช็คว่าส่งคำร้องซ้ำไหม
