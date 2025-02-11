@@ -43,9 +43,9 @@ if (isset($_POST['profile'])) {
         <div class="p-2">
             <!-- Search -->
             <div class="p-4">
-                <h6>Keywords input</h6>
-                <select id="select-tags" multiple data-placeholder="Filter Keywords" class="form-control">
-                    <optgroup label="Keywords">
+                <h6>Topic input</h6>
+                <select id="select-tags" multiple data-placeholder="Filter Topic" class="form-control">
+                    <optgroup label="Topic">
                         <?php
                         $keywords = [];
 
@@ -79,8 +79,8 @@ if (isset($_POST['profile'])) {
             <table class="table mt-2">
                 <thead>
                     <tr>
-                        <th>Keywords Topic</th>
-                        <th>Number of Keywords</th>
+                        <th>Thesis Topic</th>
+                        <th>Number of Topic</th>
                     </tr>
                 </thead>
                 <tbody id="thesisTableBody">
@@ -104,7 +104,7 @@ if (isset($_POST['profile'])) {
 
                     arsort($keyword_counts); // Sort by count in descending order
 
-                    $top_keywords = array_slice($keyword_counts, 0, 5); // Get top 5 keywords
+                    $top_keywords = array_slice($keyword_counts, 0, 5); // Get top 5 Topic
 
                     foreach ($keyword_counts as $topic => $count) {
                         echo "
@@ -152,7 +152,7 @@ if (isset($_POST['profile'])) {
             data: {
                 labels: <?php echo json_encode(array_keys($top_keywords)); ?>,
                 datasets: [{
-                    label: 'Top 5 Keywords',
+                    label: 'Top 5 Topic',
                     data: <?php echo json_encode(array_values($top_keywords)); ?>,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)', // สีแดง
