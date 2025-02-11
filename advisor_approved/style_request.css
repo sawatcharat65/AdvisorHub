@@ -43,6 +43,9 @@ body {
     padding: 10px 15px;
     border-radius: 5px;
     text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
 }
 .btn-orange:hover {
     background-color: #e65c00;
@@ -213,4 +216,10 @@ body {
 
 .reject-text{
     color:red
+}
+
+.wrap-foot{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

@@ -41,9 +41,9 @@ date_default_timezone_set("Asia/Bangkok");
         <h1>รายละเอียดคำร้องขอแต่งตั้งอาจารย์ที่ปรึกษา</h1>
         <div class="details">
             <?php
-                if(isset($_GET['id'])) {
-                    $id = $_GET['id'];
-                    
+                if(isset($_POST['id'])) {
+                    $id = $_POST['id'];
+
                     // ดึงข้อมูลคำร้องจากฐานข้อมูล
                     $sql = "SELECT student_id, thesis_topic_thai, thesis_topic_eng, thesis_description, time_stamp, is_advisor_approved 
                             FROM advisor_request 
@@ -64,7 +64,10 @@ date_default_timezone_set("Asia/Bangkok");
 
                         echo "<ul>";
                         foreach ($student_ids as $student_id) {
-                            echo "<li><strong>รหัสนิสิต:</strong> " . htmlspecialchars($student_id) . "</li>";
+                            $sql = "SELECT * FROM student WHERE id = '$student_id'";
+                            $result = $conn->query($sql);
+                            $row_name = $result->fetch_assoc();
+                            echo "<li><strong>ID</strong> " . htmlspecialchars($student_id) .' <strong>Name</strong> '. $row_name['first_name'].' '. $row_name['last_name'] ."</li>";
                         }
                         echo "</ul>";
                         echo "<p><strong>วันที่ส่งคำร้อง:</strong> " . htmlspecialchars($row['time_stamp']) . "</p>";
