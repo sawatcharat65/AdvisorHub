@@ -21,6 +21,22 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == 'admin') {
     header('location: /AdvisorHub/advisor');
 }
 
+if(isset($_POST['accept'])){
+    $advisor_req_id = $_POST['accept'];
+    $sql = "UPDATE advisor_request SET partner_accepted = 1 WHERE id = '$advisor_req_id'";
+    $result = $conn->query($sql);
+    header('location: /AdvisorHub/advisor_approved/request.php');
+    exit();
+}
+
+if(isset($_POST['reject'])){
+    $advisor_req_id = $_POST['reject'];
+    $sql = "UPDATE advisor_request SET partner_accepted = 2 WHERE id = '$advisor_req_id'";
+    $result = $conn->query($sql);
+    header('location: /AdvisorHub/advisor_approved/request.php');
+    exit();
+}
+
 $id = $_SESSION['id'];
 
 ?>
@@ -57,14 +73,22 @@ $id = $_SESSION['id'];
                     $student_ids = json_decode($row['student_id'], true);
                     if (!is_array($student_ids)) {
                         $student_ids = [$row['student_id']];
+                        
                     }
                     ?>
                     <div class="card">
                         <h5 class="card-title">หัวข้อวิทยานิพนธ์: <?php echo htmlspecialchars($row["thesis_topic_thai"]); ?></h5>
                         <ul class="list-group">
-                            <?php foreach ($student_ids as $student_id): ?>
+                            <?php foreach ($student_ids as $student_id): 
+                                $sql = "SELECT * from student WHERE id = '$student_id'";
+                                $result = $conn->query($sql);
+                                $row_name = $result->fetch_assoc();
+                            
+                            ?>
+                                
                                 <li class="list-group-item">
                                     <strong>รหัสนิสิต:</strong> <?php echo htmlspecialchars($student_id); ?>
+                                    <strong>ชื่อ:</strong> <?php echo htmlspecialchars($row_name['first_name'])." ". htmlspecialchars($row_name['last_name']); ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -84,7 +108,7 @@ $id = $_SESSION['id'];
 
         } elseif ($_SESSION['role'] == 'student') {
             // ดึงข้อมูลคำร้องที่เกี่ยวข้องกับ student_id
-            $sql = "SELECT id, thesis_topic_thai, student_id, is_advisor_approved, is_admin_approved, time_stamp 
+            $sql = "SELECT *
                     FROM advisor_request 
                     WHERE JSON_CONTAINS(student_id, ?) 
                     ORDER BY time_stamp DESC";
@@ -95,9 +119,12 @@ $id = $_SESSION['id'];
             $stmt->bind_param("s", $json_id); // ค่าของ student_id ที่เป็น JSON
             $stmt->execute();
             $result = $stmt->get_result();
-        
+            
             if ($result->num_rows > 0):
                 while ($row = $result->fetch_assoc()):
+                    $requester_id = $row['requester_id'];
+                    $partner_accepted = $row['partner_accepted'];
+                    $advisor_req_id = $row['id'];
                     // กำหนดสถานะคำร้อง
                     if ($row['is_advisor_approved'] == 0) {
                         $advisor_status = '<span class="status waiting">Waiting</span>';
@@ -124,6 +151,24 @@ $id = $_SESSION['id'];
                         <div class="request-footer">
                             <span class="timestamp"><?php echo $row["time_stamp"]; ?></span>
                         </div>
+                        <?php if($requester_id != $id && $partner_accepted == 0){
+                                    echo 
+                                    "
+                                    <form action='' method='post' class='form-choose'>
+                                        <div class='wrapChoose'>
+                                            <button name='accept' class='accept' value='$advisor_req_id'>Accept Request</button>
+                                        </div>
+                                        <div class='wrapChoose'>
+                                            <button name='reject' class='reject' value='$advisor_req_id'>Reject Request</button>
+                                        </div>
+                                    </form>
+                                    ";
+                                }elseif($requester_id != $id && $partner_accepted == 1){
+                                    echo "<div class='status-partner'><h3 class='accept-text'>You Accepted</h3></div>";
+                                }elseif($requester_id != $id && $partner_accepted == 2){
+                                    echo "<div class='status-partner'><h3 class='reject-text'>You Rejected</h3></div>";
+                                }
+                                ?>
                     </div>
                 <?php endwhile;
             else: ?>
