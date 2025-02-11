@@ -26,9 +26,9 @@ $semester = (int) mysqli_real_escape_string($conn, $_POST['semester']);
 
 $thesisType = mysqli_real_escape_string($conn, $_POST['thesisType']);
 
-if ($thesisType == 'single') {
+if ($thesisType == 'single') { // กรณีเดี่ยว บันทึก student_id ของนิสิตคนเดียว
     $singleStudentID = mysqli_real_escape_string($conn, $_POST['singleStudentID']);
-} else {
+} else { // กรณีคู่ บันทึก student_id ของนิสิต 2 คน
     $pairStudentID1 = mysqli_real_escape_string($conn, $_POST['pairStudentID1']);
     $pairStudentID2 = mysqli_real_escape_string($conn, $_POST['pairStudentID2']);
 

@@ -4,6 +4,7 @@ include('../server.php');
 
 session_start();
 
+// ถ้าไม่ได้บันทึก session id ของอาจารย์ ให้กลับไปหน้า advisor
 if (empty($_SESSION['advisor_id'])) {
   header('location: /AdvisorHub/advisor');
 }
@@ -13,6 +14,7 @@ if (isset($_POST['logout'])) {
   header('location: /AdvisorHub/login');
 }
 
+// ถ้าไม่ได้ล็อกอิน ให้กลับไปหน้า login
 if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
   die(header("location:http://localhost/AdvisorHub/login"));
 }
@@ -160,10 +162,13 @@ $advisor_row = mysqli_fetch_array($advisor_result);
       const singleFields = document.getElementById('singleFields');
       const pairFields = document.getElementById('pairFields');
 
+      // ถ้าเลือกทำเดี่ยว ให้แสดงฟิลด์สำหรับ ทำเดี่ยว และซ่อนฟิลด์สำหรับ ทำคู่
       if (thesisType === 'single') {
         singleFields.style.display = 'block';
         pairFields.style.display = 'none';
-      } else if (thesisType === 'pair') {
+      }
+      // ถ้าเลือกทำคู่ ให้แสดงฟิลด์สำหรับ ทำคู่ และซ่อนฟิลด์สำหรับ ทำเดี่ยว
+      else if (thesisType === 'pair') {
         singleFields.style.display = 'none';
         pairFields.style.display = 'block';
       }
