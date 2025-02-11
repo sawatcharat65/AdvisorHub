@@ -57,7 +57,7 @@ function renderNavbar($allowedPages) {
 <style>
 body{
     margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 
 }
 nav {
@@ -120,8 +120,8 @@ nav li:hover {
 }
 .userProfile {
     color: rgb(255, 255, 255);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-weight: bold;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+    font-weight: bold 
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
     margin-left: auto; 
     margin-right: 5rem; 
@@ -129,6 +129,11 @@ nav li:hover {
     justify-content: center;
     align-items: center;
     position: relative;
+}
+
+.userProfile h2{
+    font-size: 30px !important;
+    font-weight: bold !important;
 }
 
 .bxs-user-circle{
@@ -142,7 +147,7 @@ nav li:hover {
     width: 100px;
     height: 80px;
     background-color: rgb(255, 255, 255);
-    position: absolute;
+    position: absolute !important;
     top: 60%;
     right: 30%;
     border: 1px solid rgba(0, 0, 0, 0.107);
@@ -169,7 +174,7 @@ nav li:hover {
 }
 
 .userProfile:hover .dropdown{
-    display: block;
+    display: block !important;
 }
 
 </style>
