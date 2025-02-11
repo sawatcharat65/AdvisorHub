@@ -88,55 +88,51 @@ $id = $_SESSION['id'];
                     FROM advisor_request 
                     WHERE JSON_CONTAINS(student_id, ?) 
                     ORDER BY time_stamp DESC";
-
+        
             $stmt = $conn->prepare($sql);
             // ใช้ json_encode เพื่อแปลง $id เป็น JSON string
             $json_id = json_encode([$id]); 
             $stmt->bind_param("s", $json_id); // ค่าของ student_id ที่เป็น JSON
             $stmt->execute();
             $result = $stmt->get_result();
-
+        
             if ($result->num_rows > 0):
                 while ($row = $result->fetch_assoc()):
                     // กำหนดสถานะคำร้อง
                     if ($row['is_advisor_approved'] == 0) {
-                        $status_from_advisor = '<span style="color: #17a2b8; font-weight:bolder">Waiting</span>';
+                        $advisor_status = '<span class="status waiting">Waiting</span>';
                     } elseif ($row['is_advisor_approved'] == 1) {
-                        $status_from_advisor = '<span style="color: green; font-weight:bolder">Approved</span>';
-                    }elseif($row['is_advisor_approved'] == 2){
-                        $status_from_advisor = '<span style="color: red; font-weight:bolder">Rejected</span>';
-                        ;
+                        $advisor_status = '<span class="status approved">Approved</span>';
+                    } elseif ($row['is_advisor_approved'] == 2) {
+                        $advisor_status = '<span class="status rejected">Rejected</span>';
                     }
                     
                     if ($row['is_admin_approved'] == 0) {
-                        $status_from_admin = '<span style="color: #17a2b8; font-weight:bolder">Waiting</span>';
-                    }elseif($row['is_admin_approved'] == 1){
-                        $status_from_admin = '<span style="color: green; font-weight:bolder">Approved</span>';
-                    }elseif($row['is_admin_approved'] == 2){
-                        $status_from_admin = '<span style="color: red; font-weight:bolder">Rejected</span>';
+                        $admin_status = '<span class="status waiting">Waiting</span>';
+                    } elseif ($row['is_admin_approved'] == 1) {
+                        $admin_status = '<span class="status approved">Approved</span>';
+                    } elseif ($row['is_admin_approved'] == 2) {
+                        $admin_status = '<span class="status rejected">Rejected</span>';
                     }
-
-
                     ?>
-                    <div class="card">
-                        <h5 class="card-title">หัวข้อวิทยานิพนธ์: <?php echo htmlspecialchars($row["thesis_topic_thai"]); ?></h5>
-                        <ul class="list-group">
-                            <li class="list-group-item">
-                                <strong>Advisor Approval Status:</strong> <?php echo $status_from_advisor ?>
-                                <br>
-                                <strong>Admin Approval Status:</strong>  <?php  echo $status_from_admin ?>
-                            </li>
-                        </ul>
-                        <div class="d-flex align-items-center mt-3">
-                            <span class="timestamp"> <?php echo $row["time_stamp"]; ?></span>
+                    <div class="request-card">
+                        <h3 class="request-title">หัวข้อวิทยานิพนธ์: <?php echo htmlspecialchars($row["thesis_topic_thai"]); ?></h3>
+                        <div class="request-info">
+                            <p><strong>Advisor Approval Status:</strong> <?php echo $advisor_status; ?></p>
+                            <p><strong>Admin Approval Status:</strong> <?php echo $admin_status; ?></p>
+                        </div>
+                        <div class="request-footer">
+                            <span class="timestamp"><?php echo $row["time_stamp"]; ?></span>
                         </div>
                     </div>
                 <?php endwhile;
             else: ?>
-                <p class="no-request">คุณยังไม่มีคำร้อง</p>
+                <div class="no-request-message">
+                    <p>คุณยังไม่มีคำร้อง</p>
+                </div>
             <?php endif; ?>
-
-        <?php 
+        
+        <?php
             $stmt->close();
             $conn->close();
         }
