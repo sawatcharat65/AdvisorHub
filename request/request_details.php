@@ -1,5 +1,6 @@
 <?php
 include("../server.php");
+include('../components/navbar.php');
 session_start();
 // if ($_SESSION['previous_page'] != "advisor_requset.php") {
 //     header("location:http://localhost/AdvisorHub/request/");
@@ -28,6 +29,8 @@ if (mysqli_num_rows($result) > 0) {
 </head>
 
 <body>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
+
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="container text-center w-65 shadow-lg rounded-2 p-5">
             <h2 class="mb-3">รายละเอียดการส่งคำร้อง</h2>
