@@ -155,8 +155,7 @@ $result = $stmt->get_result();
                                                 <div class="section-content">
                                                     <?php echo htmlspecialchars($row['advisor_fname'] . ' ' . $row['advisor_lname']); ?>
                                                 </div>
-                                                <div class="section-title mt-3">Semester</div>
-                                                <div class="section-content"><?php echo htmlspecialchars($row['semester']); ?></div>
+
                                             </div>
                                         </div>
 
