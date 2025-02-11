@@ -29,7 +29,7 @@ function renderNavbar($allowedPages) {
                 }
             }
 
-            if(isset($_SESSION['username']) && $_SESSION['role'] == 'advisor' ){
+            if(isset($_SESSION['username']) && ($_SESSION['role'] == 'advisor' ||  $_SESSION['role'] == 'student')){
                 echo "<li><a href='/AdvisorHub/advisor_approved/request.php'>Request</a></li>";
             }
             ?>
