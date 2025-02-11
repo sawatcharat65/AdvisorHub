@@ -11,12 +11,13 @@ $advisor_id = $_SESSION['advisor_id'];
 if (isset($_POST['start_date'], $_POST['end_date'], $_POST['search_query'], $_POST['view_mode'])) {
     $start_date = $_POST['start_date'];
     $end_date = $_POST['end_date'];
-    $search_query = '%' . $_POST['search_query'] . '%';
+    $search_query = '%' . strtolower($_POST['search_query']) . '%'; // แปลง search_query เป็นตัวพิมพ์เล็ก
     $view_mode = $_POST['view_mode'];
 
+    // แปลง title และ keywords เป็นตัวพิมพ์เล็กก่อนทำการค้นหา
     $stmt = $conn->prepare("SELECT * FROM thesis 
                             WHERE advisor_id = ? 
-                            AND (title LIKE ? OR keywords LIKE ?) 
+                            AND (LOWER(title) LIKE ? OR LOWER(keywords) LIKE ?) 
                             AND issue_date BETWEEN ? AND ? 
                             ORDER BY issue_date DESC");
     $stmt->bind_param("sssss", $advisor_id, $search_query, $search_query, $start_date, $end_date);
@@ -25,7 +26,7 @@ if (isset($_POST['start_date'], $_POST['end_date'], $_POST['search_query'], $_PO
 
     $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM thesis 
                             WHERE advisor_id = ? 
-                            AND (title LIKE ? OR keywords LIKE ?) 
+                            AND (LOWER(title) LIKE ? OR LOWER(keywords) LIKE ?) 
                             AND issue_date BETWEEN ? AND ?");
     $stmt->bind_param("sssss", $advisor_id, $search_query, $search_query, $start_date, $end_date);
     $stmt->execute();
