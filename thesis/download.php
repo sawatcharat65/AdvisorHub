@@ -18,7 +18,7 @@ if (isset($_GET['id'])) {
         $filename = $title . $thesis_file_type;
 
         // ส่งข้อมูลไฟล์เป็น BLOB กลับไปยัง JavaScript
-        header("Content-Type: application/".$thesis_file_type);  // ประเภทไฟล์ ZIP
+        header("Content-Type: application/".$thesis_file_type);  
         header("Content-Disposition: attachment; filename=\"" . $filename . "\"");  // กำหนดชื่อไฟล์
         echo $thesis_file;
         exit;
