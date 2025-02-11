@@ -59,7 +59,7 @@ $id = $_SESSION['id'];
             // ดึงข้อมูลเฉพาะคำร้องที่ advisor_id ตรงกับอาจารย์ที่ล็อกอิน
             $sql = "SELECT id, student_id, thesis_topic_thai, is_advisor_approved, is_admin_approved, time_stamp 
             FROM advisor_request 
-            WHERE advisor_id = ? AND is_advisor_approved = 0
+            WHERE advisor_id = ? AND is_advisor_approved = 0 AND is_admin_approved != 2 AND partner_accepted = 1
             ORDER BY time_stamp DESC";
 
             $stmt = $conn->prepare($sql);
@@ -106,6 +106,7 @@ $id = $_SESSION['id'];
             $stmt->close();
             $conn->close();
 
+        //ถ้าเป็นนักเรียน
         } elseif ($_SESSION['role'] == 'student') {
             // ดึงข้อมูลคำร้องที่เกี่ยวข้องกับ student_id
             $sql = "SELECT *
