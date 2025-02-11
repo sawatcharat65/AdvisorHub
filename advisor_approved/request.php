@@ -104,7 +104,7 @@ $id = $_SESSION['id'];
                     } elseif ($row['is_advisor_approved'] == 1) {
                         $status_from_advisor = '<span style="color: green; font-weight:bolder">Approved</span>';
                     }elseif($row['is_advisor_approved'] == 2){
-                        $status_from_advisor = '<span style="color: red;">Rejected</span>';
+                        $status_from_advisor = '<span style="color: red; font-weight:bolder">Rejected</span>';
                         ;
                     }
                     
@@ -128,7 +128,6 @@ $id = $_SESSION['id'];
                             </li>
                         </ul>
                         <div class="d-flex align-items-center mt-3">
-                            <a href="/AdvisorHub/request/request_details.php" class="btn-orange">รายละเอียด</a>
                             <span class="timestamp"> <?php echo $row["time_stamp"]; ?></span>
                         </div>
                     </div>
