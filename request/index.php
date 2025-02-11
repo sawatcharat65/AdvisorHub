@@ -50,6 +50,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
   <title>แบบฟอร์มส่งคำร้อง</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="../Logo.png">
 </head>
 
 <body>
