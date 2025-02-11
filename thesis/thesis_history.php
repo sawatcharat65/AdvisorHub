@@ -186,8 +186,8 @@ if (isset($_POST['chat'])) {
 
                             <div class="d-flex align-items-center flex-wrap mb-4">
                                 <h4 class="card-title mb-0 me-2">Thesis</h4>
-                                <span class="badge rounded-pill bg-secondary opacity-75 text-white px-2 py-1">
-                                    <?php echo $thesis_count ?>
+                                <span id="thesisCount" class="badge rounded-pill bg-secondary opacity-75 text-white px-2 py-1">
+                                    0
                                 </span>
 
                                 <div class="d-flex justify-content-end align-items-center gap-2 ms-auto">
@@ -235,7 +235,7 @@ if (isset($_POST['chat'])) {
     <!-- Ajax -->
     <script type="text/javascript">
         $(document).ready(function() {
-            let start = moment('2025-01-01');
+            let start = moment('2000-01-01');
             let end = moment();
             let viewMode = 'list';
             let searchQuery = "";
@@ -244,14 +244,16 @@ if (isset($_POST['chat'])) {
                 $.ajax({
                     url: 'filter_thesis.php',
                     type: 'POST',
+                    dataType: 'json',
                     data: {
                         start_date: startDate,
                         end_date: endDate,
                         search_query: searchQuery,
                         view_mode: viewMode
                     },
-                    success: function(data) {
-                        $('#thesis-container').html(data);
+                    success: function(response) {
+                        $('#thesis-container').html(response.html);
+                        $('#thesisCount').text(response.thesis_count); // อัปเดตจำนวนวิทยานิพนธ์
                     }
                 });
             }
@@ -272,7 +274,7 @@ if (isset($_POST['chat'])) {
                     'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
                     'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                    'All Time': [moment('2025-01-01'), moment()]
+                    'All Time': [moment('2000-01-01'), moment()]
                 }
             }, function(newStart, newEnd) {
                 start = newStart;
