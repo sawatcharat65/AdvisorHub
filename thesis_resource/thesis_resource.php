@@ -74,15 +74,6 @@ $current_user_role = $_SESSION['role'];
 $can_upload = false;
 $is_owner = false;
 
-// Debug information
-echo "<div style='margin: 20px; padding: 20px; background: #f0f0f0;'>";
-echo "<h4>Debug Information:</h4>";
-echo "<pre>";
-echo "Current User ID: " . $current_user_id . "\n";
-echo "Current User Role: " . $current_user_role . "\n";
-echo "Thesis Advisor ID: " . $thesis['advisor_id'] . "\n";
-echo "Student IDs: " . print_r($student_ids, true) . "\n";
-
 // ดึงรหัสนักศึกษาจากชื่อ
 $student_id_query = "SELECT id FROM student WHERE first_name = ?";
 $stmt = $conn->prepare($student_id_query);
@@ -92,27 +83,19 @@ $student_result = $stmt->get_result();
 $student_data = $student_result->fetch_assoc();
 $actual_student_id = $student_data ? $student_data['id'] : null;
 
-echo "Found Student ID from name: " . ($actual_student_id ?? 'Not found') . "\n";
 
 // Check if user is advisor of this thesis
 if ($current_user_role === 'advisor' && $thesis['advisor_id'] === $current_user_id) {
-    echo "Checking advisor permission: YES\n";
     $can_upload = true;
     $is_owner = true;
 } else {
-    echo "Checking advisor permission: NO\n";
 }
 
 // Check if user is one of the students of this thesis
 if ($current_user_role === 'student' && $actual_student_id) {
-    echo "Checking student permission:\n";
-    echo "Looking for ID: " . $actual_student_id . " in student list\n";
-    
     if (is_array($student_ids)) {
         foreach ($student_ids as $id) {
-            echo "Comparing with: " . $id . "\n";
             if ($id === $actual_student_id) {
-                echo "MATCH FOUND!\n";
                 $can_upload = true;
                 $is_owner = true;
                 break;
@@ -136,12 +119,6 @@ if ($current_user_role === 'advisor') {
     }
 }
 
-echo "Final Results:\n";
-echo "Can Upload: " . ($can_upload ? 'true' : 'false') . "\n";
-echo "Is Owner: " . ($is_owner ? 'true' : 'false') . "\n";
-echo "</pre>";
-echo "</div>";
-
 // Fetch existing files for this thesis
 $files_sql = "SELECT tr.*, ac.role
               FROM thesis_resource tr
@@ -163,36 +140,147 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
     <title>Thesis Resources</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="../thesis_resource_list/style.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .thesis-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .thesis-card {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            background-color: white;
+            border: none;
+        }
+        .thesis-title {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 1.5rem;
+        }
+        .thesis-subtitle {
+            color: #7f8c8d;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            font-size: 1.125rem;
+        }
+        .section-title {
+            color: #34495e;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .section-content {
+            color: #2c3e50;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .file-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .file-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .upload-card {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #3498db;
+        }
+        .upload-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px;
+            border: none;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .download-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .download-btn:hover {
+            background-color: #27ae60;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        .btn-group > .action-btn {
+            margin-left: 8px;
+        }
+        .back-btn {
+            background-color: #34495e;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background-color: #2c3e50;
+        }
+        @media (max-width: 768px) {
+            .thesis-title {
+                font-size: 1.25rem;
+            }
+            .thesis-subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
     <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']); ?>
 
-    <div class="container my-4">
+    <div class="container-fluid thesis-container">
         <!-- Thesis Information -->
-        <div class="card mb-4">
-            
-            <div class="card-body">
-                <h2 class="card-title mb-4"><?php echo htmlspecialchars($thesis['thesis_topic_thai']); ?></h2>
-                <h4 class="text-muted mb-4"><?php echo htmlspecialchars($thesis['thesis_topic_eng']); ?></h4>
+        <div class="thesis-card mb-4">
+            <div class="card-body p-5">
+                <h2 class="thesis-title"><?php echo htmlspecialchars($thesis['thesis_topic_thai']); ?></h2>
+                <h4 class="thesis-subtitle"><?php echo htmlspecialchars($thesis['thesis_topic_eng']); ?></h4>
                 
                 <div class="row">
                     <div class="col-md-6">
-                        <h5 class="mb-3">Students:</h5>
+                        <div class="section-title mb-3">Students</div>
                         <?php foreach ($students as $student): ?>
-                            <p>
+                            <div class="section-content mb-2">
                                 <?php echo htmlspecialchars($student['id'] . ' ' . 
                                                           $student['first_name'] . ' ' . 
                                                           $student['last_name']); ?>
-                            </p>
+                            </div>
                         <?php endforeach; ?>
                     </div>
                     <div class="col-md-6">
-                        <h5 class="mb-3">Advisor:</h5>
-                        <p><?php echo htmlspecialchars($thesis['advisor_fname'] . ' ' . $thesis['advisor_lname']); ?></p>
-                        <h5 class="mb-3">Semester:</h5>
-                        <p><?php echo htmlspecialchars($thesis['semester'] . '/' . $thesis['academic_year']); ?></p>
+                        <div class="section-title mb-3">Advisor</div>
+                        <div class="section-content mb-3">
+                            <?php echo htmlspecialchars($thesis['advisor_fname'] . ' ' . $thesis['advisor_lname']); ?>
+                        </div>
+                        <div class="section-title mb-3">Semester</div>
+                        <div class="section-content">
+                            <?php echo htmlspecialchars($thesis['semester'] . '/' . $thesis['academic_year']); ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -200,16 +288,15 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
 
         <?php if ($can_upload): ?>
         <!-- File Upload Area -->
-        <!-- File Upload Area -->
-        <div class="card mb-4" style="display: <?php echo $can_upload ? 'block' : 'none'; ?>">
-            <div class="card-body">
-                <h5 class="card-title">Upload Files</h5>
-                <form id="uploadForm" class="mt-3">
+        <div class="card upload-card mb-4">
+            <div class="card-body p-5">
+                <h5 class="section-title mb-4">Upload Files</h5>
+                <form id="uploadForm">
                     <div class="mb-3">
                         <input type="file" id="fileInput" class="form-control" multiple>
                         <input type="hidden" id="thesisId" value="<?php echo $thesis_id; ?>">
                     </div>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn upload-btn">
                         <i class="bi bi-upload me-2"></i>Upload
                     </button>
                 </form>
@@ -221,39 +308,40 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
         <?php endif; ?>
 
         <!-- File List -->
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title mb-4">Uploaded Files</h5>
+        <div class="thesis-card">
+            <div class="card-body p-5">
+                <h5 class="section-title mb-4">Uploaded Files</h5>
                 <div id="filesList">
                     <?php if (empty($files)): ?>
-                        <p class="text-muted text-center">No files uploaded yet</p>
+                        <div class="text-center text-muted p-4">
+                            <i class="bi bi-file-earmark me-2"></i>
+                            No files uploaded yet
+                        </div>
                     <?php else: ?>
                         <?php foreach ($files as $file): ?>
-                            <div class="file-item p-3 border-bottom">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-file-earmark me-3 fs-4"></i>
-                                    <div class="flex-grow-1">
-                                        <div class="fw-bold"><?php echo htmlspecialchars($file['file_name']); ?></div>
-                                        <small class="text-muted">Uploaded by: <?php echo htmlspecialchars($file['uploader_id']); ?></small><br>
-                                        <small class="text-muted">Upload time: <?php echo date('M d, Y H:i', strtotime($file['time_stamp'])); ?></small>
-                                    </div>
+                            <div class="file-item p-4 d-flex align-items-center">
+                                <i class="bi bi-file-earmark me-4 fs-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold"><?php echo htmlspecialchars($file['file_name']); ?></div>
+                                    <small class="text-muted d-block">
+                                        Uploaded by: <?php echo htmlspecialchars($file['uploader_id']); ?>
+                                    </small>
+                                    <small class="text-muted">
+                                        Upload time: <?php echo date('M d, Y H:i', strtotime($file['time_stamp'])); ?>
+                                    </small>
+                                </div>
+                                <div class="btn-group">
                                     <div class="btn-group">
                                         <form method="POST" action="download.php" style="display: inline;">
                                             <input type="hidden" name="file_id" value="<?php echo $file['id']; ?>">
-                                            <input type="hidden" name="thesis_id" value="<?php echo $thesis_id; ?>">
-                                            <button type="submit" class="btn btn-outline-primary btn-sm">
-                                                <i class="bi bi-download me-1"></i>Download
+                                            <button type="submit" class="action-btn download-btn">
+                                                <i class="bi bi-download"></i>
                                             </button>
                                         </form>
-                                        <?php if ($is_owner && $file['uploader_id'] === $current_user_id): ?>
-                                            <form method="POST" action="delete.php" style="display: inline;">
-                                                <input type="hidden" name="file_id" value="<?php echo $file['id']; ?>">
-                                                <input type="hidden" name="thesis_id" value="<?php echo $thesis_id; ?>">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm ms-2" 
-                                                        onclick="return confirm('Are you sure you want to delete this file?')">
-                                                    <i class="bi bi-trash me-1"></i>Delete
-                                                </button>
-                                            </form>
+                                        <?php if ($is_owner): ?>
+                                            <button class="action-btn delete-btn" onclick="deleteFile(<?php echo $file['id']; ?>)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -267,8 +355,8 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
         <!-- Back Button -->
         <div class="mt-4">
             <form method="POST" action="../thesis_resource_list/thesis_resource_list.php">
-                <button type="submit" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left me-2"></i>Back to List
+                <button type="submit" class="btn back-btn">
+                    <i class="bi bi-arrow-left me-2"></i>ย้อนกลับ
                 </button>
             </form>
         </div>
@@ -276,6 +364,7 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ใช้โค้ดเดิมของ script ที่คุณมี
         const uploadForm = document.getElementById('uploadForm');
         const fileInput = document.getElementById('fileInput');
         const thesisId = document.getElementById('thesisId').value;
@@ -316,34 +405,51 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
         }
 
         function uploadFile(file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('thesis_id', <?php echo $thesis_id; ?>);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('thesis_id', <?php echo $thesis_id; ?>);
 
-        console.log('Uploading file:', file.name);
-        console.log('Thesis ID:', <?php echo $thesis_id; ?>);
+            fetch('upload.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(text => {
+                console.log('Raw response:', text);
+                return JSON.parse(text);
+            })
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Upload failed: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Upload failed');
+            });
+        }
 
-        fetch('upload.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.text())
-        .then(text => {
-            console.log('Raw response:', text);
-            return JSON.parse(text);
-        })
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                alert('Upload failed: ' + data.error);
+        function deleteFile(fileId) {
+            if (confirm('Are you sure you want to delete this file?')) {
+                fetch('delete.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'file_id=' + fileId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Delete failed: ' + data.error);
+                    }
+                });
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Upload failed');
-        });
-    }
+        }
     </script>
 </body>
 </html>
