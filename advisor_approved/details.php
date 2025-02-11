@@ -38,7 +38,7 @@ date_default_timezone_set("Asia/Bangkok");
     <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
 
     <div class="container">
-        <h1>รายละเอียดคำร้องขอแต่งตั้งอาจารย์ที่ปรึกษา</h1>
+        <h1>Details of the Request for Advisor Appointment</h1>
         <div class="details">
             <?php
                 if(isset($_POST['id'])) {
@@ -59,18 +59,18 @@ date_default_timezone_set("Asia/Bangkok");
                         $student_ids = json_decode($row['student_id'], true);
 
                         echo "<h3>หัวข้อวิทยานิพนธ์: " . htmlspecialchars($row['thesis_topic_thai']) . "</h3>";
-                        echo "<h4>หัวข้อภาษาอังกฤษ: " . htmlspecialchars($row['thesis_topic_eng']) . "</h4>";
-                        echo "<p><strong>รายละเอียดวิทยานิพนธ์:</strong> " . nl2br(htmlspecialchars($row['thesis_description'])) . "</p>";
+                        echo "<h3>หัวข้อภาษาอังกฤษ: " . htmlspecialchars($row['thesis_topic_eng']) . "</h3>";
+                        echo "<h3><strong>รายละเอียดวิทยานิพนธ์:</strong> " . nl2br(htmlspecialchars($row['thesis_description'])) . "</h3>";
 
                         echo "<ul>";
                         foreach ($student_ids as $student_id) {
                             $sql = "SELECT * FROM student WHERE id = '$student_id'";
                             $result = $conn->query($sql);
                             $row_name = $result->fetch_assoc();
-                            echo "<li><strong>ID</strong> " . htmlspecialchars($student_id) .' <strong>Name</strong> '. $row_name['first_name'].' '. $row_name['last_name'] ."</li>";
+                            echo "<li><h2><strong>ID</strong> " . htmlspecialchars($student_id) .' <strong>Name</strong> '. $row_name['first_name'].' '. $row_name['last_name'] ."</h2></li>";
                         }
                         echo "</ul>";
-                        echo "<p><strong>วันที่ส่งคำร้อง:</strong> " . htmlspecialchars($row['time_stamp']) . "</p>";
+                        echo "<h3><strong>Date:</strong> " . htmlspecialchars($row['time_stamp']) . "</h4>";
 
                         // แสดงสถานะ
                         if ($row['is_advisor_approved'] == 1) {

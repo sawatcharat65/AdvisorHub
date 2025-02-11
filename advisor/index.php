@@ -54,7 +54,7 @@ if (isset($_POST['search'])) {
         <!-- Filter Section -->
         <form method="post" class="filter-container">
             <label for="expertise">Expertise input</label>
-            <select id="expertise" name="expertise[]" multiple data-placeholder="Filter Expertise">
+            <select id="expertise" name="expertise[]" multiple data-placeholder="Filter Expertise" class="expertise-filter">
                 <option value="Artificial Intelligence (AI)">Artificial Intelligence (AI)</option>
                 <option value="Machine Learning">Machine Learning</option>
                 <option value="Deep Learning">Deep Learning</option>
