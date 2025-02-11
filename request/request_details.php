@@ -13,7 +13,7 @@ if (mysqli_num_rows($result) > 0) {
     $row = mysqli_fetch_array($result);
     $student_ids = json_decode($row['student_id'], true);
 } else {
-    header('location:http://localhost/AdvisorHub/home/');
+    header('location: /AdvisorHub/advisor_approved/request.php');
 }
 
 ?>
@@ -104,7 +104,7 @@ if (mysqli_num_rows($result) > 0) {
             <p class="text-danger mt-2">
                 หากข้อมูลส่งคำร้องของคุณไม่ถูกต้อง โปรดติดต่อเจ้าหน้าที่
             </p>
-            <a href="../home">
+            <a href="/AdvisorHub/advisor_approved/request.php">
                 <button class="btn mt-3" style="color:white; background-color: #ff9300;">
                     กลับสู่หน้าหลัก
                 </button>
