@@ -47,8 +47,9 @@ if ($result->num_rows > 0) {
                 </form>
             </div>
         </div>
+        </div>
         ";
     }
 } else {
-    echo "<p>No advisors found matching your filter criteria.</p>";
+    echo "<h3 class='not-match'>No advisors found matching your search criteria.</h3>";
 }
