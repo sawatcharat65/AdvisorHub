@@ -92,8 +92,11 @@ $id = $_SESSION['id'];
                                 </li>
                             <?php endforeach; ?>
                         </ul>
-                        <div class="d-flex align-items-center mt-3">
-                            <a href="details.php?id=<?php echo $row['id']; ?>" class="btn-orange">รายละเอียด</a>
+                        <div class="wrap-foot d-flex align-items-center mt-3">
+                            <form action="details.php" method="POST">
+                                <input type="hidden" name='id' value=<?php echo $row['id'] ?>>
+                                <button type="submit"  class="btn-orange">รายละเอียด</button>
+                            </form>
                             <span class="timestamp"> <?php echo $row["time_stamp"]; ?></span>
                         </div>
                     </div>
