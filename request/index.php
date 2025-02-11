@@ -171,42 +171,6 @@ $advisor_row = mysqli_fetch_array($advisor_result);
     // ตั้งค่าเริ่มต้นให้แสดงฟิลด์สำหรับ ทำเดี่ยว
     window.onload = toggleFields;
   </script>
-
-  <!-- <script>
-    function fetchStudentData() {
-      let studentID = document.getElementById('pairStudentID2').value.trim();
-
-      if (studentID === '') {
-        clearStudentFields();
-        return;
-      }
-
-      fetch(`fetch_student.php?studentID=${studentID}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            document.getElementById('pairName2').value = data.name;
-            document.getElementById('pairBranch2').value = data.branch;
-            document.getElementById('pairPhone2').value = data.phone;
-            document.getElementById('pairEmail2').value = data.email;
-          } else {
-            clearStudentFields();
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          clearStudentFields();
-        });
-    }
-
-    // ฟังก์ชันสำหรับเคลียร์ช่องข้อมูล
-    function clearStudentFields() {
-      document.getElementById('pairName2').value = '';
-      document.getElementById('pairBranch2').value = '';
-      document.getElementById('pairPhone2').value = '';
-      document.getElementById('pairEmail2').value = '';
-    }
-  </script> -->
 </body>
 
 </html>
