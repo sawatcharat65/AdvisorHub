@@ -34,21 +34,21 @@
     <?php
         if(isset($_SESSION['profileInbox'])){
             $student_id = $_SESSION['profileInbox'];
-            $sql = "SELECT * FROM student_profile WHERE student_id = '$student_id'";
+            $sql = "SELECT * FROM student_profile WHERE student_profile_id = '$student_id'";
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
             //ถ้ามี profile 
             if(isset($row['id'])){
                 $interests = $row['interests'];
 
-                $sql = "SELECT * FROM student WHERE id = '$student_id'";
+                $sql = "SELECT * FROM student WHERE student_id = '$student_id'";
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
 
-                $first_name = $row['first_name'];
-                $last_name = $row['last_name'];
-                $tel = $row['tel'];
-                $email = $row['email'];
+                $first_name = $row['student_first_name'];
+                $last_name = $row['student_last_name'];
+                $tel = $row['student_tel'];
+                $email = $row['student_email'];
                 $department = $row['department'];
 
                 echo 
