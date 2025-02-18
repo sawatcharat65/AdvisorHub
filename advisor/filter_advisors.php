@@ -1,7 +1,8 @@
 <?php
 require('../server.php');
 
-header('Content-Type: text/html; charset=UTF-8');
+//กำหนดให้เบราว์เซอร์รับข้อมูลเป็น HTML และใช้การเข้ารหัส UTF-8
+//header('Content-Type: text/html; charset=UTF-8');
 
 $data = json_decode(file_get_contents("php://input"), true);
 $expertise = isset($data['expertise']) ? $data['expertise'] : [];
