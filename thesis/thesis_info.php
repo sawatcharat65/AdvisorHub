@@ -24,15 +24,15 @@ if (isset($_SESSION['advisor_id'])) {
     $row_thesis = $result->fetch_assoc();
 
     if ($row_thesis) {
-        $id = $row_thesis['id'];
-        $title = $row_thesis['title'];
+        $thesis_id = $row_thesis['thesis_id'];
+        $thesis_title = $row_thesis['thesis_title'];
         $authors = nl2br(implode("\n", explode(',', $row_thesis['authors'])));
         $keywords = str_replace(['[', ']'], '', $row_thesis['keywords']);
         $issue_date = $row_thesis['issue_date'];
         $publisher = $row_thesis['publisher'];
         $abstract = $row_thesis['abstract'];
-        $uri = $row_thesis['uri'];
         $thesis_file = $row_thesis['thesis_file'];
+        $thesis_file_type = $row_thesis['thesis_file_type'];
     } else {
         echo "ไม่พบข้อมูลวิทยานิพนธ์";
     }
@@ -41,18 +41,18 @@ if (isset($_SESSION['advisor_id'])) {
     $keyword_array = explode(',', str_replace('"', '', $keywords));
 
     // ใช้ Regular Expression แยกภาษาไทย และภาษาอังกฤษ
-    $title_parts = preg_split('/(?=[A-Z])/', $title, 2); // แยกเมื่อเจออักษรภาษาอังกฤษตัวใหญ่
+    $title_parts = preg_split('/(?=[A-Z])/', $thesis_title, 2); // แยกเมื่อเจออักษรภาษาอังกฤษตัวใหญ่
 
     $thai_title = trim($title_parts[0]); // ส่วนของภาษาไทย
     $english_title = isset($title_parts[1]) ? trim($title_parts[1]) : ""; // ส่วนของภาษาอังกฤษ (ถ้ามี)
 
     // ดึงข้อมูลของที่ปรึกษา (ชื่อ-นามสกุล)
-    $sql_advisor = "SELECT first_name, last_name FROM advisor WHERE id = '$advisor_id'";
+    $sql_advisor = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '$advisor_id'";
     $result_advisor = $conn->query($sql_advisor);
     $row_advisor = $result_advisor->fetch_assoc();
 
     if ($row_advisor) {
-        $advisor_name = $row_advisor['first_name'] . " " . $row_advisor['last_name'];
+        $advisor_name = $row_advisor['advisor_first_name'] . " " . $row_advisor['advisor_last_name'];
     } else {
         $advisor_name = "ไม่พบชื่อที่ปรึกษา";
     }
@@ -96,7 +96,7 @@ $uri = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <div class="info">URI: <span><a href="<?php echo $uri; ?>"><?php echo $uri; ?></a></span></div>
 
         <div class="downloadf button mt-4">
-            <a href="download.php?id=<?php echo $row_thesis['id']; ?>" class="btn">
+            <a href="download.php?id=<?php echo $row_thesis['thesis_id']; ?>" class="btn">
                 Download Thesis File
             </a>
         </div>

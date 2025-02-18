@@ -50,6 +50,7 @@ if (isset($_POST['chat'])) {
 
     <?php
     if (isset($_SESSION['advisor_id'])) {
+        // Get advisor information from session
         $advisor_id = $_SESSION['advisor_id'];
         $sql = "SELECT * FROM advisor_profile WHERE advisor_id = '$advisor_id'";
         $result = $conn->query($sql);
@@ -57,18 +58,20 @@ if (isset($_POST['chat'])) {
 
         $advisor_id = $row['advisor_id'];
         $expertise = json_decode($row['expertise']);
-        $interests = $row['interests'];
+        $advisor_interests = $row['advisor_interests'];
         $img = $row['img'];
 
-        $sql = "SELECT * FROM advisor WHERE id = '$advisor_id'";
+        // Get advisor information from advisor table
+        $sql = "SELECT * FROM advisor WHERE advisor_id = '$advisor_id'";
         $result_advisor = $conn->query($sql);
         $row_advisor = $result_advisor->fetch_assoc();
 
-        $first_name = $row_advisor['first_name'];
-        $last_name = $row_advisor['last_name'];
-        $tel = $row_advisor['tel'];
-        $email = $row_advisor['email'];
+        $advisor_first_name = $row_advisor['advisor_first_name'];
+        $advisor_last_name = $row_advisor['advisor_last_name'];
+        $advisor_tel = $row_advisor['advisor_tel'];
+        $advisor_email = $row_advisor['advisor_email'];
 
+        // Get thesis information from thesis table
         $sql = "SELECT * FROM thesis WHERE advisor_id = '$advisor_id' ORDER BY issue_date DESC";
         $result_thesis = $conn->query($sql);
         $thesis_count = $result_thesis->num_rows;
@@ -76,16 +79,17 @@ if (isset($_POST['chat'])) {
         if ($result_thesis->num_rows > 0) {
             $row_thesis = $result_thesis->fetch_assoc();
 
-            $title = $row_thesis['title'];
+            $thesis_title = $row_thesis['thesis_title'];
             $authors = $row_thesis['authors'];
             $keywords = $row_thesis['keywords'];
             $issue_date = $row_thesis['issue_date'];
             $publisher = $row_thesis['publisher'];
             $abstract = $row_thesis['abstract'];
-            $uri = $row_thesis['uri'];
             $thesis_file = $row_thesis['thesis_file'];
+            $thesis_file_type = $row_thesis['thesis_file_type'];
         }
 
+        // Get student count from advisor_request table
         $sql = "SELECT 
         COUNT(*) + SUM(CASE WHEN is_even = 1 THEN 1 ELSE 0 END) AS student_count
         FROM advisor_request
@@ -121,7 +125,7 @@ if (isset($_POST['chat'])) {
                                     <div class="d-flex flex-md-row flex-column justify-content-between gap-2">
                                         <!--heading-->
                                         <div>
-                                            <h2 class="mt-3 fw-bold"> <?php echo $first_name . " " . $last_name; ?> </h2>
+                                            <h2 class="mt-3 fw-bold"> <?php echo $advisor_first_name . " " . $advisor_last_name; ?> </h2>
                                             <!--content-->
                                             <div class="d-flex flex-lg-row flex-column gap-2">
                                                 <small class="fw-medium text-gray-800">A teacher at Naresuan University</small>
@@ -146,7 +150,7 @@ if (isset($_POST['chat'])) {
                                             </span>
                                             <span>
                                                 <!--text-->
-                                                <span class="text-gray-800"> <?php echo $email ?> </span>
+                                                <span class="text-gray-800"> <?php echo $advisor_email ?> </span>
                                             </span>
                                         </div>
                                         <div class="d-flex flex-row gap-2 align-items-center lh-1">
@@ -156,7 +160,7 @@ if (isset($_POST['chat'])) {
                                             </span>
                                             <!--text-->
                                             <span>
-                                                <span class="text-gray-800"> <?php echo $tel ?> </span>
+                                                <span class="text-gray-800"> <?php echo $advisor_tel ?> </span>
                                             </span>
                                         </div>
                                     </div>
