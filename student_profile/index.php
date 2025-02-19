@@ -45,10 +45,10 @@
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
 
-                $first_name = $row['student_first_name'];
-                $last_name = $row['student_last_name'];
-                $tel = $row['student_tel'];
-                $email = $row['student_email'];
+                $student_first_name = $row['student_first_name'];
+                $student_last_name = $row['student_last_name'];
+                $student_tel = $row['student_tel'];
+                $student_email = $row['student_email'];
                 $department = $row['department'];
 
                 echo 
@@ -56,13 +56,13 @@
                 <div class='container'>
                     
                     <div class='profile-info'>
-                    <h2>$first_name $last_name</h2>
+                    <h2>$student_first_name $student_last_name</h2>
                     <p>Department $department</p>
                     </div>
                     <div class='contact-info'>
                         <h3>Contact</h3>
-                        <p><strong>Email:</strong> $email</p>
-                        <p><strong>Telephone Number:</strong> $tel</p>
+                        <p><strong>Email:</strong> $student_email</p>
+                        <p><strong>Telephone Number:</strong> $student_tel</p>
                         </div>
 
                         <!-- ข้อมูลหัวข้อวิจัย -->
