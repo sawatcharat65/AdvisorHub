@@ -17,10 +17,10 @@
 
     if (isset($_POST['delete'])) {
         // รับ id จาก session
-        $id = $_SESSION['id'];
+        $advisor_id = $_SESSION['account_id'];
     
         // 1. ค้นหาข้อมูลไฟล์รูปภาพจากฐานข้อมูลก่อนการลบ
-        $sql = "SELECT img FROM advisor_profile WHERE advisor_id = '$id'";
+        $sql = "SELECT img FROM advisor_profile WHERE advisor_id = '$advisor_id '";
         $result = $conn->query($sql);
     
         // ตรวจสอบว่าได้ผลลัพธ์หรือไม่
@@ -35,7 +35,7 @@
         }
     
         // 3. ลบข้อมูลจากฐานข้อมูล
-        $sql_delete = "DELETE FROM advisor_profile WHERE advisor_id = '$id'";
+        $sql_delete = "DELETE FROM advisor_profile WHERE advisor_id = '$advisor_id '";
         if ($conn->query($sql_delete)) {
             header('location: /AdvisorHub/profile');
             exit;
@@ -46,9 +46,9 @@
 
     if (isset($_POST['submit']) && isset($_POST['expertise']) && isset($_FILES['img']) && $_FILES['img']['error'] == UPLOAD_ERR_OK) {
         // รับค่าจากฟอร์ม
-        $id = $_SESSION['id'];
+        $advisor_id = $_SESSION['account_id'];
         $expertise = json_encode($_POST['expertise']);
-        $interests = $_POST['interests'];
+        $advisor_interests = $_POST['interests'];
 
         // จัดการการอัพโหลดไฟล์
         $target_dir = "../uploads/";
@@ -91,7 +91,7 @@
     
                 // เตรียมคำสั่ง SQL
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssss", $id, $expertise, $interests, $img);
+                $stmt->bind_param("ssss", $advisor_id, $expertise, $advisor_interests, $img);
                 
                 // ดำเนินการคำสั่ง SQL
                 if ($stmt->execute()) {
@@ -116,15 +116,15 @@
     
 
     if(isset($_POST['addStudentProfile'])){
-        $id = $_SESSION['id'];
-        $interests = $_POST['interests'];
+        $student_id = $_SESSION['account_id'];
+        $student_interests = $_POST['interests'];
         $sql = "INSERT INTO student_profile (student_id, interests)
         VALUES (?, ?)";
 
         // เตรียม statement
         if ($stmt = $conn->prepare($sql)) {
             // ผูกค่าตัวแปรกับคำสั่ง SQL
-            $stmt->bind_param("ss", $id,$interests);
+            $stmt->bind_param("ss", $student_id,$student_interests);
             
             // Execute คำสั่ง SQL
             if ($stmt->execute()) {
@@ -141,8 +141,8 @@
     }
 
     if(isset($_POST['deleteStudentProfile'])){
-        $id = $_SESSION['id'];
-        $sql = "DELETE FROM student_profile WHERE student_id = '$id'";
+        $student_id = $_SESSION['account_id'];
+        $sql = "DELETE FROM student_profile WHERE student_id = '$student_id'";
 
         if($conn->query($sql)){
             header('location: /AdvisorHub/profile');
@@ -169,28 +169,28 @@
     <?php
         $username = $_SESSION['username'];
         $role = $_SESSION['role'];
-        $id = $_SESSION['id'];
+        $account_id = $_SESSION['account_id'];
         
         //ถ้าเป็นอาจารย์ 
         if($role == 'advisor'){
-            $sql = "SELECT * FROM advisor_profile WHERE advisor_id = '$id'";
+            $sql = "SELECT * FROM advisor_profile WHERE advisor_id = '$account_id'";
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
 
             //ถ้าอาจารย์มี profile อยู่แล้ว
             if(isset($row['id'])){
                 $expertise = json_decode($row['expertise']);
-                $interests = $row['interests'];
+                $advisor_interests = $row['advisor_interests'];
                 $img = $row['img'];
                 
-                $sql = "SELECT * FROM advisor WHERE id = '$id'";
+                $sql = "SELECT * FROM advisor WHERE advisor_id = '$account_id'";
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
 
-                $first_name = $row['first_name'];
-                $last_name = $row['last_name'];
-                $tel = $row['tel'];
-                $email = $row['email'];
+                $advisor_first_name = $row['advisor_first_name'];
+                $advisor_last_name = $row['advisor_last_name'];
+                $advisor_tel = $row['advisor_tel'];
+                $advisor_email = $row['advisor_email'];
 
                 echo 
                 "
@@ -198,14 +198,14 @@
                     
                     <div class='profile-info'>
                     <img src= '$img' >
-                    <h2>$first_name $last_name</h2>
+                    <h2>$advisor_first_name $advisor_last_name</h2>
                     </div>
 
                     
                     <div class='contact-info'>
                         <h3>Contact</h3>
-                        <p><strong>Email:</strong> $email</p>
-                        <p><strong>Telephone Number:</strong> $tel</p>
+                        <p><strong>Email:</strong> $advisor_email</p>
+                        <p><strong>Telephone Number:</strong> $advisor_tel</p>
                         </div>
 
                         <!-- ข้อมูลหัวข้อวิจัย -->
@@ -218,7 +218,7 @@
 
                     echo "
                         <h3>Interests</h3>
-                        <p>" . nl2br($interests) . "</p>
+                        <p>" . nl2br($advisor_interests) . "</p>
                         
                     </div>
                     <form action='' method='post' class='editForm'>
@@ -344,43 +344,43 @@
             }
             //ถ้าเป็นนักเรียน
         }elseif($role = 'student'){
-            $sql = "SELECT * FROM student_profile WHERE student_id = '$id'";
+            $sql = "SELECT * FROM student_profile WHERE student_id = '$account_id'";
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
             //ถ้ามี profile 
             if(isset($row['id'])){
-                $interests = $row['interests'];
+                $student_interests = $row['student_interests'];
 
-                $sql = "SELECT * FROM student WHERE id = '$id'";
+                $sql = "SELECT * FROM student WHERE student_id = '$account_id'";
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
 
-                $first_name = $row['first_name'];
-                $last_name = $row['last_name'];
-                $tel = $row['tel'];
-                $email = $row['email'];
-                $department = $row['department'];
+                $student_first_name = $row['student_first_name'];
+                $student_last_name = $row['student_last_name'];
+                $student_tel = $row['student_tel'];
+                $student_email = $row['student_email'];
+                $student_department = $row['student_department'];
 
                 echo 
                 "
                 <div class='container'>
                     
                     <div class='profile-info'>
-                    <h2>$first_name $last_name</h2>
-                    <p>Department $department</p>
+                    <h2>$student_first_name $student_last_name</h2>
+                    <p>Department $student_department</p>
                     </div>
 
                     
                     <div class='contact-info'>
                         <h3>Contact</h3>
-                        <p><strong>Email:</strong> $email</p>
-                        <p><strong>Telephone Number:</strong> $tel</p>
+                        <p><strong>Email:</strong> $student_email</p>
+                        <p><strong>Telephone Number:</strong> $student_tel</p>
                         </div>
 
                         <!-- ข้อมูลหัวข้อวิจัย -->
                         <div class='research-info'>
                         <h3>Interested research topics</h3>
-                        <p>" . nl2br($interests) . "</p>
+                        <p>" . nl2br($student_interests) . "</p>
                     </div>
                     <form action='' method='post' class='editForm'>
                         <button name='edit' class='edit'>Edit</button>
