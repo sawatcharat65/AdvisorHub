@@ -9,11 +9,10 @@ if (!$file_id) {
 }
 
 try {
-   // ตรวจสอบสิทธิ์ทั้ง advisor และ student
    $sql = "SELECT tr.*, ar.advisor_id, ar.student_id
            FROM thesis_resource tr
            JOIN advisor_request ar ON tr.advisor_request_id = ar.id
-           WHERE tr.id = ?";
+           WHERE tr.thesis_resource_id = ?";
    $stmt = $conn->prepare($sql);
    $stmt->bind_param("i", $file_id);
    $stmt->execute();
@@ -40,7 +39,7 @@ try {
    }
 
    if ($can_delete) {
-       $sql = "DELETE FROM thesis_resource WHERE id = ?";
+       $sql = "DELETE FROM thesis_resource WHERE thesis_resource_id = ?";
        $stmt = $conn->prepare($sql);
        $stmt->bind_param("i", $file_id);
        

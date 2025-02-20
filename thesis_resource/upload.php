@@ -18,11 +18,9 @@ $user_id = $_SESSION['id'];
 $file_type = $file['type'];
 
 try {
-    // อ่านข้อมูลไฟล์
     $file_data = file_get_contents($file['tmp_name']);
     
-    // บันทึกลงฐานข้อมูล
-    $sql = "INSERT INTO thesis_resource (uploader_id, file_name, file_data, advisor_request_id, file_type) 
+    $sql = "INSERT INTO thesis_resource (uploader_id, thesis_resource_file_name, thesis_resource_file_data, advisor_request_id, thesis_resource_file_type) 
             VALUES (?, ?, ?, ?, ?)";
     
     $stmt = $conn->prepare($sql);

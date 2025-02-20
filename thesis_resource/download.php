@@ -8,19 +8,16 @@ if (!isset($_POST['file_id'])) {
 
 $file_id = intval($_POST['file_id']); 
 
-// SQL Query เพื่อดึงข้อมูลไฟล์จากฐานข้อมูล
-$sql = "SELECT file_name, file_data, file_type FROM thesis_resource WHERE id = ?";
+$sql = "SELECT thesis_resource_file_name, thesis_resource_file_data, thesis_resource_file_type FROM thesis_resource WHERE thesis_resource_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $file_id);
 $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows > 0) {
-    // ดึงข้อมูลไฟล์
     $stmt->bind_result($file_name, $file_data, $file_type);
     $stmt->fetch();
 
-    // กำหนด Content-Type ตามประเภทไฟล์
     switch ($file_type) {
         case 'image/jpeg':
             header("Content-Type: image/jpeg");
@@ -53,13 +50,11 @@ if ($stmt->num_rows > 0) {
             header("Content-Type: application/octet-stream");
     }
 
-    // กำหนด Headers สำหรับการดาวน์โหลด
     header("Content-Disposition: attachment; filename=\"" . basename($file_name) . "\"");
     header("Content-Length: " . strlen($file_data));
     header("Cache-Control: private, max-age=0, must-revalidate");
     header("Pragma: public");
 
-    // ส่งข้อมูลไฟล์
     echo $file_data;
     exit;
 } else {
