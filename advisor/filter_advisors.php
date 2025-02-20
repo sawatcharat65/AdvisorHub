@@ -12,7 +12,7 @@ if (!empty($expertise)) {
     $sql = "
         SELECT * 
         FROM advisor a 
-        JOIN advisor_profile ap ON a.id = ap.advisor_id 
+        JOIN advisor_profile ap ON a.advisor_id = ap.advisor_id 
         WHERE JSON_CONTAINS(ap.expertise, '$expertise_json')
     ";
 } else {
@@ -27,14 +27,14 @@ if ($result->num_rows > 0) {
         $expertise = $row['expertise'];
         $img = $row['img'];
 
-        $sql = "SELECT * FROM advisor WHERE id = '$advisor_id'";
+        $sql = "SELECT * FROM advisor WHERE advisor_id = '$advisor_id'";
         $result_advisor = $conn->query($sql);
         $row_advisor = $result_advisor->fetch_assoc();
 
-        $first_name = $row_advisor['first_name'];
-        $last_name = $row_advisor['last_name'];
-        $email = $row_advisor['email'];
-        $tel = $row_advisor['tel'];
+        $first_name = $row_advisor['advisor_first_name'];
+        $last_name = $row_advisor['advisor_last_name'];
+        $email = $row_advisor['advisor_email'];
+        $tel = $row_advisor['advisor_tel'];
 
         echo "
         <div class='advisorCard'>
