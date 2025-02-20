@@ -23,13 +23,13 @@ $id = $_SESSION['id'];
 $username = $_SESSION['username'];
 
 // sql สำหรับเช็คว่าอยู่ใน role อะไร (advisor, student, admin)
-$check_sql = "SELECT role FROM account WHERE id = '{$id}'";
+$check_sql = "SELECT role FROM account WHERE account_id = '{$id}'";
 $check_result = mysqli_query($conn, $check_sql);
 $check_row = mysqli_fetch_array($check_result);
 
 // condition สำหรับ sql ดึงข้อมูลนิสิต
 if ($check_row['role'] == 'student') {
-  $sql = "SELECT * FROM student WHERE id = '{$id}'";
+  $sql = "SELECT * FROM student WHERE student_id = '{$id}'";
   $result = mysqli_query($conn, $sql);
   $row = mysqli_fetch_array($result);
 } else {
@@ -37,7 +37,7 @@ if ($check_row['role'] == 'student') {
 }
 
 // sql สำหรับเรียกข้อมูลอาจารย์
-$advisor_sql = "SELECT first_name, last_name FROM advisor WHERE id = '{$_SESSION["advisor_id"]}'";
+$advisor_sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '{$_SESSION["advisor_id"]}'";
 $advisor_result = mysqli_query($conn, $advisor_sql);
 $advisor_row = mysqli_fetch_array($advisor_result);
 

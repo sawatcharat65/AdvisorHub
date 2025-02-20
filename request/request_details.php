@@ -70,7 +70,7 @@ if (mysqli_num_rows($result) > 0) {
 
                 <p>อาจารย์ที่ปรึกษา:
                     <?php
-                    $sql_advisor = "SELECT first_name, last_name FROM advisor WHERE id = '{$row["advisor_id"]}'";
+                    $sql_advisor = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '{$row["advisor_id"]}'";
                     $result_advisor = mysqli_query($conn, $sql_advisor);
                     if (mysqli_num_rows($result_advisor) > 0) {
                         $row_advisor = mysqli_fetch_array($result_advisor);
