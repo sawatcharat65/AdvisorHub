@@ -38,7 +38,7 @@ $thesisTitleThai = mysqli_real_escape_string($conn, $_POST['thesisTitleThai']);
 $thesisTitleEnglish = mysqli_real_escape_string($conn, $_POST['thesisTitleEnglish']);
 $thesisDescription = mysqli_real_escape_string($conn, $_POST['thesisDescription']);
 
-$sql = "SELECT * FROM advisor_request WHERE JSON_CONTAINS(student_id, '\"{$_SESSION["id"]}\"') AND is_advisor_approved != 2 AND is_admin_approved != 2 AND partner_accepted != 2";
+$sql = "SELECT * FROM advisor_request WHERE JSON_CONTAINS(student_id, '\"{$_SESSION["account_id"]}\"') AND is_advisor_approved != 2 AND is_admin_approved != 2 AND partner_accepted != 2";
 $result = $conn->query($sql);
 
 // เช็คว่าส่งคำร้องซ้ำไหม
@@ -48,7 +48,7 @@ if ($result->num_rows > 0) {
 } else {
     if ($thesisType == 'single') {
         $is_even = 0;
-        $requester_id = $_SESSION['id'];
+        $requester_id = $_SESSION['account_id'];
         $student_id = [$singleStudentID];
         $student_id_json = json_encode($student_id);
         $sql = "INSERT INTO advisor_request (student_id, requester_id,advisor_id, thesis_topic_thai, 
@@ -69,7 +69,7 @@ if ($result->num_rows > 0) {
         }
     } else {
         $is_even = 1;
-        $requester_id = $_SESSION['id'];
+        $requester_id = $_SESSION['account_id'];
         $student_ids = [$pairStudentID1, $pairStudentID2];
         $student_ids_json = json_encode($student_ids);
         $sql = "INSERT INTO advisor_request (student_id, requester_id, advisor_id, thesis_topic_thai, 
