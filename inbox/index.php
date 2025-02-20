@@ -41,7 +41,7 @@
     // Helper function to get user role
     function getUserRole($id) {
         global $conn;
-        $sql = "SELECT role FROM account WHERE id = '$id'";
+        $sql = "SELECT role FROM account WHERE account_id = '$id'";
         $result = $conn->query($sql);
         $row = $result->fetch_assoc();
         return $row['role'];
@@ -51,7 +51,7 @@
     function getUserInfo($id) {
         global $conn;
         // Check if advisor
-        $sql = "SELECT * FROM advisor WHERE id = '$id'";
+        $sql = "SELECT * FROM advisor WHERE advisor_id = '$id'";
         $result = $conn->query($sql);
         $row = $result->fetch_assoc();
         if($row) {
@@ -59,7 +59,7 @@
         }
 
         // Check if student
-        $sql = "SELECT * FROM student WHERE id = '$id'";
+        $sql = "SELECT * FROM student WHERE student_id = '$id'";
         $result = $conn->query($sql);
         return $result->fetch_assoc(); // Return student info if exists
     }
