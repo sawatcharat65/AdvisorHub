@@ -37,7 +37,7 @@ if(isset($_POST['reject'])){
     exit();
 }
 
-$id = $_SESSION['id'];
+$id = $_SESSION['account_id'];
 
 ?>
 

@@ -15,11 +15,11 @@ if (isset($_POST['logout'])) {
 }
 
 // ถ้าไม่ได้ล็อกอิน ให้กลับไปหน้า login
-if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
+if (!isset($_SESSION['username']) && !isset($_SESSION['account_id'])) {
   die(header("location:http://localhost/AdvisorHub/login"));
 }
 
-$id = $_SESSION['id'];
+$id = $_SESSION['account_id'];
 $username = $_SESSION['username'];
 
 // sql สำหรับเช็คว่าอยู่ใน role อะไร (advisor, student, admin)

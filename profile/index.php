@@ -118,7 +118,7 @@
     if(isset($_POST['addStudentProfile'])){
         $student_id = $_SESSION['account_id'];
         $student_interests = $_POST['interests'];
-        $sql = "INSERT INTO student_profile (student_id, interests)
+        $sql = "INSERT INTO student_profile (student_id, student_interests)
         VALUES (?, ?)";
 
         // เตรียม statement
@@ -348,7 +348,7 @@
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
             //ถ้ามี profile 
-            if(isset($row['id'])){
+            if(isset($row['student_id'])){
                 $student_interests = $row['student_interests'];
 
                 $sql = "SELECT * FROM student WHERE student_id = '$account_id'";

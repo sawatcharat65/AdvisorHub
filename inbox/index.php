@@ -82,7 +82,7 @@
                     <button name='chat' class='chat-button' value='{$userInfo['id']}'><i class='bx bxs-message-dots'></i></button>";
         
         // Check for unread messages
-        $unreadMessages = checkUnreadMessages($_SESSION['id'], $userInfo['id']);
+        $unreadMessages = checkUnreadMessages($_SESSION['account_id'], $userInfo['id']);
         if($unreadMessages) {
             echo "<i class='bx bxs-circle'></i>";
         }
@@ -112,7 +112,7 @@
         <div class="inbox">
 
         <?php
-            $id = $_SESSION['id'];
+            $id = $_SESSION['account_id'];
             
             // Query for distinct receiver and sender ids
             $sql = "SELECT DISTINCT receiver_id FROM messages WHERE sender_id = '$id' UNION
