@@ -86,8 +86,8 @@ if (isset($_POST['search'])) {
         if ($search_query != "") {
             $sql = "SELECT *
                     FROM advisor a
-                    JOIN advisor_profile ap ON a.id = ap.advisor_id
-                    WHERE a.first_name LIKE ? OR a.last_name LIKE ? ";
+                    JOIN advisor_profile ap ON a.advisor_id = ap.advisor_id
+                    WHERE a.advisor_first_name LIKE ? OR a.advisor_last_name LIKE ? ";
 
             $stmt = $conn->prepare($sql);
 
@@ -102,7 +102,7 @@ if (isset($_POST['search'])) {
             $sql = "
                     SELECT * 
                     FROM advisor a 
-                    JOIN advisor_profile ap ON a.id = ap.advisor_id 
+                    JOIN advisor_profile ap ON a.advisor_id = ap.advisor_id 
                     WHERE JSON_CONTAINS(ap.expertise, '$expertise');
                 ";
             $result = $conn->query($sql);
@@ -116,17 +116,17 @@ if (isset($_POST['search'])) {
             while ($row = $result->fetch_assoc()) {
                 $advisor_id = $row['advisor_id'];
                 $expertise = $row['expertise'];
-                $interests = $row['interests'];
+                $interests = $row['advisor_interests'];
                 $img = $row['img'];
 
-                $sql = "SELECT * FROM advisor WHERE id = '$advisor_id'";
+                $sql = "SELECT * FROM advisor WHERE advisor_id = '$advisor_id'";
                 $result_advisor = $conn->query($sql);
                 $row_advisor = $result_advisor->fetch_assoc();
 
-                $first_name = $row_advisor['first_name'];
-                $last_name = $row_advisor['last_name'];
-                $tel = $row_advisor['tel'];
-                $email = $row_advisor['email'];
+                $first_name = $row_advisor['advisor_first_name'];
+                $last_name = $row_advisor['advisor_last_name'];
+                $tel = $row_advisor['advisor_tel'];
+                $email = $row_advisor['advisor_email'];
 
                 echo "
                     <div class='advisorCard'>
