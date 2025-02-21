@@ -16,7 +16,7 @@ if (isset($_POST['profile'])) {
     header('location: /AdvisorHub/profile');
 }
 
-if(empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['id']){
+if(empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['account_id']){
     header('location: /AdvisorHub/advisor');
 }
 
@@ -24,7 +24,7 @@ if (isset($_POST['profileInbox'])) {
     $user_id = $_POST['profileInbox'];
     $_SESSION['profileInbox'] = $user_id;
 
-    $sql = "SELECT role FROM advisor WHERE id = '$user_id'";
+    $sql = "SELECT role FROM advisor WHERE advisor_id = '$user_id'";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
 
@@ -59,14 +59,15 @@ if (isset($_POST['search'])) {
 
     <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']);
     $receiver_id = $_SESSION['receiver_id'];
-    $sql = "SELECT first_name, last_name FROM advisor WHERE id = '$receiver_id' UNION SELECT first_name, last_name FROM student WHERE id = '$receiver_id'";
+    $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '$receiver_id' UNION 
+            SELECT student_first_name, student_last_name FROM student WHERE student_id = '$receiver_id'";
     $result = $conn->query($sql);
     $row = $result->fetch_assoc();
     echo 
     "
     <div class='topic-container'>
         <div class='topic-head'>
-            <h2>{$row['first_name']} {$row['last_name']}</h2>
+            <h2>{$row['advisor_first_name']} {$row['advisor_last_name']}</h2>
     ";
     ?>
 
@@ -84,25 +85,25 @@ if (isset($_POST['search'])) {
         </div>
         
         <?php
-            $id = $_SESSION['id'];
+            $id = $_SESSION['account_id'];
             $receiver_id = $_SESSION['receiver_id'];
 
             // ถ้ามีการค้นหาก็จะใช้คำค้นหานั้นในการกรอง
             $search_condition = "";
             if (!empty($search_query)) {
-                $search_condition = " AND title LIKE '%$search_query%' ";
+                $search_condition = " AND message_title LIKE '%$search_query%' ";
             }
 
             $sql = "
-                    SELECT title, MAX(time_stamp) AS latest_time
+                    SELECT message_title, MAX(time_stamp) AS latest_time
                     FROM messages
                     WHERE (sender_id = '$id' AND receiver_id = '$receiver_id') 
                     OR (sender_id = '$receiver_id' AND receiver_id = '$id')
                     $search_condition
-                    GROUP BY title
+                    GROUP BY message_title
                     ORDER BY 
                         CASE 
-                            WHEN title LIKE '%$search_query%' THEN 1 
+                            WHEN message_title LIKE '%$search_query%' THEN 1 
                             ELSE 2 
                         END,
                         latest_time DESC
@@ -110,7 +111,7 @@ if (isset($_POST['search'])) {
             $result = $conn->query($sql);
             
             while($row = $result->fetch_assoc()){
-                $title = $row['title'];
+                $title = $row['message_title'];
                 $timestamp = $row['latest_time'];
                 echo 
                 "
@@ -125,7 +126,7 @@ if (isset($_POST['search'])) {
                     <button name='chat' class='chat-button' value='$receiver_id'><i class='bx bxs-message-dots'></i></button>
                     ";
 
-                    $query = "SELECT DISTINCT is_read FROM messages WHERE receiver_id = '$id' AND sender_id = '$receiver_id' AND is_read = 0 AND title = '$title'";
+                    $query = "SELECT DISTINCT is_read FROM messages WHERE receiver_id = '$id' AND sender_id = '$receiver_id' AND is_read = 0 AND message_title = '$title'";
                     $result_is_read = $conn->query($query);
 
                     // ตรวจสอบว่ามีการส่งข้อความที่ยังไม่ได้อ่าน

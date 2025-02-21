@@ -21,7 +21,7 @@ if (isset($_POST['profile'])) {
 }
 
 // ตรวจสอบการเข้าถึงแชท
-if (empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['id']) {
+if (empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['account_id']) {
     header('location: /AdvisorHub/advisor');
     exit;
 }
@@ -31,7 +31,7 @@ function sendMessage($conn, $sender_id, $receiver_id, $title, $message) {
     // ตรวจสอบว่า message ไม่ใช่ค่าว่าง
     if (!empty($message)) {
         // ใช้ prepared statement เพื่อลดความเสี่ยงจาก SQL Injection
-        $stmt = $conn->prepare("INSERT INTO messages (sender_id, receiver_id, title, message) VALUES (?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO messages (sender_id, receiver_id, message_title, message) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("ssss", $sender_id, $receiver_id, $title, $message);
         $stmt->execute();
         $stmt->close();
@@ -41,8 +41,8 @@ function sendMessage($conn, $sender_id, $receiver_id, $title, $message) {
 // ตรวจสอบว่า user กดปุ่มส่งข้อความหรือไม่
 if (isset($_POST['submit'])) {
     $message = $_POST['message'];
-    $title = $_POST['title'];
-    $sender_id = $_SESSION['id'];
+    $title = $_POST['message_title'];
+    $sender_id = $_SESSION['account_id'];
     $receiver_id = $_SESSION['receiver_id'];
 
     sendMessage($conn, $sender_id, $receiver_id, $title, $message);
