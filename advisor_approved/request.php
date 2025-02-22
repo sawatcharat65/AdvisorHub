@@ -31,7 +31,7 @@ if (isset($_POST['accept'])) {
 
 if (isset($_POST['reject'])) {
     $advisor_req_id = $_POST['reject'];
-    $sql = "UPDATE advisor_request SET partner_accepted = 2 WHERE id = '$advisor_req_id'";
+    $sql = "UPDATE advisor_request SET partner_accepted = 2 WHERE advisor_request_id = '$advisor_req_id'";
     $result = $conn->query($sql);
     header('location: /AdvisorHub/advisor_approved/request.php');
     exit();
@@ -169,9 +169,9 @@ $id = $_SESSION['account_id'];
                                     </form>
                                     ";
                         } elseif ($requester_id != $id && $partner_accepted == 1) {
-                            echo "<div class='status-partner'><h3 class='accept-text'>You Accepted</h3></div>";
+                            echo "<div class='status-partner'><h3 class='accept-text'>You Accepted Partner</h3></div>";
                         } elseif ($requester_id != $id && $partner_accepted == 2) {
-                            echo "<div class='status-partner'><h3 class='reject-text'>You Rejected</h3></div>";
+                            echo "<div class='status-partner'><h3 class='reject-text'>You Rejected Partner</h3></div>";
                         }
                         ?>
                     </div>
