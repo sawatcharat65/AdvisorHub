@@ -98,7 +98,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           <div class="col-md-6">
             <label for="singleStudentID" class="form-label">รหัสนิสิต:</label>
             <input type="text" class="form-control" id="singleStudentID" name="singleStudentID"
-              value="<?php echo $row['id']; ?>" readonly>
+              value="<?php echo $row['student_id']; ?>" readonly>
           </div>
         </div>
       </div>
@@ -124,7 +124,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
       <div class="mb-3">
         <label for="advisorName" class="form-label">อาจารย์ที่ปรึกษาวิทยานิพนธ์:</label>
         <input type="text" class="form-control" id="advisorName" name="advisorName"
-          value="<?php echo $advisor_row['first_name'] . ' ' . $advisor_row['last_name']; ?>" readonly>
+          value="<?php echo $advisor_row['advisor_first_name'] . ' ' . $advisor_row['advisor_last_name']; ?>" readonly>
       </div>
 
       <!-- ชื่อเรื่องไทย -->
