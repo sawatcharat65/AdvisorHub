@@ -74,7 +74,7 @@ if (mysqli_num_rows($result) > 0) {
                     $result_advisor = mysqli_query($conn, $sql_advisor);
                     if (mysqli_num_rows($result_advisor) > 0) {
                         $row_advisor = mysqli_fetch_array($result_advisor);
-                        echo $row_advisor["first_name"] . " " . $row_advisor["last_name"];
+                        echo $row_advisor["advisor_first_name"] . " " . $row_advisor["advisor_last_name"];
                     } else {
                         echo "ไม่พบข้อมูล";
                     }
