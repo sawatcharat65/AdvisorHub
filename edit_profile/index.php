@@ -1,129 +1,157 @@
 <?php
-    session_start();
-    require('../server.php');
-    include('../components/navbar.php');
-    if(isset($_POST['logout'])){
-        session_destroy();
-        header('location: /AdvisorHub/login');
-    }
+ob_start(); // เริ่ม Output Buffering
+session_start();
+require('../server.php');
+include('../components/navbar.php');
 
-    if(isset($_POST['profile'])){
-        header('location: /AdvisorHub/profile');
-    }
+// ตรวจสอบการ logout หรือ redirect ก่อน output
+if (isset($_POST['logout'])) {
+    session_destroy();
+    ob_end_clean();
+    header('location: /AdvisorHub/login');
+    exit;
+}
 
-    if(empty($_SESSION['username'])){
-        header('location: /AdvisorHub/login');
-    }
+if (isset($_POST['profile'])) {
+    ob_end_clean();
+    header('location: /AdvisorHub/profile');
+    exit;
+}
 
-    if (isset($_POST['edit'])) {
-        $id = $_SESSION['account_id'];  
-        $expertise = json_encode($_POST['expertise']);
-        $interests = $_POST['interests'];
+if (empty($_SESSION['username'])) {
+    ob_end_clean();
+    header('location: /AdvisorHub/login');
+    exit;
+}
 
-        // เชื่อมต่อฐานข้อมูลและดึงข้อมูลรูปโปรไฟล์เก่าจากฐานข้อมูล
-        $sql = "SELECT img FROM advisor_profile WHERE advisor_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $stmt->bind_result($old_img);
-        $stmt->fetch();
-        $stmt->close();
-    
-        // จัดการการอัพโหลดไฟล์ (ถ้ามีการเลือกไฟล์ใหม่)
-        $target_dir = "../uploads/";
-        $uploadOk = 1;
-        $new_file_name = null;
-    
-        if (isset($_FILES["img"]) && $_FILES["img"]["error"] == 0) {
-            // ตรวจสอบว่าเป็นไฟล์รูปภาพ
-            $imageFileType = strtolower(pathinfo($_FILES["img"]["name"], PATHINFO_EXTENSION));
-            $new_file_name = uniqid() . "." . $imageFileType;
-            $target_file = $target_dir . $new_file_name;
-    
-            $check = getimagesize($_FILES["img"]["tmp_name"]);
-            if ($check === false) {
-                echo "File is not an image.";
-                $uploadOk = 0;
-            }
-    
-            // ตรวจสอบขนาดไฟล์
-            if ($_FILES["img"]["size"] > 5000000) {  // 5MB
-                echo "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-    
-            // ตรวจสอบประเภทไฟล์
-            $allowed_types = array("jpg", "jpeg", "png", "gif");
-            if (!in_array($imageFileType, $allowed_types)) {
-                echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                $uploadOk = 0;
-            }
-    
-            // หากทุกอย่างถูกต้องให้ทำการอัพโหลด
-            if ($uploadOk == 1) {
-                if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
-                    // ลบไฟล์เก่า (ถ้ามี)
-                    if ($old_img && file_exists($old_img)) {
-                        unlink($old_img);  // ลบไฟล์เก่า
-                    }
-                    $img = $target_file; // เก็บชื่อไฟล์ใหม่
-                } else {
-                    echo "Sorry, there was an error uploading your file.";
-                    exit;
-                }
-            }
-        } else {
-            // ถ้าไม่มีการอัพโหลดไฟล์ใหม่ ให้ใช้ไฟล์เดิม
-            $img = $old_img;
+// แก้ไขโปรไฟล์อาจารย์
+if (isset($_POST['edit'])) {
+    $id = $_SESSION['account_id'];
+    $expertise = json_encode($_POST['expertise'] ?? []);
+    $interests = htmlspecialchars($_POST['interests'] ?? '', ENT_QUOTES, 'UTF-8');
+
+    $sql = "SELECT img FROM advisor_profile WHERE advisor_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->bind_result($old_img);
+    $stmt->fetch();
+    $stmt->close();
+
+    $target_dir = "../uploads/";
+    $uploadOk = 1;
+    $img = $old_img;
+
+    if (isset($_FILES["img"]) && $_FILES["img"]["error"] == 0) {
+        $imageFileType = strtolower(pathinfo($_FILES["img"]["name"], PATHINFO_EXTENSION));
+        $new_file_name = uniqid() . "." . $imageFileType;
+        $target_file = $target_dir . $new_file_name;
+
+        $check = getimagesize($_FILES["img"]["tmp_name"]);
+        if ($check === false) {
+            $error = "File is not an image.";
+            $uploadOk = 0;
+        } elseif ($_FILES["img"]["size"] > 5000000) {
+            $error = "Sorry, your file is too large.";
+            $uploadOk = 0;
+        } elseif (!in_array($imageFileType, ["jpg", "jpeg", "png", "gif"])) {
+            $error = "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            $uploadOk = 0;
         }
-    
-        // อัพเดทข้อมูลในฐานข้อมูล
-        $sql = "UPDATE advisor_profile SET 
-                expertise = ?, 
-                advisor_interests = ?,
-                img = ?
-                WHERE advisor_id = ?";
-    
+
+        if ($uploadOk == 1) {
+            if (move_uploaded_file($_FILES["img"]["tmp_name"], $target_file)) {
+                if ($old_img && file_exists($old_img)) {
+                    unlink($old_img);
+                }
+                $img = $target_file;
+            } else {
+                $error = "Sorry, there was an error uploading your file.";
+            }
+        }
+    }
+
+    if (!isset($error)) {
+        $sql = "UPDATE advisor_profile SET expertise = ?, advisor_interests = ?, img = ? WHERE advisor_id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $expertise, $interests, $img, $id);
-    
+        $stmt->bind_param("sssi", $expertise, $interests, $img, $id);
+
         if ($stmt->execute()) {
-            header('location: /AdvisorHub/profile');  // รีไดเร็กต์ไปที่หน้าประวัติ
+            $stmt->close();
+            $conn->close();
+            ob_end_clean();
+            header('location: /AdvisorHub/profile');
             exit;
         } else {
-            echo "Error: " . $stmt->error;
-        }
-    
-        $stmt->close();
-        $conn->close();
-    }
-    
-
-    if (isset($_POST['editStudentProfile'])) {
-        $id = $_SESSION['accout_id'];
-        $interests = $_POST['student_interests'];
-
-        // คำสั่ง SQL สำหรับการอัพเดตข้อมูล
-        $sql_update = "UPDATE student_profile SET student_interests = ? WHERE student_id = ?";
-
-        // เตรียมคำสั่ง SQL
-        if ($stmt = $conn->prepare($sql_update)) {
-            // ผูกค่าตัวแปรกับคำสั่ง SQL
-            $stmt->bind_param("ss", $interests, $id);
-
-            // Execute คำสั่ง SQL
-            if ($stmt->execute()) {
-                header('location: /AdvisorHub/profile');
-            } else {
-                echo "Error updating profile: " . $stmt->error;
-            }
-
-            // ปิด statement
+            $error = "Error: " . $stmt->error;
             $stmt->close();
-        } else {
-            echo "Error preparing statement: " . $conn->error;
         }
     }
+    $conn->close();
+}
+
+// แก้ไขโปรไฟล์นักศึกษา
+if (isset($_POST['editStudentProfile'])) {
+    $id = $_SESSION['account_id'];
+    $interests = htmlspecialchars($_POST['student_interests'] ?? '', ENT_QUOTES, 'UTF-8');
+
+    $sql_update = "UPDATE student_profile SET student_interests = ? WHERE student_id = ?";
+    $stmt = $conn->prepare($sql_update);
+
+    if ($stmt) {
+        $stmt->bind_param("si", $interests, $id);
+        if ($stmt->execute()) {
+            $stmt->close();
+            $conn->close();
+            ob_end_clean();
+            header('location: /AdvisorHub/profile');
+            exit;
+        } else {
+            $error = "Error updating profile: " . $stmt->error;
+            $stmt->close();
+        }
+    } else {
+        $error = "Error preparing statement: " . $conn->error;
+    }
+    $conn->close();
+}
+
+// ดึงข้อมูลสำหรับแสดงฟอร์ม
+$username = $_SESSION['username'];
+$role = $_SESSION['role'];
+$id = $_SESSION['account_id'];
+$profile_data = null;
+
+if ($role == 'advisor') {
+    $sql = "SELECT * FROM advisor_profile WHERE advisor_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $profile_data = $result->fetch_assoc();
+    $stmt->close();
+    if (!$profile_data) {
+        $conn->close();
+        ob_end_clean();
+        header('location: /AdvisorHub/profile');
+        exit;
+    }
+} elseif ($role == 'student') {
+    $sql = "SELECT * FROM student_profile WHERE student_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $profile_data = $result->fetch_assoc();
+    $stmt->close();
+    if (!$profile_data) {
+        $conn->close();
+        ob_end_clean();
+        header('location: /AdvisorHub/profile');
+        exit;
+    }
+}
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -138,165 +166,64 @@
     <link rel="icon" href="../Logo.png">
 </head>
 <body>
-    
-    <?php renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
+    <?php echo renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']); ?>
 
-    <?php
-        $username = $_SESSION['username'];
-        $role = $_SESSION['role'];
-        $id = $_SESSION['account_id'];
+    <?php if (isset($error)): ?>
+        <script>alert('<?php echo addslashes($error); ?>');</script>
+    <?php endif; ?>
 
-        if($role == 'advisor'){
-            $sql = "SELECT * FROM advisor_profile WHERE advisor_id = '$id'";
-            $result = $conn->query($sql);
-            $row = $result->fetch_assoc();
-            
-            if(isset($row['account_id'])){
-                $interests = $row['advisor_interests'];
-
-                echo 
-                "
-                <form action='' method='post' class='profile-form' enctype='multipart/form-data'>
-                    <div class='wrap'>
-                        <h2>Edit Profile</h2>
-                        <h3>Expertise</h3>
-                        <div class='wrapCheckbox'>
-                            <label for='ai'>Artificial Intelligence (AI)</label>
-                            <input type='checkbox' id='ai' class='filter-checkbox' name='expertise[]' value='Artificial Intelligence (AI)'>
-                            <br/>
-                            
-                            <label for='ml'>Machine Learning</label>
-                            <input type='checkbox' id='ml' class='filter-checkbox' name='expertise[]' value='Machine Learning'>
-                            <br/>
-
-                            <label for='dl'>Deep Learning</label>
-                            <input type='checkbox' id='dl' class='filter-checkbox' name='expertise[]' value='Deep Learning'>
-                            <br/>
-
-                            <label for='nlp'>Natural Language Processing (NLP)</label>
-                            <input type='checkbox' id='nlp' class='filter-checkbox' name='expertise[]' value='Natural Language Processing (NLP)'>
-                            <br/>
-
-                            <label for='cv'>Computer Vision</label>
-                            <input type='checkbox' id='cv' class='filter-checkbox' name='expertise[]' value='Computer Vision'>
-                            <br/>
-
-                            <label for='ds'>Data Science</label>
-                            <input type='checkbox' id='ds' class='filter-checkbox' name='expertise[]' value='Data Science'>
-                            <br/>
-
-                            <label for='bigdata'>Big Data</label>
-                            <input type='checkbox' id='bigdata' class='filter-checkbox' name='expertise[]' value='Big Data'>
-                            <br/>
-
-                            <label for='cyber'>Cybersecurity</label>
-                            <input type='checkbox' id='cyber' class='filter-checkbox' name='expertise[]' value='Cybersecurity'>
-                            <br/>
-
-                            <label for='blockchain'>Blockchain Technology</label>
-                            <input type='checkbox' id='blockchain' class='filter-checkbox' name='expertise[]' value='Blockchain Technology'>
-                            <br/>
-
-                            <label for='iot'>Internet of Things (IoT)</label>
-                            <input type='checkbox' id='iot' class='filter-checkbox' name='expertise[]' value='Internet of Things (IoT)'>
-                            <br/>
-
-                            <label for='cloud'>Cloud Computing</label>
-                            <input type='checkbox' id='cloud' class='filter-checkbox' name='expertise[]' value='Cloud Computing'>
-                            <br/>
-
-                            <label for='edge'>Edge Computing</label>
-                            <input type='checkbox' id='edge' class='filter-checkbox' name='expertise[]' value='Edge Computing'>
-                            <br/>
-
-                            <label for='quantum'>Quantum Computing</label>
-                            <input type='checkbox' id='quantum' class='filter-checkbox' name='expertise[]' value='Quantum Computing'>
-                            <br/>
-
-                            <label for='hci'>Human-Computer Interaction (HCI)</label>
-                            <input type='checkbox' id='hci' class='filter-checkbox' name='expertise[]' value='Human-Computer Interaction (HCI)'>
-                            <br/>
-
-                            <label for='robotics'>Robotics</label>
-                            <input type='checkbox' id='robotics' class='filter-checkbox' name='expertise[]' value='Robotics'>
-                            <br/>
-
-                            <label for='software'>Software Engineering</label>
-                            <input type='checkbox' id='software' class='filter-checkbox' name='expertise[]' value='Software Engineering'>
-                            <br/>
-
-                            <label for='arvr'>Augmented Reality (AR) and Virtual Reality (VR)</label>
-                            <input type='checkbox' id='arvr' class='filter-checkbox' name='expertise[]' value='Augmented Reality (AR) and Virtual Reality (VR)'>
-                            <br/>
-
-                            <label for='digitwin'>Digital Twin</label>
-                            <input type='checkbox' id='digitwin' class='filter-checkbox' name='expertise[]' value='Digital Twin'>
-                            <br/>
-
-                            <label for='compbio'>Computational Biology</label>
-                            <input type='checkbox' id='compbio' class='filter-checkbox' name='expertise[]' value='Computational Biology'>
-                            <br/>
-
-                            <label for='ethicalai'>Ethical AI</label>
-                            <input type='checkbox' id='ethicalai' class='filter-checkbox' name='expertise[]' value='Ethical AI'>
-                            
-                        </div>
-
-                        <div class='wrapInputInterests'>
-                            <textarea name='interests' id='' placeholder='Interests' required>$interests</textarea>
-                        </div>
-
-                        <div class='wrapInput'>
-                            <input type='file' id='fileInput' name='img'>
-                            <label for='fileInput' class='file-upload-btn'>Choose Profile Image</label>
-                            <p class='file-name' id='fileName'></p>
-                        </div>
-
-                        <div class='wrapInput'>
-                            <button name='edit'>Edit Profile</button>
-                        </div>
-                        
-                    </div>
-                </form>
-                ";
-            }else{
-                header('location: /AdvisorHub/profile');
-            }
-        }elseif($role == 'student'){
-            $user_id = $_SESSION['account_id'];
-            $sql = "SELECT * FROM student_profile WHERE student_id = '$id'";
-            $result = $conn->query($sql);
-            $row = $result->fetch_assoc();
-
-
-            if(isset($row['account_id'])){
-                $interests = $row['student_interests'];
-
-                echo 
-                "
-                <form action='' method='post' class='profile-form' enctype='multipart/form-data'>
-                    <div class='wrap'>
-                        <h2>Edit Student Profile</h2>
-                        
-                        <div class='wrapInput'>
-                            <textarea name='interests' id='' placeholder='Interests' required>$interests</textarea>
-                        </div>
-
-                        <div class='wrapInput'>
-                            <button name='editStudentProfile'>Edit</button>
-                        </div>
-                        
-                    </div>
-                </form>
-                ";
-            }else{
-                header('location: /AdvisorHub/profile');
-            }
-        }
-    ?>
+    <?php if ($role == 'advisor'): ?>
+        <form action="" method="post" class="profile-form" enctype="multipart/form-data">
+            <div class="wrap">
+                <h2>Edit Profile</h2>
+                <h3>Expertise</h3>
+                <div class="wrapCheckbox">
+                    <?php
+                    $expertise_options = [
+                        'Artificial Intelligence (AI)', 'Machine Learning', 'Deep Learning',
+                        'Natural Language Processing (NLP)', 'Computer Vision', 'Data Science',
+                        'Big Data', 'Cybersecurity', 'Blockchain Technology', 'Internet of Things (IoT)',
+                        'Cloud Computing', 'Edge Computing', 'Quantum Computing', 'Human-Computer Interaction (HCI)',
+                        'Robotics', 'Software Engineering', 'Augmented Reality (AR) and Virtual Reality (VR)',
+                        'Digital Twin', 'Computational Biology', 'Ethical AI'
+                    ];
+                    $current_expertise = json_decode($profile_data['expertise'] ?? '[]', true);
+                    foreach ($expertise_options as $option) {
+                        $id = strtolower(str_replace(' ', '', $option));
+                        $checked = in_array($option, $current_expertise) ? 'checked' : '';
+                        echo "<label for='$id'>$option</label>";
+                        echo "<input type='checkbox' id='$id' class='filter-checkbox' name='expertise[]' value='$option' $checked><br/>";
+                    }
+                    ?>
+                </div>
+                <div class="wrapInputInterests">
+                    <textarea name="interests" placeholder="Interests" required><?php echo htmlspecialchars($profile_data['advisor_interests'] ?? ''); ?></textarea>
+                </div>
+                <div class="wrapInput">
+                    <input type="file" id="fileInput" name="img">
+                    <label for="fileInput" class="file-upload-btn">Choose Profile Image</label>
+                    <p class="file-name" id="fileName"></p>
+                </div>
+                <div class="wrapInput">
+                    <button name="edit">Edit Profile</button>
+                </div>
+            </div>
+        </form>
+    <?php elseif ($role == 'student'): ?>
+        <form action="" method="post" class="profile-form" enctype="multipart/form-data">
+            <div class="wrap">
+                <h2>Edit Student Profile</h2>
+                <div class="wrapInput">
+                    <textarea name="student_interests" placeholder="Interests" required><?php echo htmlspecialchars($profile_data['student_interests'] ?? ''); ?></textarea>
+                </div>
+                <div class="wrapInput">
+                    <button name="editStudentProfile">Edit</button>
+                </div>
+            </div>
+        </form>
+    <?php endif; ?>
 
     <script>
-    // แสดงชื่อไฟล์เมื่อเลือก
         document.getElementById("fileInput").addEventListener("change", function(e) {
             const fileName = e.target.files[0] ? e.target.files[0].name : "ไม่มีไฟล์เลือก";
             document.getElementById("fileName").textContent = fileName;
@@ -304,3 +231,4 @@
     </script>
 </body>
 </html>
+<?php ob_end_flush(); // ส่ง output และปิด buffer ?>
