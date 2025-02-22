@@ -4,7 +4,7 @@ include('../server.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['request_id'])) {
     $request_id = $_POST['request_id'];
-    
+
     if (isset($_POST['approve'])) {
         $is_advisor_approved = 1; // อนุมัติ
     } elseif (isset($_POST['reject'])) {
@@ -31,4 +31,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['request_id'])) {
     header("Location: /AdvisorHub/advisor_approved/request.php");
     exit();
 }
-?>

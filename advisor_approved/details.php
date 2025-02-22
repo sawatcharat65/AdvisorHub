@@ -94,13 +94,14 @@ date_default_timezone_set("Asia/Bangkok");
                     echo "<p style='color: red;'>ไม่พบข้อมูลคำร้อง</p>";
                 }
                 $stmt->close();
+            } else {
+                echo "<p style='color: red;'>ไม่พบข้อมูลคำร้อง</p>";
             }
             ?>
         </div>
 
         <form action="approve_reject.php" method="POST">
             <input type="hidden" name="request_id" value="<?= htmlspecialchars($advisor_request_id) ?>">
-
             <button class="button-accept" name="approve"><i class='bx bx-check'></i></button>
             <button class="button-reject" name="reject"><i class='bx bx-x'></i></button>
         </form>
