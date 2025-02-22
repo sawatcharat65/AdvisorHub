@@ -110,8 +110,8 @@ if (isset($_SESSION['advisor_info_id'])) {
             
             <div class="contact-info">
                 <h3>Contact</h3>
-                <p><strong>Email:</strong> <?= $advisor_info['email']; ?></p>
-                <p><strong>Telephone Number:</strong> <?= $advisor_info['tel']; ?></p>
+                <p><strong>Email:</strong> <?= $advisor_info['advisor_email']; ?></p>
+                <p><strong>Telephone Number:</strong> <?= $advisor_info['advisor_tel']; ?></p>
             </div>
 
             <div class="research-info">
@@ -121,8 +121,8 @@ if (isset($_SESSION['advisor_info_id'])) {
                 <?php endforeach; ?>
 
                 <h3>Interests</h3>
-                <p><?= $advisor_info['interests']; ?></p>
-
+                <p><?= $advisor_info['advisor_interests']; ?></p>
+                
                 <h3>Number of advising students: <?= $advisor_info['student_count']; ?></h3>
             </div>
 
