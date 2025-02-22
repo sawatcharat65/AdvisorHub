@@ -80,12 +80,11 @@ $id = $_SESSION['account_id'];
                     <div class="card">
                         <h5 class="card-title">หัวข้อวิทยานิพนธ์: <?php echo htmlspecialchars($row["thesis_topic_thai"]); ?></h5>
                         <ul class="list-group">
-                            <?php foreach ($student_ids as $student_id):
-                                $sql = "SELECT * from student WHERE student_id = '$student_id'";
-                                $result = $conn->query($sql);
-                                $row_name = $result->fetch_assoc();
-
-                            ?>
+                        <?php foreach ($student_ids as $student_id):
+                            $sql_student = "SELECT * FROM student WHERE student_id = '$student_id'";
+                            $result_student = $conn->query($sql_student);
+                            $row_name = $result_student->fetch_assoc();
+                        ?>
 
                                 <li class="list-group-item">
                                     <strong>รหัสนิสิต:</strong> <?php echo htmlspecialchars($student_id); ?>

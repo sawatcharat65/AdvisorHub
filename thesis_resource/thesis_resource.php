@@ -134,7 +134,114 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        /* คงไว้เหมือนเดิม */
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .thesis-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .thesis-card {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            background-color: white;
+            border: none;
+        }
+        .thesis-title {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 1.5rem;
+        }
+        .thesis-subtitle {
+            color: #7f8c8d;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            font-size: 1.125rem;
+        }
+        .section-title {
+            color: #34495e;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .section-content {
+            color: #2c3e50;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .file-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .file-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .upload-card {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #3498db;
+        }
+        .upload-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px;
+            border: none;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .download-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .download-btn:hover {
+            background-color: #27ae60;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        .btn-group > .action-btn {
+            margin-left: 8px;
+        }
+        .back-btn {
+            background-color: #34495e;
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background-color: #2c3e50;
+        }
+        @media (max-width: 768px) {
+            .thesis-title {
+                font-size: 1.25rem;
+            }
+            .thesis-subtitle {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
