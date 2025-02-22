@@ -76,7 +76,7 @@ if (isset($_POST['submit'])) {
         </div>
         <div class="form-field">
             <label for="consultation-topic" class="form-label">Topic</label>
-            <input type="text" id="consultation-topic" class="form-input" name='title' placeholder="Fill your topic here" required>
+            <input type="text" id="consultation-topic" class="form-input" name='message_title' placeholder="Fill your topic here" required>
         </div>
         <div class="form-field">
             <label for="consultation-details" class="form-label">Details</label>

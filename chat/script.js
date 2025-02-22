@@ -2,13 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('form');
     const messageInput = document.querySelector('.input-message');
     const chatBox = document.querySelector('.message-container');
-    
 
     // ส่งข้อความเมื่อกดปุ่มส่ง
     form.addEventListener('submit', (e) => {
-        
+        e.preventDefault(); // ป้องกันการรีเฟรชหน้า
 
         const message = messageInput.value;
+        const currentScrollPosition = chatBox.scrollTop; // บันทึกตำแหน่ง scroll ปัจจุบัน
 
         if (message.trim() !== '') {
             fetch('index.php', {
@@ -19,58 +19,62 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.text())
             .then(() => {
                 messageInput.value = ''; // ล้างข้อความ
-                loadMessages(); // โหลดข้อความใหม่
+                loadMessages(currentScrollPosition); // โหลดข้อความใหม่โดยส่งตำแหน่ง scroll
             })
             .catch(error => console.error('Error:', error));
         }
     });
 
-    
-    function loadMessages() {
+    // ฟังก์ชันโหลดข้อความ โดยรับพารามิเตอร์ตำแหน่ง scroll
+    function loadMessages(scrollPosition = null) {
         fetch('load_messages.php')
             .then(response => response.text())
             .then(data => {
                 chatBox.innerHTML = data;
-                chatBox.scrollTop = chatBox.scrollHeight; // เลื่อนลงล่างสุด
+                // ถ้ามีตำแหน่ง scroll ที่ส่งมา ให้คืนค่าตำแหน่งนั้น มิฉะนั้นเลื่อนไปล่างสุด
+                if (scrollPosition !== null) {
+                    chatBox.scrollTop = scrollPosition;
+                } else {
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
             })
             .catch(error => console.error('Error:', error));
     }
 
-    // โหลดข้อความทุก 1 วินาที
-    setInterval(loadMessages, 1000);
-});
+    // โหลดข้อความทุก 1 วินาที (รักษาตำแหน่ง scroll ปัจจุบัน)
+    setInterval(() => {
+        const currentScroll = chatBox.scrollTop;
+        loadMessages(currentScroll);
+    }, 1000);
 
+    // โหลดข้อความครั้งแรกเมื่อหน้าโหลด
+    loadMessages();
+});
 
 // Function to handle scrolling and showing/hiding the button
 function handleScroll() {
-    var chatBox = document.querySelector('.chat-box');
-    var scrollButton = document.querySelector('.scroll-to-bottom');
-    var threshold = 50; 
+    const chatBox = document.querySelector('.chat-box');
+    const scrollButton = document.querySelector('.scroll-to-bottom');
+    const threshold = 50;
 
-    // Check if the user is close enough to the bottom (within the threshold)
     if (chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight <= threshold) {
-        // User is close to the bottom, hide the button
         scrollButton.style.display = 'none';
     } else {
-        // User is not close to the bottom, show the button
         scrollButton.style.display = 'block';
     }
 }
 
-// Add the scroll event listener to the chat box
-document.querySelector('.chat-box').addEventListener('scroll', handleScroll);
+// Add event listeners
+const chatBox = document.querySelector('.chat-box');
+chatBox.addEventListener('scroll', handleScroll);
 
-// Add event listener for the button to scroll to the bottom
-document.querySelector('.scroll-to-bottom').addEventListener('click', function() {
-    var chatBox = document.querySelector('.chat-box');
+document.querySelector('.scroll-to-bottom').addEventListener('click', () => {
     chatBox.scrollTop = chatBox.scrollHeight;
-    handleScroll(); // Call handleScroll to recheck the scroll position after clicking
-});
-// Initially call handleScroll when the page loads
-window.onload = function() {
     handleScroll();
-    var chatBox = document.querySelector('.chat-box');
-    chatBox.scrollTop = chatBox.scrollHeight;  // Hide or show the button based on initial scroll position
+});
+
+// เรียก handleScroll และเลื่อนไปล่างสุดเมื่อโหลดหน้า
+window.onload = () => {
+    handleScroll();
+    chatBox.scrollTop = chatBox.scrollHeight;
 };
-
-

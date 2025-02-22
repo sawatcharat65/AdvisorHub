@@ -51,7 +51,7 @@
         if(isset($_SESSION['receiver_id'])){
             $receiver_id = $_SESSION['receiver_id'];
             $title = $_SESSION['title'];
-            $sender_id = $_SESSION['id'];
+            $sender_id = $_SESSION['account_id'];
 
             // เมื่ออ่านแล้วเอาเครื่องหมายยังไม่อ่านออก
             $sql = "UPDATE messages SET is_read = 1 WHERE receiver_id = '$sender_id' AND sender_id = '$receiver_id' AND is_read = 0 AND message_title = '$title'";
@@ -137,9 +137,6 @@
     <button class="scroll-to-bottom"><i class='bx bx-down-arrow-alt'></i></button>
 
     </div>
-    <footer>
-        <p>&copy; 2024 Naresuan University.</p>
-    </footer>
     <script src="script.js"></script>
 </body>
 </html>

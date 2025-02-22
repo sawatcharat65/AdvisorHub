@@ -3,10 +3,11 @@ session_start();
 require('../server.php');
 
 
-$sender_id = $_SESSION['id'];
+$sender_id = $_SESSION['account_id'];
 $receiver_id = $_SESSION['receiver_id'];
 $title = $_SESSION['title'];
 
+//เอาเครื่องหมายอ่านออก
 $sql = "UPDATE messages SET is_read = 1 WHERE receiver_id = '$sender_id' AND sender_id = '$receiver_id' AND is_read = 0 AND message_title = '$title'";
 $result = $conn->query($sql);
 
