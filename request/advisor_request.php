@@ -54,11 +54,11 @@ if ($result->num_rows > 0) {
         $sql = "INSERT INTO advisor_request (student_id, requester_id,advisor_id, thesis_topic_thai, 
                                              thesis_topic_eng, thesis_description, is_even, 
                                              semester, academic_year, is_advisor_approved, 
-                                             is_admin_approved, time_stamp) 
+                                             is_admin_approved, partner_accepted,time_stamp) 
                 VALUES('{$student_id_json}', '$requester_id','{$_POST["advisor_id"]}', '{$thesisTitleThai}', 
                        '{$thesisTitleEnglish}', '{$thesisDescription}', {$is_even}, 
                        {$semester}, {$academic_year}, 
-                       0, 0, NOW())";
+                       0, 0, 1, NOW())";
                        
         if ($query = mysqli_query($conn, $sql)) {
             $_SESSION["notify_message"] = "ส่งคำร้องสำเร็จ";
@@ -75,11 +75,11 @@ if ($result->num_rows > 0) {
         $sql = "INSERT INTO advisor_request (student_id, requester_id, advisor_id, thesis_topic_thai, 
                                              thesis_topic_eng, thesis_description, is_even, 
                                              semester, academic_year, is_advisor_approved, 
-                                             is_admin_approved, time_stamp) 
+                                             is_admin_approved, partner_accepted,time_stamp) 
                 VALUES('{$student_ids_json}', '{$requester_id}','{$_POST["advisor_id"]}', '{$thesisTitleThai}', 
                        '{$thesisTitleEnglish}', '{$thesisDescription}', {$is_even}, 
                        {$semester}, {$academic_year}, 
-                       0, 0, NOW())";
+                       0, 0, 0, NOW())";
     
         if ($query = mysqli_query($conn, $sql)) {
             $_SESSION["notify_message"] = "ส่งคำร้องสำเร็จ";

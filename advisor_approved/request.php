@@ -80,7 +80,7 @@ $id = $_SESSION['account_id'];
                         <h5 class="card-title">หัวข้อวิทยานิพนธ์: <?php echo htmlspecialchars($row["thesis_topic_thai"]); ?></h5>
                         <ul class="list-group">
                             <?php foreach ($student_ids as $student_id): 
-                                $sql = "SELECT * from student WHERE id = '$student_id'";
+                                $sql = "SELECT * from student WHERE student_id = '$student_id'";
                                 $result = $conn->query($sql);
                                 $row_name = $result->fetch_assoc();
                             
