@@ -111,7 +111,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           <div class="col-md-6">
             <label for="pairStudentID1" class="form-label">รหัสนิสิต[1]:</label>
             <input type="text" class="form-control" id="pairStudentID1" name="pairStudentID1"
-              value="<?php echo $row['id']; ?>" readonly>
+              value="<?php echo $row['student_id']; ?>" readonly>
           </div>
           <div class="col-md-6">
             <label for="pairStudentID2" class="form-label">รหัสนิสิต[2]:</label>
