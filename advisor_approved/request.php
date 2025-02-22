@@ -57,7 +57,7 @@ $id = $_SESSION['account_id'];
         //ถ้าเป็น advisor
         if ($_SESSION['role'] == 'advisor') {
             // ดึงข้อมูลเฉพาะคำร้องที่ advisor_id ตรงกับอาจารย์ที่ล็อกอิน
-            $sql = "SELECT id, student_id, thesis_topic_thai, is_advisor_approved, is_admin_approved, time_stamp 
+            $sql = "SELECT advisor_request_id, student_id, thesis_topic_thai, is_advisor_approved, is_admin_approved, time_stamp 
             FROM advisor_request 
             WHERE advisor_id = ? AND is_advisor_approved = 0 AND is_admin_approved != 2 AND partner_accepted = 1
             ORDER BY time_stamp DESC";
