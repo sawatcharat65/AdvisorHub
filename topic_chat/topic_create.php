@@ -27,7 +27,8 @@ if (empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['ac
 }
 
 // ฟังก์ชันสำหรับการตรวจสอบและส่งข้อความ
-function sendMessage($conn, $sender_id, $receiver_id, $title, $message) {
+function sendMessage($conn, $sender_id, $receiver_id, $title, $message)
+{
     // ตรวจสอบว่า message ไม่ใช่ค่าว่าง
     if (!empty($message)) {
         // ใช้ prepared statement เพื่อลดความเสี่ยงจาก SQL Injection
@@ -67,7 +68,7 @@ if (isset($_POST['submit'])) {
 
 <body>
 
-<?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
+    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
 
     <form method='post' class="consultation-form-container">
         <div class="form-header">
