@@ -16,7 +16,7 @@
     }
 
     if (isset($_POST['edit'])) {
-        $id = $_SESSION['id'];  
+        $id = $_SESSION['account_id'];  
         $expertise = json_encode($_POST['expertise']);
         $interests = $_POST['interests'];
 
@@ -80,7 +80,7 @@
         // อัพเดทข้อมูลในฐานข้อมูล
         $sql = "UPDATE advisor_profile SET 
                 expertise = ?, 
-                interests = ?,
+                advisor_interests = ?,
                 img = ?
                 WHERE advisor_id = ?";
     
@@ -100,11 +100,11 @@
     
 
     if (isset($_POST['editStudentProfile'])) {
-        $id = $_SESSION['id'];
-        $interests = $_POST['interests'];
+        $id = $_SESSION['accout_id'];
+        $interests = $_POST['student_interests'];
 
         // คำสั่ง SQL สำหรับการอัพเดตข้อมูล
-        $sql_update = "UPDATE student_profile SET interests = ? WHERE student_id = ?";
+        $sql_update = "UPDATE student_profile SET student_interests = ? WHERE student_id = ?";
 
         // เตรียมคำสั่ง SQL
         if ($stmt = $conn->prepare($sql_update)) {
