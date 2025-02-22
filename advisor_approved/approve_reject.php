@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['request_id'])) {
     }
 
     // อัปเดตสถานะในฐานข้อมูล
-    $sql = "UPDATE advisor_request SET is_advisor_approved = ? WHERE id = ?";
+    $sql = "UPDATE advisor_request SET is_advisor_approved = ? WHERE advisor_request_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $is_advisor_approved, $request_id);
 
@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['request_id'])) {
     $stmt->close();
     $conn->close();
 
-    // รีเฟรชกลับไปยัง details.php ของคำร้องที่เพิ่งอนุมัติ/ปฏิเสธ
     header("Location: details.php?id=" . $request_id);
     exit();
 }
