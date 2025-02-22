@@ -4,7 +4,7 @@ include('../server.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['request_id'])) {
     $request_id = $_POST['request_id'];
-    
+
     if (isset($_POST['approve'])) {
         $is_advisor_approved = 1; // อนุมัติ
     } elseif (isset($_POST['reject'])) {
@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['request_id'])) {
     $stmt->close();
     $conn->close();
 
-    header("Location: details.php?id=" . $request_id);
+    header("Location: request.php");
     exit();
 }
-?>

@@ -43,8 +43,8 @@ date_default_timezone_set("Asia/Bangkok");
         <h1>Details of the Request for Advisor Appointment</h1>
         <div class="details">
             <?php
-            if (isset($_POST['account_id'])) {
-                $advisor_request_id = $_POST['account_id'];
+            if (isset($_POST['advisor_request_id'])) {
+                $advisor_request_id = $_POST['advisor_request_id'];
 
                 // ดึงข้อมูลคำร้องจากฐานข้อมูล
                 $sql = "SELECT student_id, thesis_topic_thai, thesis_topic_eng, thesis_description, time_stamp, is_advisor_approved 
@@ -91,13 +91,14 @@ date_default_timezone_set("Asia/Bangkok");
                     echo "<p style='color: red;'>ไม่พบข้อมูลคำร้อง</p>";
                 }
                 $stmt->close();
+            } else {
+                echo "<p style='color: red;'>ไม่พบข้อมูลคำร้อง</p>";
             }
             ?>
         </div>
 
         <form action="approve_reject.php" method="POST">
             <input type="hidden" name="request_id" value="<?= htmlspecialchars($advisor_request_id) ?>">
-
             <button class="button-accept" name="approve"><i class='bx bx-check'></i></button>
             <button class="button-reject" name="reject"><i class='bx bx-x'></i></button>
         </form>
