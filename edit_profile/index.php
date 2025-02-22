@@ -144,15 +144,15 @@
     <?php
         $username = $_SESSION['username'];
         $role = $_SESSION['role'];
-        $id = $_SESSION['id'];
+        $id = $_SESSION['account_id'];
 
         if($role == 'advisor'){
             $sql = "SELECT * FROM advisor_profile WHERE advisor_id = '$id'";
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
             
-            if(isset($row['id'])){
-                $interests = $row['interests'];
+            if(isset($row['account_id'])){
+                $interests = $row['advisor_interests'];
 
                 echo 
                 "
@@ -263,14 +263,14 @@
                 header('location: /AdvisorHub/profile');
             }
         }elseif($role == 'student'){
-            $user_id = $_SESSION['id'];
+            $user_id = $_SESSION['account_id'];
             $sql = "SELECT * FROM student_profile WHERE student_id = '$id'";
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
 
 
-            if(isset($row['id'])){
-                $interests = $row['interests'];
+            if(isset($row['account_id'])){
+                $interests = $row['student_interests'];
 
                 echo 
                 "
