@@ -128,7 +128,7 @@ $id = $_SESSION['account_id'];
                 while ($row = $result->fetch_assoc()):
                     $requester_id = $row['requester_id'];
                     $partner_accepted = $row['partner_accepted'];
-                    $advisor_req_id = $row['id'];
+                    $advisor_req_id = $row['advisor_request_id'];
                     // กำหนดสถานะคำร้อง
                     if ($row['is_advisor_approved'] == 0) {
                         $advisor_status = '<span class="status waiting">Waiting</span>';
