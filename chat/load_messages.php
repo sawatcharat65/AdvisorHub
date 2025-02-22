@@ -3,7 +3,6 @@ session_start();
 require('../server.php');
 
 
-
 $sender_id = $_SESSION['id'];
 $receiver_id = $_SESSION['receiver_id'];
 $title = $_SESSION['title'];
