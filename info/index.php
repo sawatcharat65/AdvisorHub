@@ -57,7 +57,7 @@ if (isset($_SESSION['advisor_info_id'])) {
 
     if ($advisor_info) {
         $advisor_info['expertise'] = json_decode($advisor_info['expertise']);
-        $advisor_info['interests'] = nl2br($advisor_info['interests']);
+        $advisor_info['interests'] = nl2br($advisor_info['advisor_interests']);
 
         $sql = "SELECT * FROM advisor WHERE advisor_id = '$advisor_id'";
         $result_advisor = $conn->query($sql);
