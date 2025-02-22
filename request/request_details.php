@@ -49,7 +49,7 @@ if (mysqli_num_rows($result) > 0) {
             text-wrap">
                 สถานะการส่งคำร้อง:
                 <?php
-                if (isset($_SESSION['notify_message'])) {
+                if (isset($_SESSION['notify_message'])) { 
                     echo $_SESSION['notify_message'];
                 }
                 // เคลียร์ข้อความแจ้งเตือน
