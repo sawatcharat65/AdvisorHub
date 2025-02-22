@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 18, 2025 at 04:39 PM
+-- Generation Time: Feb 22, 2025 at 04:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -104,6 +104,13 @@ CREATE TABLE `advisor_profile` (
   `img` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+--
+-- Dumping data for table `advisor_profile`
+--
+
+INSERT INTO `advisor_profile` (`advisor_profile_id`, `advisor_id`, `expertise`, `advisor_interests`, `img`) VALUES
+(23, 'F05003', '[\"Artificial Intelligence (AI)\",\"Machine Learning\",\"Deep Learning\",\"Data Science\",\"Big Data\",\"Robotics\"]', 'Advancing AI Ethics and Fairness:\r\n&amp;quot;I am passionate about researching ethical frameworks for Artificial Intelligence, focusing on reducing bias in machine learning algorithms. My goal is to develop methods that ensure AI systems are transparent, fair, and accountable, especially in critical areas like criminal justice and hiring processes.&amp;quot;\r\nAI in Healthcare Diagnostics:\r\n&amp;quot;My research interest lies in leveraging AI to improve diagnostic accuracy in healthcare. I aim to investigate how deep learning models can analyze medical imaging and patient data to assist doctors in detecting diseases such as cancder or neurodegenerative disorders at an early stage.&amp;quot;\r\nHuman-AI Collaboration:\r\n&amp;quot;I am intrigued by the potential of human-AI collaboration and want to explore how AI can augment human creativity and decision-making. My research would focus on designing systems that seamlessly integrate with human workflows, such as in creative industries or complex problem-solving environments.&amp;quot;\r\nAI for Climate Change Solutions:\r\n&amp;quot;I am interested in applying Artificial Intelligence to address climate change challenges. My research would examine how AI can optimize renewable energy systems, predict environmental disasters, and model sustainable practices to mitigate global warming effects.&amp;quot;\r\nNatural Language Processing for Low-Resource Languages:\r\n&amp;quot;My passion is in advancing natural language processing (NLP) for underrepresented and low-resource languages. I want to investigate how AI can preserve linguistic diversity by creating tools for translation, speech recognition, and text generation in these languages.&amp;quot;\r\nAI-Driven Personalized Education:\r\n&amp;quot;I am keen to research how AI can transform education through personalized learning experiences. My focus would be on developing adaptive AI systems that tailor educational content to individual student needs, improving engagement and outcomes in diverse learning environments.&amp;quot;\r\nAutonomous Systems and Safety:\r\n&amp;quot;My research interest centers on the safety and reliability of autonomous systems, such as self-driving cars or drones. I aim to explore AI techniques that enhance real-time decision-making and risk assessment to ensure these systems operate securely in unpredictable conditions.&amp;quot;\r\nExplainable AI (XAI):\r\n&amp;quot;I am fascinated by the concept of explainable AI and want to investigate methods to make complex AI models more interpretable. My research would focus on creating tools that allow users to understand and trust AI decisions, particularly in high-stakes domains like finance or law.&amp;quot;', '../uploads/67b9e2b09823c.png');
+
 -- --------------------------------------------------------
 
 --
@@ -138,7 +145,10 @@ CREATE TABLE `messages` (
   `sender_id` varchar(50) NOT NULL,
   `receiver_id` varchar(50) NOT NULL,
   `message_title` text NOT NULL,
-  `message` text NOT NULL,
+  `message` text DEFAULT NULL,
+  `message_file_name` text DEFAULT NULL,
+  `message_file_data` longblob DEFAULT NULL,
+  `message_file_type` varchar(50) DEFAULT NULL,
   `is_read` tinyint(1) NOT NULL DEFAULT 0,
   `time_stamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -180,6 +190,13 @@ CREATE TABLE `student_profile` (
   `student_id` varchar(50) NOT NULL,
   `student_interests` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `student_profile`
+--
+
+INSERT INTO `student_profile` (`student_profile_id`, `student_id`, `student_interests`) VALUES
+(10, '65310609', 'Topic: The Rise of Natural Language Processing (NLP)w\r\n\r\nNatural Language Processing (NLP) has seen remarkable progress in recent years, transforming how computers understand and interact with human language. From chatbots and virtual assistants to language translation and sentiment analysis, NLP is reshaping our daily lives. Here&amp;#039;s why it&amp;#039;s a compelling area of interest:\r\n\r\nReal-World Applications:\r\n\r\nConversational AI: Chatbots like myself are revolutionizing customer service by providing instant support, personalized recommendations, and engaging conversations.\r\ne\r\nLanguage Translation: Tools like Microsoft Translator and Google Translate break language barriers, making communication seamless across different cultures.\r\n\r\nSentiment Analysis: Businesses use sentiment analysis to gauge customer opinions, helping them make data-driven decisions and improve their products and services.\r\n\r\nTechnological Advancements:\r\n\r\nDeep Learning: NLP models powered by deep learning algorithms can process vast amounts of text data, enabling more accurate and nuanced language understanding.\r\n\r\nTransformers: The introduction of transformer architectures, such as GPT (Generative Pre-trained Transformer), has significantly improved language generation, comprehension, and context retention.\r\n\r\nFuture Prospects:\r\n\r\nHealthcare: NLP is being used to analyze medical records, assist in diagnostics, and even predict patient outcomes.\r\n\r\nEducation: AI-driven educational tools provide personalized learning experiences, making education more accessible and effective.\r\n\r\nCreativity: AI is collaborating with humans in creative fields, generating art, music, and literature, pushing the boundaries of imagination.');
 
 -- --------------------------------------------------------
 
@@ -299,13 +316,13 @@ ALTER TABLE `thesis_resource`
 -- AUTO_INCREMENT for table `advisor_profile`
 --
 ALTER TABLE `advisor_profile`
-  MODIFY `advisor_profile_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `advisor_profile_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `advisor_request`
 --
 ALTER TABLE `advisor_request`
-  MODIFY `advisor_request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `advisor_request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -317,13 +334,13 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `student_profile`
 --
 ALTER TABLE `student_profile`
-  MODIFY `student_profile_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `student_profile_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `thesis`
 --
 ALTER TABLE `thesis`
-  MODIFY `thesis_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `thesis_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `thesis_resource`
