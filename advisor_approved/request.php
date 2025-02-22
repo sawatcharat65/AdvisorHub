@@ -89,14 +89,14 @@ $id = $_SESSION['account_id'];
 
                                 <li class="list-group-item">
                                     <strong>รหัสนิสิต:</strong> <?php echo htmlspecialchars($student_id); ?>
-                                    <strong>ชื่อ:</strong> <?php echo htmlspecialchars($row_name['student_first_name']) . " " . htmlspecialchars($row_name['student_last_name']); ?>
+                                    <strong>ชื่อ:</strong> <?php echo htmlspecialchars($row_name['student_first_name'])." ". htmlspecialchars($row_name['student_last_name']); ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
                         <div class="wrap-foot d-flex align-items-center mt-3">
                             <form action="details.php" method="POST">
                                 <input type="hidden" name='advisor_request_id' value=<?php echo $row['advisor_request_id'] ?>>
-                                <button type="submit" class="btn-orange">รายละเอียด</button>
+                                <button type="submit"  class="btn-orange">รายละเอียด</button>
                             </form>
                             <span class="timestamp"> <?php echo $row["time_stamp"]; ?></span>
                         </div>

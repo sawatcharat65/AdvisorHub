@@ -20,6 +20,9 @@ if (isset($_SESSION['username']) && ($_SESSION['role'] == 'student' || $_SESSION
     header('location: /AdvisorHub/advisor');
 }
 
+if(empty($_POST['advisor_request_id'])){
+    header('location: /AdvisorHub/advisor_approved/request.php');
+}
 date_default_timezone_set("Asia/Bangkok");
 ?>
 <!DOCTYPE html>

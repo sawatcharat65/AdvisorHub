@@ -28,6 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['request_id'])) {
     $stmt->close();
     $conn->close();
 
-    header("Location: request.php");
+    header("Location: /AdvisorHub/advisor_approved/request.php");
     exit();
 }
