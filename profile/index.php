@@ -86,7 +86,7 @@
                 $img = $target_file;
     
                 // เชื่อมต่อฐานข้อมูลและเตรียมคำสั่ง SQL
-                $sql = "INSERT INTO advisor_profile (advisor_id, expertise, interests, img) 
+                $sql = "INSERT INTO advisor_profile (advisor_id, expertise, advisor_interests, img) 
                         VALUES (?, ?, ?, ?)";
     
                 // เตรียมคำสั่ง SQL
@@ -178,7 +178,7 @@
             $row = $result->fetch_assoc();
 
             //ถ้าอาจารย์มี profile อยู่แล้ว
-            if(isset($row['id'])){
+            if(isset($row['advisor_id'])){
                 $expertise = json_decode($row['expertise']);
                 $advisor_interests = $row['advisor_interests'];
                 $img = $row['img'];
