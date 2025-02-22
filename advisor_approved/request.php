@@ -23,7 +23,7 @@ if (isset($_SESSION['username']) && $_SESSION['role'] == 'admin') {
 
 if (isset($_POST['accept'])) {
     $advisor_req_id = $_POST['accept'];
-    $sql = "UPDATE advisor_request SET partner_accepted = 1 WHERE id = '$advisor_req_id'";
+    $sql = "UPDATE advisor_request SET partner_accepted = 1 WHERE advisor_request_id = '$advisor_req_id'";
     $result = $conn->query($sql);
     header('location: /AdvisorHub/advisor_approved/request.php');
     exit();
@@ -161,10 +161,10 @@ $id = $_SESSION['account_id'];
                             "
                                     <form action='' method='post' class='form-choose'>
                                         <div class='wrapChoose'>
-                                            <button name='accept' class='accept' value='$advisor_req_id'>Accept Request</button>
+                                            <button name='accept' class='accept' value='$advisor_req_id'>Accept Partner Request</button>
                                         </div>
                                         <div class='wrapChoose'>
-                                            <button name='reject' class='reject' value='$advisor_req_id'>Reject Request</button>
+                                            <button name='reject' class='reject' value='$advisor_req_id'>Reject Partner Request</button>
                                         </div>
                                     </form>
                                     ";
