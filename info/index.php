@@ -105,9 +105,9 @@ if (isset($_SESSION['advisor_info_id'])) {
         <div class="container">
             <div class="profile-info">
                 <img src="<?= $advisor_info['img']; ?>" alt="Advisor Image">
-                <h2><?= $advisor_info['first_name'] . " " . $advisor_info['last_name']; ?></h2>
+                <h2><?= $advisor_info['advisor_first_name'] . " " . $advisor_info['advisor_last_name']; ?></h2>
             </div>
-
+            
             <div class="contact-info">
                 <h3>Contact</h3>
                 <p><strong>Email:</strong> <?= $advisor_info['email']; ?></p>
