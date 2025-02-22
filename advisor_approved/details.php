@@ -20,6 +20,9 @@ if (isset($_SESSION['username']) && ($_SESSION['role'] == 'student' || $_SESSION
     header('location: /AdvisorHub/advisor');
 }
 
+if(empty($_POST['advisor_request_id'])){
+    header('location: /AdvisorHub/advisor_approved/request.php');
+}
 date_default_timezone_set("Asia/Bangkok");
 ?>
 <!DOCTYPE html>
@@ -43,8 +46,8 @@ date_default_timezone_set("Asia/Bangkok");
         <h1>Details of the Request for Advisor Appointment</h1>
         <div class="details">
             <?php
-            if (isset($_POST['account_id'])) {
-                $advisor_request_id = $_POST['account_id'];
+            if (isset($_POST['advisor_request_id'])) {
+                $advisor_request_id = $_POST['advisor_request_id'];
 
                 // ดึงข้อมูลคำร้องจากฐานข้อมูล
                 $sql = "SELECT student_id, thesis_topic_thai, thesis_topic_eng, thesis_description, time_stamp, is_advisor_approved 

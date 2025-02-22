@@ -94,7 +94,7 @@ $id = $_SESSION['account_id'];
                         </ul>
                         <div class="wrap-foot d-flex align-items-center mt-3">
                             <form action="details.php" method="POST">
-                                <input type="hidden" name='id' value=<?php echo $row['student_id'] ?>>
+                                <input type="hidden" name='advisor_request_id' value=<?php echo $row['advisor_request_id'] ?>>
                                 <button type="submit"  class="btn-orange">รายละเอียด</button>
                             </form>
                             <span class="timestamp"> <?php echo $row["time_stamp"]; ?></span>
