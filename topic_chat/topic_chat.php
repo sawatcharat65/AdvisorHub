@@ -45,14 +45,6 @@ if (isset($_POST['profileInbox'])) {
     exit();
 }
 
-// Handle search
-$search_query = "";
-$search_condition = ""; // กำหนดค่าเริ่มต้นเป็นสตริงว่าง
-if (isset($_POST['search'])) {
-    $search_query = $_POST['search'];
-    $search_condition = " AND message_title LIKE '%$search_query%' ";
-}
-
 // Fetch receiver info
 $receiver_id = $_SESSION['receiver_id'];
 $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '$receiver_id' 
@@ -61,7 +53,7 @@ $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_
 $result = $conn->query($sql);
 $receiver = $result->fetch_assoc();
 
-// Fetch approval timestamp from advisor_request
+// ดึง approval timestamp และ messages สำหรับผลลัพธ์เริ่มต้น
 $id = $_SESSION['account_id'];
 $sql = "SELECT time_stamp FROM advisor_request 
         WHERE ((requester_id = '$id' AND advisor_id = '$receiver_id') 
@@ -72,7 +64,6 @@ $sql = "SELECT time_stamp FROM advisor_request
 $result = $conn->query($sql);
 $approval_timestamp = $result->num_rows > 0 ? $result->fetch_assoc()['time_stamp'] : null;
 
-// ถ้ายังไม่มี approval_timestamp หรือคำขอยังไม่สมบูรณ์ ให้ถือว่าทั้งหมดเป็น "Before"
 $before_messages = [];
 $after_messages = [];
 
@@ -81,34 +72,34 @@ $sql = "
     FROM messages
     WHERE (sender_id = '$id' AND receiver_id = '$receiver_id') 
     OR (sender_id = '$receiver_id' AND receiver_id = '$id')
-    $search_condition
     GROUP BY message_title
     ORDER BY latest_time DESC
 ";
 $messages_result = $conn->query($sql);
 
-while ($row = $messages_result->fetch_assoc()) {
-    $message = [
-        'title' => $row['message_title'],
-        'timestamp' => $row['latest_time'],
-        'unread' => $conn->query("SELECT DISTINCT is_read FROM messages 
-                                WHERE receiver_id = '$id' 
-                                AND sender_id = '$receiver_id' 
-                                AND is_read = 0 
-                                AND message_title = '{$row['message_title']}'")->num_rows > 0
-    ];
+if ($messages_result) {
+    while ($row = $messages_result->fetch_assoc()) {
+        $message = [
+            'title' => $row['message_title'],
+            'timestamp' => $row['latest_time'],
+            'unread' => $conn->query("SELECT DISTINCT is_read FROM messages 
+                                    WHERE receiver_id = '$id' 
+                                    AND sender_id = '$receiver_id' 
+                                    AND is_read = 0 
+                                    AND message_title = '" . $conn->real_escape_string($row['message_title']) . "'")->num_rows > 0
+        ];
 
-    // ถ้าไม่มี approval_timestamp หรือ timestamp ของข้อความ <= approval_timestamp ให้อยู่ใน Before
-    if ($approval_timestamp === null || $row['latest_time'] <= $approval_timestamp) {
-        $before_messages[] = $message;
-    } else {
-        $after_messages[] = $message;
+        if ($approval_timestamp === null || $row['latest_time'] <= $approval_timestamp) {
+            $before_messages[] = $message;
+        } else {
+            $after_messages[] = $message;
+        }
     }
 }
 
 // Handle delete
 if (isset($_POST['delete'])) {
-    $title = $_POST['title'];
+    $title = $conn->real_escape_string($_POST['title']);
     $sql = "DELETE FROM messages WHERE message_title = '$title' AND ((sender_id = '$id' AND receiver_id = '$receiver_id') OR (sender_id = '$receiver_id' AND receiver_id = '$id'))";
     $conn->query($sql);
     header('location: /AdvisorHub/topic_chat/topic_chat.php');
@@ -128,6 +119,7 @@ if (isset($_POST['delete'])) {
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="icon" href="../Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -139,11 +131,10 @@ if (isset($_POST['delete'])) {
             <a href="topic_create.php" class="fa-solid fa-circle-plus"></a>
         </div>
 
-        <form method="POST" class="topic-search">
+        <div class="topic-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" name="search" placeholder="Search topic" value="<?php echo htmlspecialchars($search_query); ?>" />
-            <button type="submit"><i class='bx bx-search'></i></button>
-        </form>
+            <input type="text" id="search-input" placeholder="Search topic" value="" />
+        </div>
 
         <div class="topic-status">
             <button class="active">In progress</button>
@@ -152,100 +143,128 @@ if (isset($_POST['delete'])) {
 
         <div class='divider'></div>
 
-        <div class='after-approve'>
-            <h3>After Becoming an Advisor</h3>
-            <?php if (empty($after_messages)): ?>
-                <p>No messages found.</p>
-            <?php else: ?>
-                <?php foreach ($after_messages as $message): ?>
-                    <div class='message'>
-                        <div>
-                            <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
-                            <div class='message-date'><?php echo $message['timestamp']; ?></div>
-                        </div>
-                        <div class="message-actions">
-                            <form action='../chat/index.php' method='post' class='form-chat'>
-                                <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
-                                <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
-                                <?php if ($message['unread']): ?>
-                                    <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
-                                <?php endif; ?>
-                            </form>
-                            <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                                <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
-                                <div class="dropdown-menu">
-                                    <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
-                                        <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
-                                        <button type="submit" name="delete">Delete</button>
-                                    </form>
+        <div id="search-results">
+            <div class='after-approve'>
+                <h3>After Becoming an Advisor</h3>
+                <?php if (empty($after_messages)): ?>
+                    <p>No messages found.</p>
+                <?php else: ?>
+                    <?php foreach ($after_messages as $message): ?>
+                        <div class='message'>
+                            <div>
+                                <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
+                                <div class='message-date'><?php echo $message['timestamp']; ?></div>
+                            </div>
+                            <div class="message-actions">
+                                <form action='../chat/index.php' method='post' class='form-chat'>
+                                    <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
+                                    <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
+                                    <?php if ($message['unread']): ?>
+                                        <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
+                                    <?php endif; ?>
+                                </form>
+                                <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                                    <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
+                                    <div class="dropdown-menu">
+                                        <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
+                                            <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
+                                            <button type="submit" name="delete">Delete</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
 
-        <div class='before-approve'>
-            <h3>Before Becoming an Advisor</h3>
-            <?php if (empty($before_messages)): ?>
-                <p>No messages found.</p>
-            <?php else: ?>
-                <?php foreach ($before_messages as $message): ?>
-                    <div class='message'>
-                        <div>
-                            <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
-                            <div class='message-date'><?php echo $message['timestamp']; ?></div>
-                        </div>
-                        <div class="message-actions">
-                            <form action='../chat/index.php' method='post' class='form-chat'>
-                                <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
-                                <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
-                                <?php if ($message['unread']): ?>
-                                    <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
-                                <?php endif; ?>
-                            </form>
-                            <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                                <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
-                                <div class="dropdown-menu">
-                                    <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
-                                        <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
-                                        <button type="submit" name="delete">Delete</button>
-                                    </form>
+            <div class='before-approve'>
+                <h3>Before Becoming an Advisor</h3>
+                <?php if (empty($before_messages)): ?>
+                    <p>No messages found.</p>
+                <?php else: ?>
+                    <?php foreach ($before_messages as $message): ?>
+                        <div class='message'>
+                            <div>
+                                <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
+                                <div class='message-date'><?php echo $message['timestamp']; ?></div>
+                            </div>
+                            <div class="message-actions">
+                                <form action='../chat/index.php' method='post' class='form-chat'>
+                                    <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
+                                    <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
+                                    <?php if ($message['unread']): ?>
+                                        <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
+                                    <?php endif; ?>
+                                </form>
+                                <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                                    <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
+                                    <div class="dropdown-menu">
+                                        <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
+                                            <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
+                                            <button type="submit" name="delete">Delete</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
-</body>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuButtons = document.querySelectorAll('.menu-button');
-        menuButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const menuContainer = this.closest('.menu-container');
-                const dropdownMenu = menuContainer.querySelector('.dropdown-menu');
-                dropdownMenu.classList.toggle('active');
-                document.querySelectorAll('.dropdown-menu.active').forEach(menu => {
-                    if (menu !== dropdownMenu) {
-                        menu.classList.remove('active');
+    <script>
+        $(document).ready(function() {
+            // ฟังก์ชัน debounce เพื่อจำกัดการเรียก AJAX
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+
+            // ฟังก์ชันค้นหา
+            const performSearch = debounce(function(searchQuery) {
+                console.log("Searching for: ", searchQuery);
+                $.ajax({
+                    url: "search_topic.php",
+                    method: "POST",
+                    data: {
+                        search: searchQuery
+                    },
+                    success: function(response) {
+                        console.log("Response: ", response);
+                        $("#search-results").html(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error: ", status, error);
                     }
                 });
+            }, 100); // รอ 100ms ก่อนเรียก AJAX
+
+            // เมื่อพิมพ์ในช่องค้นหา
+            $("#search-input").on("input", function() {
+                let searchQuery = $(this).val();
+                performSearch(searchQuery);
+            });
+
+            // การจัดการเมนู dropdown
+            $(document).on('click', '.menu-button', function() {
+                const $menuContainer = $(this).closest('.menu-container');
+                const $dropdownMenu = $menuContainer.find('.dropdown-menu');
+                $dropdownMenu.toggleClass('active');
+                $('.dropdown-menu.active').not($dropdownMenu).removeClass('active');
+            });
+
+            $(document).on('click', function(event) {
+                if (!$(event.target).closest('.menu-container').length) {
+                    $('.dropdown-menu.active').removeClass('active');
+                }
             });
         });
-
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.menu-container')) {
-                document.querySelectorAll('.dropdown-menu.active').forEach(menu => {
-                    menu.classList.remove('active');
-                });
-            }
-        });
-    });
-</script>
+    </script>
+</body>
 
 </html>
