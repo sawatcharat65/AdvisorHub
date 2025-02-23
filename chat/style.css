@@ -3,7 +3,6 @@ body{
     padding: 0;
     background-color: whitesmoke;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
 }
 
 .wrap{
@@ -56,7 +55,7 @@ footer p {
     height: 600px; /* กำหนดความสูงคงที่ */
     max-height: 600px; /* ความสูงสูงสุด */
     overflow-y: auto; /* เปิดการเลื่อนในแนวตั้ง */
-    background-color: #f9f9f9;
+    background-color: #f6f6f6;
     position: relative;
 }
 
@@ -93,33 +92,70 @@ footer p {
     border-radius: 10px;
     font-size: 14px;
     line-height: 1.4;
-
+    box-shadow: 2px 4px 20px rgba(0, 0, 0, 0.108);
 }
 
 .message-sent {
-    background-color: #400093;
-    color: white;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
     align-self: flex-end;
 }
 
 .message-received {
-    background-color: #400093;
-    color: white;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
     align-self: flex-start;
+}
+
+.message-content {
+    margin-bottom: 5px; /* ระยะห่างระหว่าง content และ time */
+    word-wrap: break-word; /* ตัดคำเมื่อถึงขอบ */
+    overflow-wrap: break-word; /* รองรับเบราว์เซอร์สมัยใหม่ */
+    white-space: normal; /* อนุญาตให้ขึ้นบรรทัดใหม่ */
+    max-width: 100%; /* จำกัดความกว้างให้อยู่ในกรอบ message */
+}
+
+.message-content button {
+    cursor: pointer;
+    color: rgb(68, 68, 68);
+    border: none;
+    background-color: #ffffff; /* สีพื้นหลังปุ่มเหมือน message */
+    border: 3px dashed rgba(0, 0, 0, 0.098);
+    border-radius: 3px;
+    padding: 5px 10px; /* เพิ่ม padding ให้ปุ่มดูดีขึ้น */
+    display: flex;
+    align-items: center;
+    max-width: 100%; /* จำกัดความกว้างปุ่มไม่ให้เกิน message */
+    overflow: hidden; /* ป้องกันล้น */
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.053);
+}
+.message-content button:hover {
+    background-color: #f2f2f2;
+}
+.message-content button i.bx-file-blank {
+    font-size: 50px; /* ขนาดไอคอนตามที่คุณกำหนด */
+    margin-right: 5px; /* ระยะห่างระหว่างไอคอนและข้อความ */
+}
+
+.message-content button span {
+    display: inline-block;
+    max-width: 200px; /* จำกัดความกว้างของชื่อไฟล์ */
+    white-space: nowrap; /* ชื่อไฟล์ไม่ขึ้นบรรทัดใหม่ */
+    overflow: hidden; /* ซ่อนส่วนที่ล้น */
+    text-overflow: ellipsis; /* แสดง ... เมื่อชื่อยาวเกิน */
+    font-weight: bolder;
 }
 
 .message-time {
     font-size: 12px;
-    color: #999;
-    margin-top: 5px;
+    color: rgba(0, 0, 0, 0.7); /* สีจางลงเพื่อให้ดูกลมกลืน */
 }
-
-/* Chat input box */
 .chat-input {
     display: flex;
     padding: 15px;
     background-color: #fff;
     border-top: 1px solid #eee;
+    align-items: center;
 }
 
 .input-message {
@@ -137,17 +173,84 @@ footer p {
 }
 
 .send-button {
-    padding: 10px 15px;
+    padding: 15px 15px;
+    width: 50px;
+    height: 50px;
     background-color: #410690;
     color: white;
     border: none;
-    border-radius: 1rem;
+    border-radius: 3rem;
     cursor: pointer;
     font-size: 16px;
 }
 
 .send-button:hover {
     background-color: #330371;
+}
+
+.custom-file-upload {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.custom-file-upload input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+.custom-file-upload label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: #410690;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 30px;
+}
+
+.custom-file-upload label:hover {
+    background-color: #330371;
+}
+
+.bx-plus {
+    color: white;
+}
+
+/* สไตล์สำหรับ wrap-file-upload */
+.wrap-file-upload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrap-file-upload.hidden {
+    display: none; /* ซ่อนเริ่มต้น */
+}
+
+.file-upload-detail {
+    width: 400px;
+    height: 40px;
+    background-color: rgb(233, 233, 233);
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+    padding: 0 10px; /* เพิ่มระยะห่างด้านใน */
+    border-radius: 5px; /* ทำให้ขอบมน */
+}
+
+.file-name-display {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* ตัดชื่อไฟล์ยาวเป็น ... */
 }
 
 .scroll-to-bottom{
