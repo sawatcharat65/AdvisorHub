@@ -53,8 +53,17 @@ $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_
 $result = $conn->query($sql);
 $receiver = $result->fetch_assoc();
 
-// ดึง approval timestamp และ messages สำหรับผลลัพธ์เริ่มต้น
+// Check approval status
 $id = $_SESSION['account_id'];
+$sql = "SELECT COUNT(*) as approved FROM advisor_request 
+        WHERE ((requester_id = '$id' AND advisor_id = '$receiver_id') 
+        OR (student_id = '$id' AND advisor_id = '$receiver_id'))
+        AND is_advisor_approved = 1 
+        AND is_admin_approved = 1";
+$result = $conn->query($sql);
+$is_fully_approved = $result->fetch_assoc()['approved'] > 0;
+
+// Fetch approval timestamp and messages
 $sql = "SELECT time_stamp FROM advisor_request 
         WHERE ((requester_id = '$id' AND advisor_id = '$receiver_id') 
         OR (student_id = '$id' AND advisor_id = '$receiver_id'))
@@ -120,6 +129,15 @@ if (isset($_POST['delete'])) {
     <link rel="icon" href="../Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .topic-section {
+            display: none;
+        }
+
+        .topic-section.active {
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
@@ -137,14 +155,18 @@ if (isset($_POST['delete'])) {
         </div>
 
         <div class="topic-status">
-            <button class="active">In progress</button>
-            <button>Completed</button>
+            <?php if ($is_fully_approved): ?>
+                <button class="active" data-section="after">Post-Approval</button>
+                <button data-section="before">Pre-Approval</button>
+            <?php else: ?>
+                <button class="active" data-section="before">Pre-Approval</button>
+            <?php endif; ?>
         </div>
 
         <div class='divider'></div>
 
         <div id="search-results">
-            <div class='after-approve'>
+            <div class='topic-section after-approve <?php echo $is_fully_approved ? 'active' : ''; ?>' data-section="after">
                 <h3>After Becoming an Advisor</h3>
                 <?php if (empty($after_messages)): ?>
                     <p>No messages found.</p>
@@ -178,7 +200,7 @@ if (isset($_POST['delete'])) {
                 <?php endif; ?>
             </div>
 
-            <div class='before-approve'>
+            <div class='topic-section before-approve <?php echo !$is_fully_approved ? 'active' : ''; ?>' data-section="before">
                 <h3>Before Becoming an Advisor</h3>
                 <?php if (empty($before_messages)): ?>
                     <p>No messages found.</p>
@@ -216,7 +238,17 @@ if (isset($_POST['delete'])) {
 
     <script>
         $(document).ready(function() {
-            // ฟังก์ชัน debounce เพื่อจำกัดการเรียก AJAX
+            // Toggle sections based on button click
+            $('.topic-status button').on('click', function() {
+                $('.topic-status button').removeClass('active');
+                $(this).addClass('active');
+
+                const section = $(this).data('section');
+                $('.topic-section').removeClass('active');
+                $(`.topic-section[data-section="${section}"]`).addClass('active');
+            });
+
+            // Debounce function for search
             function debounce(func, wait) {
                 let timeout;
                 return function(...args) {
@@ -225,9 +257,8 @@ if (isset($_POST['delete'])) {
                 };
             }
 
-            // ฟังก์ชันค้นหา
+            // Search function
             const performSearch = debounce(function(searchQuery) {
-                console.log("Searching for: ", searchQuery);
                 $.ajax({
                     url: "search_topic.php",
                     method: "POST",
@@ -235,22 +266,24 @@ if (isset($_POST['delete'])) {
                         search: searchQuery
                     },
                     success: function(response) {
-                        console.log("Response: ", response);
                         $("#search-results").html(response);
+                        // Re-apply active section after search
+                        const activeSection = $('.topic-status button.active').data('section');
+                        $('.topic-section').removeClass('active');
+                        $(`.topic-section[data-section="${activeSection}"]`).addClass('active');
                     },
                     error: function(xhr, status, error) {
                         console.error("AJAX Error: ", status, error);
                     }
                 });
-            }, 100); // รอ 100ms ก่อนเรียก AJAX
+            }, 100);
 
-            // เมื่อพิมพ์ในช่องค้นหา
             $("#search-input").on("input", function() {
                 let searchQuery = $(this).val();
                 performSearch(searchQuery);
             });
 
-            // การจัดการเมนู dropdown
+            // Dropdown menu handling
             $(document).on('click', '.menu-button', function() {
                 const $menuContainer = $(this).closest('.menu-container');
                 const $dropdownMenu = $menuContainer.find('.dropdown-menu');

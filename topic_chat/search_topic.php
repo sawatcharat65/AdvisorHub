@@ -2,13 +2,12 @@
 session_start();
 require('../server.php');
 
-// ตรวจสอบว่ามีการส่งคำค้นหามาหรือไม่
 if (isset($_POST['search'])) {
     $search = $conn->real_escape_string($_POST['search']);
     $id = $_SESSION['account_id'];
     $receiver_id = $_SESSION['receiver_id'];
 
-    // ดึง approval timestamp
+    // Fetch approval timestamp
     $sql = "SELECT time_stamp FROM advisor_request 
             WHERE ((requester_id = '$id' AND advisor_id = '$receiver_id') 
             OR (student_id = '$id' AND advisor_id = '$receiver_id'))
@@ -21,7 +20,7 @@ if (isset($_POST['search'])) {
     $before_messages = [];
     $after_messages = [];
 
-    // ค้นหาข้อความที่ตรงกับคำค้นหา
+    // Search messages
     $sql = "
         SELECT message_title, MAX(time_stamp) AS latest_time
         FROM messages
@@ -56,10 +55,8 @@ if (isset($_POST['search'])) {
             }
         }
     }
-
-    // แสดงผลลัพธ์
 ?>
-    <div class='after-approve'>
+    <div class='topic-section after-approve active' data-section="after">
         <h3>After Becoming an Advisor</h3>
         <?php if (empty($after_messages)): ?>
             <p>No messages found.</p>
@@ -93,7 +90,7 @@ if (isset($_POST['search'])) {
         <?php endif; ?>
     </div>
 
-    <div class='before-approve'>
+    <div class='topic-section before-approve' data-section="before">
         <h3>Before Becoming an Advisor</h3>
         <?php if (empty($before_messages)): ?>
             <p>No messages found.</p>
