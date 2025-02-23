@@ -3,32 +3,32 @@ session_start();
 require('../server.php');
 include('../components/navbar.php');
 
-// การจัดการ logout
+// Handle logout
 if (isset($_POST['logout'])) {
     session_destroy();
     header('location: /AdvisorHub/login');
     exit();
 }
 
-// ตรวจสอบการ login
+// Check if logged in
 if (empty($_SESSION['username'])) {
     header('location: /AdvisorHub/login');
     exit();
 }
 
-// การไปหน้า profile
+// Redirect to profile
 if (isset($_POST['profile'])) {
     header('location: /AdvisorHub/profile');
     exit();
 }
 
-// ตรวจสอบ receiver_id
+// Validate receiver_id
 if (empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['account_id']) {
     header('location: /AdvisorHub/advisor');
     exit();
 }
 
-// การจัดการ profileInbox
+// Handle profileInbox
 if (isset($_POST['profileInbox'])) {
     $user_id = $_POST['profileInbox'];
     $_SESSION['profileInbox'] = $user_id;
@@ -45,13 +45,15 @@ if (isset($_POST['profileInbox'])) {
     exit();
 }
 
-// การจัดการการค้นหา
+// Handle search
 $search_query = "";
+$search_condition = ""; // กำหนดค่าเริ่มต้นเป็นสตริงว่าง
 if (isset($_POST['search'])) {
     $search_query = $_POST['search'];
+    $search_condition = " AND message_title LIKE '%$search_query%' ";
 }
 
-// ดึงข้อมูล receiver
+// Fetch receiver info
 $receiver_id = $_SESSION['receiver_id'];
 $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '$receiver_id' 
         UNION 
@@ -59,9 +61,20 @@ $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_
 $result = $conn->query($sql);
 $receiver = $result->fetch_assoc();
 
-// ดึงข้อมูล messages
+// Fetch approval timestamp from advisor_request
 $id = $_SESSION['account_id'];
-$search_condition = !empty($search_query) ? " AND message_title LIKE '%$search_query%' " : "";
+$sql = "SELECT time_stamp FROM advisor_request 
+        WHERE ((requester_id = '$id' AND advisor_id = '$receiver_id') 
+        OR (student_id = '$id' AND advisor_id = '$receiver_id'))
+        AND is_advisor_approved = 1 
+        AND is_admin_approved = 1 
+        ORDER BY time_stamp ASC LIMIT 1";
+$result = $conn->query($sql);
+$approval_timestamp = $result->num_rows > 0 ? $result->fetch_assoc()['time_stamp'] : null;
+
+// ถ้ายังไม่มี approval_timestamp หรือคำขอยังไม่สมบูรณ์ ให้ถือว่าทั้งหมดเป็น "Before"
+$before_messages = [];
+$after_messages = [];
 
 $sql = "
     SELECT message_title, MAX(time_stamp) AS latest_time
@@ -70,17 +83,12 @@ $sql = "
     OR (sender_id = '$receiver_id' AND receiver_id = '$id')
     $search_condition
     GROUP BY message_title
-    ORDER BY 
-        CASE 
-            WHEN message_title LIKE '%$search_query%' THEN 1 
-            ELSE 2 
-        END,
-        latest_time DESC
+    ORDER BY latest_time DESC
 ";
 $messages_result = $conn->query($sql);
-$messages = [];
+
 while ($row = $messages_result->fetch_assoc()) {
-    $messages[] = [
+    $message = [
         'title' => $row['message_title'],
         'timestamp' => $row['latest_time'],
         'unread' => $conn->query("SELECT DISTINCT is_read FROM messages 
@@ -89,12 +97,18 @@ while ($row = $messages_result->fetch_assoc()) {
                                 AND is_read = 0 
                                 AND message_title = '{$row['message_title']}'")->num_rows > 0
     ];
+
+    // ถ้าไม่มี approval_timestamp หรือ timestamp ของข้อความ <= approval_timestamp ให้อยู่ใน Before
+    if ($approval_timestamp === null || $row['latest_time'] <= $approval_timestamp) {
+        $before_messages[] = $message;
+    } else {
+        $after_messages[] = $message;
+    }
 }
 
+// Handle delete
 if (isset($_POST['delete'])) {
     $title = $_POST['title'];
-    $id = $_SESSION['account_id'];
-    $receiver_id = $_SESSION['receiver_id'];
     $sql = "DELETE FROM messages WHERE message_title = '$title' AND ((sender_id = '$id' AND receiver_id = '$receiver_id') OR (sender_id = '$receiver_id' AND receiver_id = '$id'))";
     $conn->query($sql);
     header('location: /AdvisorHub/topic_chat/topic_chat.php');
@@ -102,7 +116,6 @@ if (isset($_POST['delete'])) {
 }
 ?>
 
-<!-- เริ่มส่วน HTML -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -139,48 +152,84 @@ if (isset($_POST['delete'])) {
 
         <div class='divider'></div>
 
-        <?php foreach ($messages as $message): ?>
-            <div class='message'>
-                <div>
-                    <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
-                    <div class='message-date'><?php echo $message['timestamp']; ?></div>
-                </div>
-                <div class="message-actions">
-                    <form action='../chat/index.php' method='post' class='form-chat'>
-                        <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
-                        <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
-                        <?php if ($message['unread']): ?>
-                            <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
-                        <?php endif; ?>
-                    </form>
-                    <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                        <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
-                        <div class="dropdown-menu">
-                            <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
-                                <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
-                                <button type="submit" name="delete">Delete</button>
+        <div class='after-approve'>
+            <h3>After Becoming an Advisor</h3>
+            <?php if (empty($after_messages)): ?>
+                <p>No messages found.</p>
+            <?php else: ?>
+                <?php foreach ($after_messages as $message): ?>
+                    <div class='message'>
+                        <div>
+                            <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
+                            <div class='message-date'><?php echo $message['timestamp']; ?></div>
+                        </div>
+                        <div class="message-actions">
+                            <form action='../chat/index.php' method='post' class='form-chat'>
+                                <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
+                                <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
+                                <?php if ($message['unread']): ?>
+                                    <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
+                                <?php endif; ?>
                             </form>
+                            <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                                <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
+                                <div class="dropdown-menu">
+                                    <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
+                                        <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
+                                        <button type="submit" name="delete">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+        <div class='before-approve'>
+            <h3>Before Becoming an Advisor</h3>
+            <?php if (empty($before_messages)): ?>
+                <p>No messages found.</p>
+            <?php else: ?>
+                <?php foreach ($before_messages as $message): ?>
+                    <div class='message'>
+                        <div>
+                            <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
+                            <div class='message-date'><?php echo $message['timestamp']; ?></div>
+                        </div>
+                        <div class="message-actions">
+                            <form action='../chat/index.php' method='post' class='form-chat'>
+                                <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
+                                <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
+                                <?php if ($message['unread']): ?>
+                                    <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
+                                <?php endif; ?>
+                            </form>
+                            <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                                <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
+                                <div class="dropdown-menu">
+                                    <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
+                                        <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
+                                        <button type="submit" name="delete">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
     </div>
 </body>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const menuButtons = document.querySelectorAll('.menu-button');
-
         menuButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const menuContainer = this.closest('.menu-container');
                 const dropdownMenu = menuContainer.querySelector('.dropdown-menu');
-
-                // Toggle the active class
                 dropdownMenu.classList.toggle('active');
-
-                // Close other open menus
                 document.querySelectorAll('.dropdown-menu.active').forEach(menu => {
                     if (menu !== dropdownMenu) {
                         menu.classList.remove('active');
@@ -189,7 +238,6 @@ if (isset($_POST['delete'])) {
             });
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             if (!event.target.closest('.menu-container')) {
                 document.querySelectorAll('.dropdown-menu.active').forEach(menu => {

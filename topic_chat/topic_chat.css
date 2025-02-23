@@ -259,6 +259,18 @@ body {
     font-size: 10px; /* ขนาดเล็กเพื่อให้เหมาะสมกับปุ่ม */
 }
 
+.after-approve {
+    margin-bottom: 28px;
+}
+
+.after-approve h3 {
+    margin-bottom: 12px;
+}
+
+.before-approve h3 {
+    margin-bottom: 12px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .topic-container {
