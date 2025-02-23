@@ -342,7 +342,53 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
         </div>
-
+        <h2 class="text-center mb-4">รายการไฟล์</h2>
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#fileModal">
+                หัวข้อที่ 1
+                <button class="btn btn-primary btn-sm">ดูไฟล์</button>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#fileModal">
+                หัวข้อที่ 2
+                <button class="btn btn-primary btn-sm">ดูไฟล์</button>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#fileModal">
+                หัวข้อที่ 3
+                <button class="btn btn-primary btn-sm">ดูไฟล์</button>
+            </a>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="fileModalLabel">ไฟล์ที่เกี่ยวข้อง</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                ไฟล์ 1
+                                <a href="#" class="btn btn-success btn-sm">ดาวน์โหลด</a>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                ไฟล์ 2
+                                <a href="#" class="btn btn-success btn-sm">ดาวน์โหลด</a>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                ไฟล์ 3
+                                <a href="#" class="btn btn-success btn-sm">ดาวน์โหลด</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+                                    
         <!-- Back Button -->
         <div class="mt-4">
             <form method="POST" action="../thesis_resource_list/thesis_resource_list.php">
