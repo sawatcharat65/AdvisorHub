@@ -15,10 +15,10 @@ if (isset($_GET['thesis_id'])) {
         $stmt->fetch();
 
         // กำหนดชื่อไฟล์ใหม่โดยใช้ title
-        $filename = $thesis_title . $thesis_file_type;
+        $filename = $thesis_title .".". $thesis_file_type;
 
         // ส่งข้อมูลไฟล์เป็น BLOB กลับไปยัง JavaScript
-        header("Content-Type: application/" . $thesis_file_type);
+        header("Content-Type: application/".$thesis_file_type);
         header("Content-Disposition: attachment; filename=\"" . $filename . "\"");  // กำหนดชื่อไฟล์
         echo $thesis_file;
         exit;
