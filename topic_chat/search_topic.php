@@ -32,6 +32,10 @@ if (isset($_POST['search'])) {
         ORDER BY latest_time DESC
     ";
     $messages_result = $conn->query($sql);
+    if (!$messages_result) {
+        echo "<p>Error querying database: " . $conn->error . "</p>";
+        exit;
+    }
 
     if ($messages_result) {
         while ($row = $messages_result->fetch_assoc()) {
