@@ -3,11 +3,6 @@ session_start();
 include('../components/navbar.php');
 require('../server.php');
 
-// ตรวจสอบ session และจัดการการทำงานของปุ่มต่าง ๆ
-if (empty($_SESSION['username'])) {
-    header('location: /AdvisorHub/login');
-    exit();
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['logout'])) {

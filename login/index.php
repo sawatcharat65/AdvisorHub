@@ -69,7 +69,7 @@
 </head>
 <body>
 
-    <?php renderNavbar(['home', 'login'])?>
+    <?php renderNavbar(['home', 'login', 'advisor', 'statistics'])?>
     
     <div class="wrap">
         <form action="" method="post">
