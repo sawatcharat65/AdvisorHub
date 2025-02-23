@@ -15,9 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['request_id'])) {
     }
 
     // อัปเดตสถานะในฐานข้อมูล
-    $sql = "UPDATE advisor_request SET is_advisor_approved = ? WHERE advisor_request_id = ?";
+    $sql = "UPDATE advisor_request SET is_advisor_approved = ?, time_stamp = NOW() WHERE advisor_request_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ii", $is_advisor_approved, $request_id);
+    $stmt->execute();
 
     if ($stmt->execute()) {
         $_SESSION['message'] = "อัปเดตสถานะสำเร็จ!";
