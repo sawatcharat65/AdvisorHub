@@ -31,7 +31,13 @@ if (isset($_POST['profile'])) {
 
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
+    <?php 
+        if(isset($_SESSION['username'])){
+            renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'statistics', 'Teams']);
+        }else{
+            renderNavbar(allowedPages: ['home', 'login', 'advisor', 'statistics']);
+        }
+    ?>
     <div class="container">
         <h1>Research Topic Statistics</h1>
 

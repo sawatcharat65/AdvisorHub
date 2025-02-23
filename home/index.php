@@ -29,7 +29,7 @@
         if(isset($_SESSION['username'])){
             renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'statistics', 'Teams']);
         }else{
-            renderNavbar(allowedPages: ['home', 'login']);
+            renderNavbar(allowedPages: ['home', 'login', 'advisor', 'statistics']);
         }
     ?>
 

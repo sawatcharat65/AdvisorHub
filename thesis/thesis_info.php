@@ -4,15 +4,15 @@ require('../server.php');
 include('../components/navbar.php');
 if (isset($_POST['logout'])) {
     session_destroy();
-    header('location: /ThesisAdvisorHub/login');
+    header('location: /AdvisorHub/login');
 }
 
 if (empty($_SESSION['username'])) {
-    header('location: /ThesisAdvisorHub/login');
+    header('location: /AdvisorHub/login');
 }
 
 if (isset($_POST['profile'])) {
-    header('location: /ThesisAdvisorHub/profile');
+    header('location: /AdvisorHub/profile');
 }
 
 if (isset($_SESSION['advisor_id'])) {
