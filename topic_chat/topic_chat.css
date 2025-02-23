@@ -1,173 +1,47 @@
-body{
+/* รีเซ็ตพื้นฐาน */
+* {
     margin: 0;
     padding: 0;
-    background-color: whitesmoke;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    box-sizing: border-box;
 }
 
-nav {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    background-color: #410690;
-    padding: 10px 20px;
-}
-nav img {
-    margin: 1rem;
-}
-nav ul {
-    margin-left: 50px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    list-style: none;
-}
-nav li {
-    margin: 1rem;
-    list-style: none;
-    transition: .1s all ease;
-}
-li a {
-    text-decoration: none;
-    color: rgb(255, 255, 255);
-    font-weight: bold;
-    font-size: 22px;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
-    transition: .1s all ease;
+body {
+    background-color: #f5f7fa;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #333;
 }
 
-nav li:hover {
-    transform: scale(1.04);
-}
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-    nav {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    nav ul {
-        flex-direction: column;
-        width: 100%;
-        padding: 0;
-    }
-    nav li {
-        width: 100%;
-        text-align: center;
-    }
-    li a {
-        font-size: 22px;
-    }
-}
-
-.userProfile {
-    color: rgb(255, 255, 255);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-weight: bold;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
-    margin-left: auto; 
-    margin-right: 5rem; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-.bxs-user-circle{
-    font-size: 60px;
-    margin: 15px;
-    color: rgb(255, 255, 255);
-    cursor: pointer;
-}
-
-.dropdown{
-    width: 100px;
-    height: 80px;
-    background-color: rgb(255, 255, 255);
-    position: absolute;
-    top: 60%;
-    right: 30%;
-    border: 1px solid rgba(0, 0, 0, 0.107);
-    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.4);
-    border-radius: 1rem;
-    text-align: center;
-    display: none;
-
-}
-
-.dropdown button{
-    border: none;
-    background-color: white;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 15px;
-    transition: .1s all ease;
-}
-
-.dropdown button:hover{
-    transform: scale(1.02);
-    color: red;
-}
-
-.userProfile:hover .dropdown{
-    display: block;
-}
-
-.wrap{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-}
-
-footer {
-    text-align: center;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    background-color: #fff;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    margin-top: 20px;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
-}
-
-footer p {
-    color: #777;
-    font-size: 0.9rem;
-}
-
+/* กล่องหลักของ topic */
 .topic-container {
-    width: 600px;
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-top: 40px;
-    justify-self: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 90%;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 40px auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
 }
 
+/* หัวข้อและปุ่มเพิ่ม */
 .topic-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 24px;
 }
 
 .topic-head h2 {
-    font-size: 28px;
+    font-size: 30px;
+    color: #000000;
+    font-weight: 600;
+    margin: 0;
 }
 
 .topic-head a {
     color: #a463ff;
     font-size: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: color 0.2s ease;
     text-decoration: none;
 }
 
@@ -175,13 +49,20 @@ footer p {
     color: #7b68ee;
 }
 
+/* ช่องค้นหา */
 .topic-search {
     display: flex;
     align-items: center;
-    background: #f9f9f9;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    background: #f1f3f5;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.topic-search i {
+    color: #7f8c8d;
+    font-size: 18px;
 }
 
 .topic-search input {
@@ -189,148 +70,220 @@ footer p {
     background: transparent;
     outline: none;
     flex: 1;
-    margin-left: 8px;
+    margin-left: 12px;
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.topic-search button {
+    border: none;
+    background: #a463ff;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.topic-search button:hover {
+    background: #7b68ee;
+}
+
+.topic-search button i {
+    color: white;
+    font-size: 18px;
+}
+
+/* สถานะ */
+.topic-status {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
 .topic-status button {
-    padding: 10px 12px;
-    border-radius: 16px;
+    padding: 8px 16px;
+    border-radius: 20px;
     border: none;
-    cursor: pointer;
+    background: #f1f3f5;
+    color: #7f8c8d;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .topic-status button:hover {
-    background-color: #c3c3c3;
+    background: #e0e4e8;
 }
 
 .topic-status button.active {
-    background: #000000;
+    background: #2c3e50;
     color: white;
 }
 
+/* เส้นแบ่ง */
 .divider {
     height: 1px;
-    background: #ccc;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    background: #e0e4e8;
+    margin: 20px 0;
 }
 
+/* ข้อความแต่ละอัน */
 .message {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    transition: background-color 0.3s ease;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.message-date {
-    font-size: 14px;
-    color: #777;
+.message:hover {
+    background: #f4f4f4;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .sender {
-    font-weight: bold;
-    font-size: 20px;
-    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
 }
 
-.subject {
-font-size: 14px;
-color: #555;
-margin-bottom: 8px;
+.message-date {
+    font-size: 12px;
+    color: #000000;
+    font-weight: 400;
 }
 
-.snippet {
-font-size: 13px;
-color: #777;
+/* การจัดการปุ่มใน message-actions */
+.message-actions {
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางในแนวดิ่ง */
+    gap: 12px; /* ระยะห่างระหว่างปุ่ม */
 }
 
+.form-chat {
+    position: relative;
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางในแนวดิ่งภายในฟอร์ม */
+}
+
+.menu-button {
+    border: none;
+    background: #f9f9f9;
+    border-radius: 50%;
+    width: 36px; /* ขนาดเล็กลงเพื่อให้สมดุลกับภาพ */
+    height: 36px; /* ขนาดเท่ากันทั้งสองปุ่ม */
+    cursor: pointer;
+    display: flex;
+    justify-content: center; /* จัดไอคอนกึ่งกลางแนวนอน */
+    align-items: center; /* จัดไอคอนกึ่งกลางแนวตั้ง */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* เพิ่มเงาเล็กน้อย */
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.menu-button:hover {
+    background: #e3e3e3;
+    transform: scale(1.05);;
+}
+
+.bxs-message-dots {
+    color: #000000;
+    font-size: 22px;
+}
+
+.bx-dots-vertical-rounded {
+    color: #000000;
+    font-size: 18px;
+}
+
+/* Three-dot menu styles */
+.menu-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 40px; /* ปรับตำแหน่งให้เหมาะสมกับปุ่ม */
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    min-width: 120px;
+}
+
+.dropdown-menu.active {
+    display: block;
+}
+
+.dropdown-menu button {
+    border: none;
+    background: none;
+    padding: 8px 16px;
+    color: #e74c3c;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s ease;
+}
+
+.dropdown-menu button:hover {
+    background: #f4f4f4;
+}
+
+/* ตัวบ่งชี้ข้อความที่ยังไม่ได้อ่าน */
+.unread-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bxs-circle {
+    color: #e74c3c;
+    font-size: 10px; /* ขนาดเล็กเพื่อให้เหมาะสมกับปุ่ม */
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .inbox-head {
-        padding: 15px;
+    .topic-container {
+        width: 100%;
+        margin: 20px auto;
+        padding: 16px;
     }
 
-    .inbox {
-        padding: 15px;
+    .topic-head h2 {
+        font-size: 20px;
+    }
+
+    .topic-search {
+        padding: 10px 12px;
     }
 
     .message {
         padding: 12px;
     }
-}
 
+    .sender {
+        font-size: 14px;
+    }
 
-.chat-button{
-    border: none;
-    color: white;
-    font-size: 20px;
-    background-color: #f9f9f9;
-    border-radius: 50px;
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    align-items: center;
-}
-
-.chat-button:hover{
-    background-color: #f0f0f0;
-}
-
-.bxs-message-dots{
-    color: #545454;
-    font-size: 25px;
-}
-
-.bxs-user-pin{
-    color: #545454;
-    font-size: 25px;
-}
-
-.profileInbox{
-    border: none;
-    color: white;
-    font-size: 20px;
-    background-color: #f9f9f9;
-    border-radius: 50px;
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    align-items: center;
-}
-
-.profileInbox:hover{
-    background-color: #f0f0f0;
-}
-
-.form-chat{
-    position: relative;
-}
-
-.bxs-circle{
-    color: red;
-    font-size: 10px;
-    position: absolute;
-    top: 19%;
-    left: 60%;
-}
-
-.topic-search button{
-    border-radius: 3rem;
-    border: none;
-    width: 30px;
-    height: 30px;
-    transition: all .2s ease;
-    background-color: #a764ff;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.041);
-}
-
-.topic-search button:hover{
-    background-color: #913cff;
-    transform: scale(1.05);
-
+    .message-date {
+        font-size: 11px;
+    }
 }

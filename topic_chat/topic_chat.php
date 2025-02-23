@@ -90,6 +90,16 @@ while ($row = $messages_result->fetch_assoc()) {
                                 AND message_title = '{$row['message_title']}'")->num_rows > 0
     ];
 }
+
+if (isset($_POST['delete'])) {
+    $title = $_POST['title'];
+    $id = $_SESSION['account_id'];
+    $receiver_id = $_SESSION['receiver_id'];
+    $sql = "DELETE FROM messages WHERE message_title = '$title' AND ((sender_id = '$id' AND receiver_id = '$receiver_id') OR (sender_id = '$receiver_id' AND receiver_id = '$id'))";
+    $conn->query($sql);
+    header('location: /AdvisorHub/topic_chat/topic_chat.php');
+    exit();
+}
 ?>
 
 <!-- เริ่มส่วน HTML -->
@@ -135,16 +145,59 @@ while ($row = $messages_result->fetch_assoc()) {
                     <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
                     <div class='message-date'><?php echo $message['timestamp']; ?></div>
                 </div>
-                <form action='../chat/index.php' method='post' class='form-chat'>
-                    <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
-                    <button name='chat' class='chat-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
-                    <?php if ($message['unread']): ?>
-                        <i class='bx bxs-circle'></i>
-                    <?php endif; ?>
-                </form>
+                <div class="message-actions">
+                    <form action='../chat/index.php' method='post' class='form-chat'>
+                        <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
+                        <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
+                        <?php if ($message['unread']): ?>
+                            <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
+                        <?php endif; ?>
+                    </form>
+                    <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                        <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
+                        <div class="dropdown-menu">
+                            <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
+                                <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
+                                <button type="submit" name="delete">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         <?php endforeach; ?>
     </div>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuButtons = document.querySelectorAll('.menu-button');
+
+        menuButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const menuContainer = this.closest('.menu-container');
+                const dropdownMenu = menuContainer.querySelector('.dropdown-menu');
+
+                // Toggle the active class
+                dropdownMenu.classList.toggle('active');
+
+                // Close other open menus
+                document.querySelectorAll('.dropdown-menu.active').forEach(menu => {
+                    if (menu !== dropdownMenu) {
+                        menu.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.menu-container')) {
+                document.querySelectorAll('.dropdown-menu.active').forEach(menu => {
+                    menu.classList.remove('active');
+                });
+            }
+        });
+    });
+</script>
 
 </html>
