@@ -161,7 +161,7 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
         <div class='divider'></div>
 
         <div id="search-results">
-            <!-- After Approval -->
+            <!-- ข้อความหลังอนุมัติ -->
             <div class='topic-section after-approve <?php echo $is_fully_approved ? 'active' : ''; ?>' data-section="after">
                 <h3>After Becoming an Advisor</h3>
                 <div class="message-container" data-type="after">
@@ -198,7 +198,7 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
                 </div>
             </div>
 
-            <!-- Before Approval -->
+            <!-- ข้อความก่อนอนุมัติ -->
             <div class='topic-section before-approve <?php echo !$is_fully_approved ? 'active' : ''; ?>' data-section="before">
                 <h3>Before Becoming an Advisor</h3>
                 <div class="message-container" data-type="before">
