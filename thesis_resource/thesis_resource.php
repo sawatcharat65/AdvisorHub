@@ -127,22 +127,26 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thesis Resources</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" href="../Logo.png">
     <style>
         body {
             background-color: #f4f6f9;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
+
         .thesis-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem 1rem;
         }
+
         .thesis-card {
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
@@ -150,53 +154,63 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
             background-color: white;
             border: none;
         }
+
         .thesis-title {
             color: #2c3e50;
             font-weight: 700;
             margin-bottom: 0.75rem;
             font-size: 1.5rem;
         }
+
         .thesis-subtitle {
             color: #7f8c8d;
             font-weight: 500;
             margin-bottom: 1.5rem;
             font-size: 1.125rem;
         }
+
         .section-title {
             color: #34495e;
             font-weight: 600;
             margin-bottom: 0.5rem;
             font-size: 1rem;
         }
+
         .section-content {
             color: #2c3e50;
             font-size: 0.95rem;
             line-height: 1.6;
         }
+
         .file-item {
             background-color: #f8f9fa;
             border-radius: 8px;
             margin-bottom: 1rem;
             transition: all 0.3s ease;
         }
+
         .file-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
+
         .upload-card {
             background-color: #f8f9fa;
             border-radius: 12px;
             border: 2px dashed #3498db;
         }
+
         .upload-btn {
             background-color: #3498db;
             color: white;
             border: none;
             transition: all 0.3s ease;
         }
+
         .upload-btn:hover {
             background-color: #2980b9;
         }
+
         .action-btn {
             width: 40px;
             height: 40px;
@@ -208,42 +222,52 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
             transition: all 0.3s ease;
             padding: 0;
         }
+
         .download-btn {
             background-color: #2ecc71;
             color: white;
         }
+
         .download-btn:hover {
             background-color: #27ae60;
         }
+
         .delete-btn {
             background-color: #e74c3c;
             color: white;
         }
+
         .delete-btn:hover {
             background-color: #c0392b;
         }
-        .btn-group > .action-btn {
+
+        .btn-group>.action-btn {
             margin-left: 8px;
         }
+
         .back-btn {
             background-color: #34495e;
             color: white;
             border: none;
             transition: all 0.3s ease;
         }
+
         .back-btn:hover {
             background-color: #2c3e50;
         }
+
         @media (max-width: 768px) {
             .thesis-title {
                 font-size: 1.25rem;
             }
+
             .thesis-subtitle {
                 font-size: 1rem;
             }
         }
     </style>
 </head>
+
 <body>
     <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']); ?>
 
@@ -253,15 +277,15 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
             <div class="card-body p-5">
                 <h2 class="thesis-title"><?php echo htmlspecialchars($thesis['thesis_topic_thai']); ?></h2>
                 <h4 class="thesis-subtitle"><?php echo htmlspecialchars($thesis['thesis_topic_eng']); ?></h4>
-                
+
                 <div class="row">
                     <div class="col-md-6">
                         <div class="section-title mb-3">Students</div>
                         <?php foreach ($students as $student): ?>
                             <div class="section-content mb-2">
-                                <?php echo htmlspecialchars($student['student_id'] . ' ' . 
-                                                          $student['student_first_name'] . ' ' . 
-                                                          $student['student_last_name']); ?>
+                                <?php echo htmlspecialchars($student['student_id'] . ' ' .
+                                    $student['student_first_name'] . ' ' .
+                                    $student['student_last_name']); ?>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -280,24 +304,24 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
         </div>
 
         <?php if ($can_upload): ?>
-        <!-- File Upload Area -->
-        <div class="card upload-card mb-4">
-            <div class="card-body p-5">
-                <h5 class="section-title mb-4">Upload Files</h5>
-                <form id="uploadForm">
-                    <div class="mb-3">
-                        <input type="file" id="fileInput" class="form-control" multiple>
-                        <input type="hidden" id="thesisId" value="<?php echo $thesis_id; ?>">
+            <!-- File Upload Area -->
+            <div class="card upload-card mb-4">
+                <div class="card-body p-5">
+                    <h5 class="section-title mb-4">Upload Files</h5>
+                    <form id="uploadForm">
+                        <div class="mb-3">
+                            <input type="file" id="fileInput" class="form-control" multiple>
+                            <input type="hidden" id="thesisId" value="<?php echo $thesis_id; ?>">
+                        </div>
+                        <button type="submit" class="btn upload-btn">
+                            <i class="bi bi-upload me-2"></i>Upload
+                        </button>
+                    </form>
+                    <div class="progress mt-3" style="display: none;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
                     </div>
-                    <button type="submit" class="btn upload-btn">
-                        <i class="bi bi-upload me-2"></i>Upload
-                    </button>
-                </form>
-                <div class="progress mt-3" style="display: none;">
-                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
                 </div>
             </div>
-        </div>
         <?php endif; ?>
 
         <!-- File List -->
@@ -357,7 +381,7 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                 <button class="btn btn-primary btn-sm">ดูไฟล์</button>
             </a>
         </div>
-        
+
         <!-- Modal -->
         <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -388,7 +412,7 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                 </div>
             </div>
         </div>
-                                    
+
         <!-- Back Button -->
         <div class="mt-4">
             <form method="POST" action="../thesis_resource_list/thesis_resource_list.php">
@@ -447,46 +471,47 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
             formData.append('thesis_id', thesisId);
 
             fetch('upload.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(text => {
-                console.log('Raw response:', text);
-                return JSON.parse(text);
-            })
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Upload failed: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Upload failed');
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(text => {
+                    console.log('Raw response:', text);
+                    return JSON.parse(text);
+                })
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Upload failed: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Upload failed');
+                });
         }
 
         function deleteFile(fileId) {
             if (confirm('Are you sure you want to delete this file?')) {
                 fetch('delete.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'file_id=' + fileId
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('Delete failed: ' + data.error);
-                    }
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'file_id=' + fileId
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Delete failed: ' + data.error);
+                        }
+                    });
             }
         }
     </script>
 </body>
+
 </html>

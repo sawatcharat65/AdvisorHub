@@ -3,6 +3,28 @@ session_start();
 require('../server.php');
 include('../components/navbar.php');
 
+// ฟังก์ชันสำหรับดึง thesis_id
+function getThesisId($conn, $receiver_id, $current_user_id)
+{
+    // ถ้า receiver_id เป็น advisor และ current_user_id เป็น student
+    $sql = "SELECT advisor_request_id FROM advisor_request 
+            WHERE advisor_id = ? 
+            AND JSON_CONTAINS(student_id, ?)
+            AND is_advisor_approved = 1 
+            AND is_admin_approved = 1 
+            LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $student_id_json = json_encode($current_user_id); // แปลงเป็น JSON string
+    $stmt->bind_param("ss", $receiver_id, $student_id_json);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        return $row['advisor_request_id'];
+    }
+    return ''; // ถ้าไม่พบ thesis_id
+}
+
 // จัดการการออกจากระบบ
 if (isset($_POST['logout'])) {
     session_destroy();
@@ -141,7 +163,15 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
     <div class='topic-container'>
         <div class='topic-head'>
             <h2><?php echo $receiver['advisor_first_name'] . ' ' . $receiver['advisor_last_name']; ?></h2>
-            <a href="topic_create.php" class="fa-solid fa-circle-plus"></a>
+            <div class="topic-head-actions">
+                <?php if ($is_fully_approved): ?>
+                    <form action="../thesis_resource/thesis_resource.php" method="POST" style="display: inline;">
+                        <input type="hidden" name="thesis_id" value="<?php echo htmlspecialchars(getThesisId($conn, $receiver_id, $_SESSION['account_id'])); ?>">
+                        <button type="submit" class="thesis-btn fa-solid fa-user-group"></button>
+                    </form>
+                <?php endif; ?>
+                <a href="topic_create.php" class="fa-solid fa-circle-plus"></a>
+            </div>
         </div>
 
         <div class="topic-search">

@@ -302,6 +302,26 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* เงาลดลง */
 }
 
+.topic-head-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.thesis-btn {
+    background: none;
+    border: none;
+    color: #a463ff;
+    font-size: 30px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 0;
+}
+
+.thesis-btn:hover {
+    color: #7b68ee;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .topic-container {
