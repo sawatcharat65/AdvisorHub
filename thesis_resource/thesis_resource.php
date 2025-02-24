@@ -336,11 +336,12 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="section-title mb-0">Uploaded Files</h5>
-                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filterCollapse">
                             <i class="bi bi-funnel me-1"></i> Filter
                         </button>
                     </div>
-                    
+
                     <div class="collapse mb-3" id="filterCollapse">
                         <div class="card card-body">
                             <div class="row">
@@ -349,53 +350,59 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                     <h6 class="mb-2">File Type</h6>
                                     <div class="d-flex flex-wrap">
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="pdf" id="pdfFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="pdf"
+                                                id="pdfFilter">
                                             <label class="form-check-label" for="pdfFilter">PDF</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="doc" id="docFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="doc"
+                                                id="docFilter">
                                             <label class="form-check-label" for="docFilter">DOC/DOCX</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="ppt" id="pptFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="ppt"
+                                                id="pptFilter">
                                             <label class="form-check-label" for="pptFilter">PPT/PPTX</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="xls" id="xlsFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="xls"
+                                                id="xlsFilter">
                                             <label class="form-check-label" for="xlsFilter">XLS/XLSX</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="jpg" id="jpgFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="jpg"
+                                                id="jpgFilter">
                                             <label class="form-check-label" for="jpgFilter">JPEG/PNG</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="zip" id="zipFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="zip"
+                                                id="zipFilter">
                                             <label class="form-check-label" for="zipFilter">ZIP/RAR</label>
                                         </div>
                                     </div>
                                 </div>
                                 
-                              <!-- Uploader Filters -->
+                                <!-- Uploader Filters -->
                                 <div class="col-md-4">
                                     <h6 class="mb-2">Uploader</h6>
                                     <div class="d-flex flex-wrap">
                                         <?php foreach ($students as $student): ?>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $student['student_first_name']; ?>" id="uploader<?php echo $student['student_id']; ?>">
+                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $student['student_id']; ?>" id="uploader<?php echo $student['student_id']; ?>">
                                             <label class="form-check-label" for="uploader<?php echo $student['student_id']; ?>">
                                                 <?php echo $student['student_first_name']; ?>
                                             </label>
                                         </div>
                                         <?php endforeach; ?>
-                                        
+
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $thesis['advisor_first_name']; ?>" id="uploader<?php echo $thesis['advisor_id']; ?>">
+                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $thesis['advisor_id']; ?>" id="uploader<?php echo $thesis['advisor_id']; ?>">
                                             <label class="form-check-label" for="uploader<?php echo $thesis['advisor_id']; ?>">
                                                 <?php echo $thesis['advisor_first_name']; ?>
                                             </label>
                                         </div>
                                     </div>
-                                </div> 
+                                </div>
                                 
                                 <!-- Date Range Filter -->
                                 <div class="col-md-4">
@@ -410,9 +417,10 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="text-end mt-3">
-                                <button id="resetFilters" class="btn btn-sm btn-outline-secondary">Reset Filters</button>
+                                <button id="resetFilters" class="btn btn-sm btn-outline-secondary">Reset
+                                    Filters</button>
                             </div>
                         </div>
                     </div>
@@ -428,9 +436,11 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                             <div class="file-item p-4 d-flex align-items-center">
                                 <i class="bi bi-file-earmark me-4 fs-3"></i>
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold"><?php echo htmlspecialchars($file['thesis_resource_file_name']); ?></div>
+                                    <div class="fw-bold"><?php echo htmlspecialchars($file['thesis_resource_file_name']); ?>
+                                    </div>
                                     <small class="text-muted d-block">
-                                        Uploaded by: <?php echo htmlspecialchars($file['uploader_name'] ?: $file['uploader_id']); ?>
+                                        Uploaded by:
+                                        <?php echo htmlspecialchars($file['uploader_name'] ?: $file['uploader_id']); ?>
                                     </small>
                                     <small class="text-muted">
                                         Upload time: <?php echo date('M d, Y H:i', strtotime($file['time_stamp'])); ?>
@@ -444,7 +454,172 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                         </button>
                                     </form>
                                     <?php if ($is_owner): ?>
-                                        <button class="action-btn delete-btn" onclick="deleteFile(<?php echo $file['thesis_resource_id']; ?>)">
+                                        <button class="action-btn delete-btn"
+                                            onclick="deleteFile(<?php echo $file['thesis_resource_id']; ?>)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <!-- File List -->
+        <div class="thesis-card">
+            <div class="card-body p-5">
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0">Uploaded Files From Chat</h5>
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filterCollapse">
+                            <i class="bi bi-funnel me-1"></i> Filter
+                        </button>
+                    </div>
+
+                    <div class="collapse mb-3" id="filterCollapse">
+                        <div class="card card-body">
+                            <div class="row">
+                                <!-- File Type Filters -->
+                                <div class="col-md-4">
+                                    <h6 class="mb-2">File Type</h6>
+                                    <div class="d-flex flex-wrap">
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="pdf"
+                                                id="pdfFilter">
+                                            <label class="form-check-label" for="pdfFilter">PDF</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="doc"
+                                                id="docFilter">
+                                            <label class="form-check-label" for="docFilter">DOC/DOCX</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="ppt"
+                                                id="pptFilter">
+                                            <label class="form-check-label" for="pptFilter">PPT/PPTX</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="xls"
+                                                id="xlsFilter">
+                                            <label class="form-check-label" for="xlsFilter">XLS/XLSX</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="jpg"
+                                                id="jpgFilter">
+                                            <label class="form-check-label" for="jpgFilter">JPEG/PNG</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="zip"
+                                                id="zipFilter">
+                                            <label class="form-check-label" for="zipFilter">ZIP/RAR</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Uploader Filters -->
+                                <div class="col-md-4">
+                                    <h6 class="mb-2">Uploader</h6>
+                                    <div class="d-flex flex-wrap">
+                                        <?php foreach ($students as $student): ?>
+                                            <div class="form-check me-3 mb-2">
+                                                <input class="form-check-input uploader-filter" type="checkbox"
+                                                    value="<?php echo $student['student_id']; ?>"
+                                                    id="uploader<?php echo $student['student_id']; ?>">
+                                                <label class="form-check-label"
+                                                    for="uploader<?php echo $student['student_id']; ?>">
+                                                    <?php echo $student['student_first_name']; ?>
+                                                </label>
+                                            </div>
+                                        <?php endforeach; ?>
+
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input uploader-filter" type="checkbox"
+                                                value="<?php echo $thesis['advisor_id']; ?>"
+                                                id="uploader<?php echo $thesis['advisor_id']; ?>">
+                                            <label class="form-check-label"
+                                                for="uploader<?php echo $thesis['advisor_id']; ?>">
+                                                <?php echo $thesis['advisor_first_name']; ?>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Date Range Filter -->
+                                <div class="col-md-4">
+                                    <h6 class="mb-2">Date Range</h6>
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text">From</span>
+                                        <input type="date" class="form-control" id="dateFrom">
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-text">To</span>
+                                        <input type="date" class="form-control" id="dateTo">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-3">
+                                <button id="resetFilters" class="btn btn-sm btn-outline-secondary">Reset
+                                    Filters</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <?php
+
+                $message_files_sql = "SELECT messages.*, account.role,
+                    CASE 
+                        WHEN account.role = 'student' THEN (SELECT student_first_name FROM student WHERE student_id = messages.sender_id)
+                        WHEN account.role = 'advisor' THEN (SELECT advisor_first_name FROM advisor WHERE advisor_id = messages.sender_id)
+                        ELSE messages.sender_id
+                    END AS uploader_name
+                    FROM messages
+                    LEFT JOIN account ON messages.sender_id = account.account_id
+                    WHERE (messages.sender_id = ? OR messages.receiver_id = ?) AND messages.message_file_name IS NOT NULL 
+                    ORDER BY messages.time_stamp DESC";
+                $stmt = $conn->prepare($message_files_sql);
+                $stmt->bind_param("ii", $_SESSION['account_id'], $_SESSION['account_id']);
+                $stmt->execute();
+                $messages_files_result = $stmt->get_result();
+                $messages_files = $messages_files_result->fetch_all(MYSQLI_ASSOC);
+
+                ?>
+
+                <div>
+                    <?php if (empty($messages_files)): ?>
+                        <div class="text-center text-muted p-4">
+                            <i class="bi bi-file-earmark me-2"></i>
+                            No files uploaded yet
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($messages_files as $file): ?>
+                            <div class="file-item p-4 d-flex align-items-center">
+                                <i class="bi bi-file-earmark me-4 fs-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold"><?php echo htmlspecialchars($file['message_file_name']); ?>
+                                    </div>
+                                    <small class="text-muted d-block">
+                                        Uploaded by:
+                                        <?php echo htmlspecialchars($file['uploader_name'] ?: $file['uploader_id']); ?>
+                                    </small>
+                                    <small class="text-muted">
+                                        Upload time: <?php echo date('M d, Y H:i', strtotime($file['time_stamp'])); ?>
+                                    </small>
+                                </div>
+                                <div class="btn-group">
+                                    <form method="POST" action="download.php" style="display: inline;">
+                                        <input type="hidden" name="file_id" value="<?php echo $file['message_id']; ?>">
+                                        <button type="submit" class="action-btn download-btn">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </form>
+                                    <?php if ($is_owner): ?>
+                                        <button class="action-btn delete-btn"
+                                            onclick="deleteFile(<?php echo $file['message_id']; ?>)">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     <?php endif; ?>
@@ -467,6 +642,203 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        // Upload functionality
+        const uploadForm = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('fileInput');
+        const thesisId = document.getElementById('thesisId').value;
+        const progressBar = document.querySelector('.progress-bar');
+        const progress = document.querySelector('.progress');
+
+        uploadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const files = fileInput.files;
+            if (files.length > 0) {
+                Array.from(files).forEach(handleFile);
+            } else {
+                alert('Please select files to upload');
+            }
+        });
+
+        function handleFile(file) {
+            const allowedTypes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'image/jpeg',
+                'image/png',
+                'application/zip',
+                'application/x-rar-compressed',
+                'text/plain'
+            ];
+
+            if (allowedTypes.includes(file.type)) {
+                uploadFile(file);
+            } else {
+                alert(`File type not allowed: ${file.name}\nAllowed types: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, JPG, PNG, ZIP, RAR, TXT`);
+            }
+        }
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('thesis_id', thesisId);
+
+            fetch('upload.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(text => {
+                    console.log('Raw response:', text);
+                    return JSON.parse(text);
+                })
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Upload failed: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Upload failed');
+                });
+        }
+
+        function deleteFile(fileId) {
+            if (confirm('Are you sure you want to delete this file?')) {
+                fetch('delete.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'file_id=' + fileId
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Delete failed: ' + data.error);
+                        }
+                    });
+            }
+        }
+
+        // File filtering functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileTypeFilters = document.querySelectorAll('.file-type-filter');
+            const uploaderFilters = document.querySelectorAll('.uploader-filter');
+            const dateFrom = document.getElementById('dateFrom');
+            const dateTo = document.getElementById('dateTo');
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            
+            // เก็บ HTML ต้นฉบับไว้
+            const filesList = document.getElementById('filesList');
+            const originalHTML = filesList.innerHTML;
+            
+            // Apply filters when any filter changes
+            function applyFilters() {
+                console.log("Applying filters with class toggling...");
+                
+                // Get selected filters
+                const selectedFileTypes = Array.from(fileTypeFilters)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                console.log("Selected file types:", selectedFileTypes);
+                
+                const selectedUploaders = Array.from(uploaderFilters)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                console.log("Selected uploaders:", selectedUploaders);
+                
+                // Get date range
+                const fromDate = dateFrom.value ? new Date(dateFrom.value) : null;
+                const toDate = dateTo.value ? new Date(dateTo.value) : null;
+                
+                // รับรายการไฟล์ล่าสุด (กรณีมีการเปลี่ยนแปลง DOM)
+                const fileItems = document.querySelectorAll('.file-item');
+                
+                // ทำการกรองแต่ละไฟล์
+                fileItems.forEach(item => {
+                    // ดึงข้อมูลไฟล์
+                    const fileName = item.querySelector('.fw-bold').textContent;
+                    const uploaderText = item.querySelector('.text-muted').textContent;
+                    const uploaderId = uploaderText.split('Uploaded by: ')[1].trim().split('\n')[0].trim();
+                    
+                    // ดึงวันที่อัปโหลด
+                    const uploadTimeText = item.querySelectorAll('.text-muted')[1].textContent;
+                    const uploadDateStr = uploadTimeText.replace('Upload time:', '').trim();
+                    const uploadDate = new Date(uploadDateStr);
+                    
+                    // กำหนดประเภทไฟล์จากนามสกุล
+                    let fileType = 'other';
+                    const lowerFileName = fileName.toLowerCase();
+                    if (lowerFileName.endsWith('.pdf')) fileType = 'pdf';
+                    else if (lowerFileName.endsWith('.doc') || lowerFileName.endsWith('.docx')) fileType = 'doc';
+                    else if (lowerFileName.endsWith('.ppt') || lowerFileName.endsWith('.pptx')) fileType = 'ppt';
+                    else if (lowerFileName.endsWith('.xls') || lowerFileName.endsWith('.xlsx')) fileType = 'xls';
+                    else if (lowerFileName.endsWith('.jpg') || lowerFileName.endsWith('.jpeg') || lowerFileName.endsWith('.png')) fileType = 'jpg';
+                    else if (lowerFileName.endsWith('.zip') || lowerFileName.endsWith('.rar')) fileType = 'zip';
+                    
+                    console.log(`File: ${fileName}, Type: ${fileType}, Uploader: ${uploaderId}`);
+                    
+                    // ตรวจสอบว่าตรงกับตัวกรองหรือไม่
+                    const matchesFileType = selectedFileTypes.length === 0 || selectedFileTypes.includes(fileType);
+                    const matchesUploader = selectedUploaders.length === 0 || selectedUploaders.includes(uploaderId);
+                    
+                    // ตรวจสอบช่วงวันที่
+                    let matchesDateRange = true;
+                    if (fromDate) {
+                        matchesDateRange = matchesDateRange && uploadDate >= fromDate;
+                    }
+                    if (toDate) {
+                        const adjustedToDate = new Date(toDate);
+                        adjustedToDate.setDate(adjustedToDate.getDate() + 1);
+                        matchesDateRange = matchesDateRange && uploadDate < adjustedToDate;
+                    }
+                    
+                    // ซ่อน/แสดงไฟล์ด้วยคลาส
+                    if (matchesFileType && matchesUploader && matchesDateRange) {
+                        item.classList.remove('d-none');
+                    } else {
+                        item.classList.add('d-none');
+                        console.log(`Hiding file: ${fileName}`);
+                    }
+                });
+            }
+            
+            // Reset all filters
+            resetFiltersBtn.addEventListener('click', function() {
+                console.log("Resetting filters");
+                fileTypeFilters.forEach(checkbox => checkbox.checked = false);
+                uploaderFilters.forEach(checkbox => checkbox.checked = false);
+                dateFrom.value = '';
+                dateTo.value = '';
+                
+                // แสดงไฟล์ทั้งหมด
+                document.querySelectorAll('.file-item').forEach(item => {
+                    item.classList.remove('d-none');
+                });
+            });
+            
+            // เพิ่ม event listeners สำหรับตัวกรองทั้งหมด
+            fileTypeFilters.forEach(checkbox => {
+                checkbox.addEventListener('change', applyFilters);
+            });
+            
+            uploaderFilters.forEach(checkbox => {
+                checkbox.addEventListener('change', applyFilters);
+            });
+            
+            dateFrom.addEventListener('change', applyFilters);
+            dateTo.addEventListener('change', applyFilters);
+        });
+    </script>
 </body>
 </html>
