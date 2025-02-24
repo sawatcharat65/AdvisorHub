@@ -49,7 +49,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แบบฟอร์มส่งคำร้อง</title>
+  <title>Request Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="../Logo.png">
@@ -119,7 +119,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
           </div>
         </div>
       </div>
-      
+
       <!-- อาจารย์ที่ปรึกษา -->
       <div class="mb-3">
         <label for="advisorName" class="form-label">อาจารย์ที่ปรึกษาวิทยานิพนธ์:</label>

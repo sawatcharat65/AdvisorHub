@@ -46,7 +46,7 @@ $id = $_SESSION['account_id'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายการคำร้องทั้งหมด</title>
+    <title>Request</title>
     <link rel="stylesheet" href="style_request.css">
     <link rel="icon" href="../Logo.png">
 </head>
@@ -80,22 +80,22 @@ $id = $_SESSION['account_id'];
                     <div class="card">
                         <h5 class="card-title">หัวข้อวิทยานิพนธ์: <?php echo htmlspecialchars($row["thesis_topic_thai"]); ?></h5>
                         <ul class="list-group">
-                        <?php foreach ($student_ids as $student_id):
-                            $sql_student = "SELECT * FROM student WHERE student_id = '$student_id'";
-                            $result_student = $conn->query($sql_student);
-                            $row_name = $result_student->fetch_assoc();
-                        ?>
+                            <?php foreach ($student_ids as $student_id):
+                                $sql_student = "SELECT * FROM student WHERE student_id = '$student_id'";
+                                $result_student = $conn->query($sql_student);
+                                $row_name = $result_student->fetch_assoc();
+                            ?>
 
                                 <li class="list-group-item">
                                     <strong>รหัสนิสิต:</strong> <?php echo htmlspecialchars($student_id); ?>
-                                    <strong>ชื่อ:</strong> <?php echo htmlspecialchars($row_name['student_first_name'])." ". htmlspecialchars($row_name['student_last_name']); ?>
+                                    <strong>ชื่อ:</strong> <?php echo htmlspecialchars($row_name['student_first_name']) . " " . htmlspecialchars($row_name['student_last_name']); ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
                         <div class="wrap-foot d-flex align-items-center mt-3">
                             <form action="details.php" method="POST">
                                 <input type="hidden" name='advisor_request_id' value=<?php echo $row['advisor_request_id'] ?>>
-                                <button type="submit"  class="btn-orange">รายละเอียด</button>
+                                <button type="submit" class="btn-orange">รายละเอียด</button>
                             </form>
                             <span class="timestamp"> <?php echo $row["time_stamp"]; ?></span>
                         </div>

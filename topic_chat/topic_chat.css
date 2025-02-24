@@ -271,6 +271,14 @@ body {
     margin-bottom: 12px;
 }
 
+.topic-section {
+    display: none;
+}
+
+.topic-section.active {
+    display: block;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .topic-container {
