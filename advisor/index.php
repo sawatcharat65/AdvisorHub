@@ -8,10 +8,6 @@ if (isset($_POST['logout'])) {
     header('location: /AdvisorHub/login');
 }
 
-if (empty($_SESSION['username'])) {
-    header('location: /AdvisorHub/login');
-}
-
 if (isset($_POST['profile'])) {
     header('location: /AdvisorHub/profile');
 }
@@ -40,7 +36,13 @@ if (isset($_POST['search'])) {
 
 <body>
 
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
+    <?php 
+        if(isset($_SESSION['username'])){
+            renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'statistics', 'Teams']);
+        }else{
+            renderNavbar(allowedPages: ['home', 'login', 'advisor', 'statistics']);
+        }
+    ?>
 
     <form action="" method="post">
         <div class="search">

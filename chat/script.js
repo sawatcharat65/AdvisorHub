@@ -78,3 +78,32 @@ window.onload = () => {
     handleScroll();
     chatBox.scrollTop = chatBox.scrollHeight;
 };
+
+//ระบบแสดง file เมื่อใส่ file
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.getElementById('file-input');
+    const messageInput = document.querySelector('.input-message');
+    const fileNameDisplay = document.querySelector('.file-name-display');
+    const wrapFileUpload = document.querySelector('.wrap-file-upload');
+
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files.length > 0) {
+            const fileName = fileInput.files[0].name;
+            fileNameDisplay.innerHTML = `<i class='bx bxs-file-blank'></i> ${fileName}`; // ใช้ innerHTML เพื่อแสดงไอคอน
+            wrapFileUpload.classList.remove('hidden'); // แสดง wrap-file-upload
+        } else {
+            fileNameDisplay.textContent = ''; // ล้างข้อความ
+            wrapFileUpload.classList.add('hidden'); // ซ่อน wrap-file-upload
+        }
+    });
+
+    // เลื่อนลงไปที่ข้อความล่าสุด
+    const messageContainer = document.querySelector('.message-container');
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+
+    // ปุ่มเลื่อนลง
+    const scrollButton = document.querySelector('.scroll-to-bottom');
+    scrollButton.addEventListener('click', function () {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    });
+});

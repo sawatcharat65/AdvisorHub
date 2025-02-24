@@ -37,7 +37,7 @@ if (isset($_POST['start_date'], $_POST['end_date'], $_POST['search_query'], $_PO
     $html = '';
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $thesis_link = "thesis_info.php?id=" . $row['thesis_id'];
+            $thesis_link = "thesis_info.php?thesis_id=" . $row['thesis_id'];
             $issue_date = date('d M, Y', strtotime($row['issue_date']));
             $thesis_title = htmlspecialchars($row['thesis_title'], ENT_QUOTES, 'UTF-8');
             $keywords = isset($row['keywords']) ? $row['keywords'] : '';

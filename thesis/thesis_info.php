@@ -4,26 +4,27 @@ require('../server.php');
 include('../components/navbar.php');
 if (isset($_POST['logout'])) {
     session_destroy();
-    header('location: /ThesisAdvisorHub/login');
+    header('location: /AdvisorHub/login');
 }
 
 if (empty($_SESSION['username'])) {
-    header('location: /ThesisAdvisorHub/login');
+    header('location: /AdvisorHub/login');
 }
 
 if (isset($_POST['profile'])) {
-    header('location: /ThesisAdvisorHub/profile');
+    header('location: /AdvisorHub/profile');
 }
 
-if (isset($_SESSION['advisor_id'])) {
-    $advisor_id = $_SESSION['advisor_id'];
+if (isset($_GET['thesis_id'])) {
+    $thesis_id = $_GET['thesis_id'];
 
     // ดึงข้อมูลจากตาราง thesis
-    $sql = "SELECT * FROM thesis WHERE advisor_id = '$advisor_id'";
+    $sql = "SELECT * FROM thesis WHERE thesis_id = '$thesis_id'";
     $result = $conn->query($sql);
     $row_thesis = $result->fetch_assoc();
 
     if ($row_thesis) {
+        $advisor_id = $row_thesis['advisor_id'];
         $thesis_id = $row_thesis['thesis_id'];
         $thesis_title = $row_thesis['thesis_title'];
         $authors = nl2br(implode("\n", explode(',', $row_thesis['authors'])));
@@ -96,7 +97,7 @@ $uri = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         <div class="info">URI: <span><a href="<?php echo $uri; ?>"><?php echo $uri; ?></a></span></div>
 
         <div class="downloadf button mt-4">
-            <a href="download.php?id=<?php echo $row_thesis['thesis_id']; ?>" class="btn">
+            <a href="download.php?thesis_id=<?php echo $row_thesis['thesis_id']; ?>" class="btn">
                 Download Thesis File
             </a>
         </div>
