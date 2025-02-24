@@ -14,6 +14,11 @@ if (isset($_POST['logout'])) {
   header('location: /AdvisorHub/login');
 }
 
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+  header('location: /AdvisorHub/advisor');
+}
+
 // ถ้าไม่ได้ล็อกอิน ให้กลับไปหน้า login
 if (!isset($_SESSION['username']) && !isset($_SESSION['account_id'])) {
   die(header("location:http://localhost/AdvisorHub/login"));

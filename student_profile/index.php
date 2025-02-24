@@ -15,6 +15,11 @@
         header('location: /AdvisorHub/profile');
     }
 
+    //ไม่ให้ admin เข้าถึง
+    if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+        header('location: /AdvisorHub/advisor');
+    }
+
 ?>
 
 <!DOCTYPE html>
