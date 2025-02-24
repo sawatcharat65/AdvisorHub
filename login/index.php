@@ -39,7 +39,7 @@
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
                 $_SESSION['account_id'] = $row['admin_id'];
-                $_SESSION['username'] = $row['first_name'];
+                $_SESSION['username'] = $row['admin_first_name'];
             }
             header('location: /AdvisorHub/advisor');
 
