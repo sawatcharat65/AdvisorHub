@@ -26,9 +26,12 @@
 </head>
 <body>
     <?php 
-        if(isset($_SESSION['username'])){
+        if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin'){
             renderNavbar(allowedPages: ['home', 'advisor', 'inbox', 'statistics', 'Teams']);
-        }else{
+        }elseif(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+            renderNavbar(allowedPages: ['home', 'advisor', 'statistics']);
+        }
+        else{
             renderNavbar(allowedPages: ['home', 'login', 'advisor', 'statistics']);
         }
     ?>

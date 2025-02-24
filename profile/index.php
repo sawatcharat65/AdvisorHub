@@ -15,6 +15,11 @@
         header('location: /AdvisorHub/edit_profile');
     }
 
+    //ไม่ให้ admin เข้าถึง
+    if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+        header('location: /AdvisorHub/advisor');
+    }
+    
     if (isset($_POST['delete'])) {
         // รับ id จาก session
         $advisor_id = $_SESSION['account_id'];

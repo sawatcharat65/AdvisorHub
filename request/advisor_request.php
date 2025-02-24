@@ -21,6 +21,11 @@ if(isset($_POST['profile'])){
     header('location: /AdvisorHub/profile');
 }
 
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+    header('location: /AdvisorHub/advisor');
+}
+
 $academic_year = (int) mysqli_real_escape_string($conn, $_POST['academic_year']);
 $semester = (int) mysqli_real_escape_string($conn, $_POST['semester']);
 

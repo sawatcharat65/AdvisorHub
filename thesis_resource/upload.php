@@ -2,6 +2,12 @@
 session_start();
 require('../server.php');
 
+
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+    header('location: /AdvisorHub/advisor');
+}
+
 if (empty($_SESSION['username'])) {
     echo json_encode(['error' => 'Unauthorized']);
     exit;

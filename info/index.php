@@ -39,6 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('location: ' . $_SERVER['PHP_SELF']);
         exit();
     }
+
+    //ไม่ให้ admin เข้าถึง
+    if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+        header('location: /AdvisorHub/advisor');
+    }
 }
 
 // ดึงข้อมูลที่ปรึกษาจาก session

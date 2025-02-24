@@ -16,6 +16,11 @@ if (mysqli_num_rows($result) > 0) {
     header('location: /AdvisorHub/advisor_approved/request.php');
 }
 
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+    header('location: /AdvisorHub/advisor');
+}
+
 ?>
 
 <!DOCTYPE html>

@@ -24,6 +24,10 @@ function getThesisId($conn, $receiver_id, $current_user_id)
     }
     return ''; // ถ้าไม่พบ thesis_id
 }
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+    header('location: /AdvisorHub/advisor');
+}
 
 // จัดการการออกจากระบบ
 if (isset($_POST['logout'])) {
