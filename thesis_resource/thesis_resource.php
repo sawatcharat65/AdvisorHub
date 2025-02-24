@@ -113,7 +113,13 @@ if ($current_user_role === 'student' && $actual_student_id) {
 }
 
 // Fetch existing files for this thesis
-$files_sql = "SELECT tr.*, ac.role
+$files_sql = "SELECT tr.*, 
+              ac.role,
+              CASE 
+                WHEN ac.role = 'student' THEN (SELECT student_first_name FROM student WHERE student_id = tr.uploader_id)
+                WHEN ac.role = 'advisor' THEN (SELECT advisor_first_name FROM advisor WHERE advisor_id = tr.uploader_id)
+                ELSE tr.uploader_id
+              END AS uploader_name
               FROM thesis_resource tr
               LEFT JOIN account ac ON tr.uploader_id = ac.account_id
               WHERE tr.advisor_request_id = ?
@@ -360,7 +366,7 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                         </div>
                                         <div class="form-check me-3 mb-2">
                                             <input class="form-check-input file-type-filter" type="checkbox" value="jpg" id="jpgFilter">
-                                            <label class="form-check-label" for="jpgFilter">JPG/PNG</label>
+                                            <label class="form-check-label" for="jpgFilter">JPEG/PNG</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
                                             <input class="form-check-input file-type-filter" type="checkbox" value="zip" id="zipFilter">
@@ -419,26 +425,12 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                         </div>
                     <?php else: ?>
                         <?php foreach ($files as $file): ?>
-                            <?php
-                                $fileExtension = strtolower(pathinfo($file['thesis_resource_file_name'], PATHINFO_EXTENSION));
-                                $fileType = '';
-                                if ($fileExtension === 'pdf') $fileType = 'pdf';
-                                elseif (in_array($fileExtension, ['doc', 'docx'])) $fileType = 'doc';
-                                elseif (in_array($fileExtension, ['ppt', 'pptx'])) $fileType = 'ppt';
-                                elseif (in_array($fileExtension, ['xls', 'xlsx'])) $fileType = 'xls';
-                                elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) $fileType = 'jpg';
-                                elseif (in_array($fileExtension, ['zip', 'rar'])) $fileType = 'zip';
-                                else $fileType = 'other';
-                            ?>
-                            <div class="file-item p-4 d-flex align-items-center" 
-                                data-file-type="<?php echo $fileType; ?>"
-                                data-uploader-id="<?php echo htmlspecialchars($file['uploader_id']); ?>"
-                                data-upload-date="<?php echo date('Y-m-d', strtotime($file['time_stamp'])); ?>">
+                            <div class="file-item p-4 d-flex align-items-center">
                                 <i class="bi bi-file-earmark me-4 fs-3"></i>
                                 <div class="flex-grow-1">
                                     <div class="fw-bold"><?php echo htmlspecialchars($file['thesis_resource_file_name']); ?></div>
                                     <small class="text-muted d-block">
-                                        Uploaded by: <?php echo htmlspecialchars($file['uploader_id']); ?>
+                                        Uploaded by: <?php echo htmlspecialchars($file['uploader_name'] ?: $file['uploader_id']); ?>
                                     </small>
                                     <small class="text-muted">
                                         Upload time: <?php echo date('M d, Y H:i', strtotime($file['time_stamp'])); ?>
@@ -562,6 +554,7 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                     });
             }
         }
+
         // File filtering functionality
         document.addEventListener('DOMContentLoaded', function() {
             const fileTypeFilters = document.querySelectorAll('.file-type-filter');
@@ -569,70 +562,97 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
             const dateFrom = document.getElementById('dateFrom');
             const dateTo = document.getElementById('dateTo');
             const resetFiltersBtn = document.getElementById('resetFilters');
-            const fileItems = document.querySelectorAll('.file-item');
+            
+            // เก็บ HTML ต้นฉบับไว้
+            const filesList = document.getElementById('filesList');
+            const originalHTML = filesList.innerHTML;
             
             // Apply filters when any filter changes
             function applyFilters() {
-                // Get selected file types
+                console.log("Applying filters with class toggling...");
+                
+                // Get selected filters
                 const selectedFileTypes = Array.from(fileTypeFilters)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
-                    
-                // Get selected uploaders
+                console.log("Selected file types:", selectedFileTypes);
+                
                 const selectedUploaders = Array.from(uploaderFilters)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
-                    
+                console.log("Selected uploaders:", selectedUploaders);
+                
                 // Get date range
                 const fromDate = dateFrom.value ? new Date(dateFrom.value) : null;
                 const toDate = dateTo.value ? new Date(dateTo.value) : null;
                 
-                // Loop through all file items and check if they match the filters
+                // รับรายการไฟล์ล่าสุด (กรณีมีการเปลี่ยนแปลง DOM)
+                const fileItems = document.querySelectorAll('.file-item');
+                
+                // ทำการกรองแต่ละไฟล์
                 fileItems.forEach(item => {
-                    // Use data attributes instead of parsing the DOM
-                    const fileType = item.getAttribute('data-file-type');
-                    const uploaderId = item.getAttribute('data-uploader-id');
-                    const uploadDate = new Date(item.getAttribute('data-upload-date'));
+                    // ดึงข้อมูลไฟล์
+                    const fileName = item.querySelector('.fw-bold').textContent;
+                    const uploaderText = item.querySelector('.text-muted').textContent;
+                    const uploaderId = uploaderText.split('Uploaded by: ')[1].trim().split('\n')[0].trim();
                     
-                    // Check file type
+                    // ดึงวันที่อัปโหลด
+                    const uploadTimeText = item.querySelectorAll('.text-muted')[1].textContent;
+                    const uploadDateStr = uploadTimeText.replace('Upload time:', '').trim();
+                    const uploadDate = new Date(uploadDateStr);
+                    
+                    // กำหนดประเภทไฟล์จากนามสกุล
+                    let fileType = 'other';
+                    const lowerFileName = fileName.toLowerCase();
+                    if (lowerFileName.endsWith('.pdf')) fileType = 'pdf';
+                    else if (lowerFileName.endsWith('.doc') || lowerFileName.endsWith('.docx')) fileType = 'doc';
+                    else if (lowerFileName.endsWith('.ppt') || lowerFileName.endsWith('.pptx')) fileType = 'ppt';
+                    else if (lowerFileName.endsWith('.xls') || lowerFileName.endsWith('.xlsx')) fileType = 'xls';
+                    else if (lowerFileName.endsWith('.jpg') || lowerFileName.endsWith('.jpeg') || lowerFileName.endsWith('.png')) fileType = 'jpg';
+                    else if (lowerFileName.endsWith('.zip') || lowerFileName.endsWith('.rar')) fileType = 'zip';
+                    
+                    console.log(`File: ${fileName}, Type: ${fileType}, Uploader: ${uploaderId}`);
+                    
+                    // ตรวจสอบว่าตรงกับตัวกรองหรือไม่
                     const matchesFileType = selectedFileTypes.length === 0 || selectedFileTypes.includes(fileType);
-                    
-                    // Check uploader
                     const matchesUploader = selectedUploaders.length === 0 || selectedUploaders.includes(uploaderId);
                     
-                    // Check date range
+                    // ตรวจสอบช่วงวันที่
                     let matchesDateRange = true;
                     if (fromDate) {
                         matchesDateRange = matchesDateRange && uploadDate >= fromDate;
                     }
                     if (toDate) {
-                        // Add one day to include the end date fully
                         const adjustedToDate = new Date(toDate);
                         adjustedToDate.setDate(adjustedToDate.getDate() + 1);
                         matchesDateRange = matchesDateRange && uploadDate < adjustedToDate;
                     }
                     
-                    // Show/hide based on all filters
+                    // ซ่อน/แสดงไฟล์ด้วยคลาส
                     if (matchesFileType && matchesUploader && matchesDateRange) {
-                        item.style.display = 'flex';
+                        item.classList.remove('d-none');
                     } else {
-                        item.style.display = 'none';
+                        item.classList.add('d-none');
+                        console.log(`Hiding file: ${fileName}`);
                     }
                 });
             }
             
             // Reset all filters
             resetFiltersBtn.addEventListener('click', function() {
+                console.log("Resetting filters");
                 fileTypeFilters.forEach(checkbox => checkbox.checked = false);
                 uploaderFilters.forEach(checkbox => checkbox.checked = false);
                 dateFrom.value = '';
                 dateTo.value = '';
                 
-                // Show all files
-                fileItems.forEach(item => item.style.display = 'flex');
+                // แสดงไฟล์ทั้งหมด
+                document.querySelectorAll('.file-item').forEach(item => {
+                    item.classList.remove('d-none');
+                });
             });
             
-            // Add event listeners to all filters
+            // เพิ่ม event listeners สำหรับตัวกรองทั้งหมด
             fileTypeFilters.forEach(checkbox => {
                 checkbox.addEventListener('change', applyFilters);
             });
