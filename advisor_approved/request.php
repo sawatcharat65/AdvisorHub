@@ -129,7 +129,16 @@ $id = $_SESSION['account_id'];
                     $requester_id = $row['requester_id'];
                     $partner_accepted = $row['partner_accepted'];
                     $advisor_req_id = $row['advisor_request_id'];
+                    $is_even = $row['is_even'];
                     // กำหนดสถานะคำร้อง
+                    if ($partner_accepted == 0) {
+                        $partner_status = '<span class="status waiting">Waiting</span>';
+                    } elseif ($partner_accepted == 1) {
+                        $partner_status = '<span class="status approved">Accepted</span>';
+                    } elseif ($partner_accepted == 2) {
+                        $partner_status = '<span class="status rejected">Rejected</span>';
+                    }
+
                     if ($row['is_advisor_approved'] == 0) {
                         $advisor_status = '<span class="status waiting">Waiting</span>';
                     } elseif ($row['is_advisor_approved'] == 1) {
@@ -149,6 +158,10 @@ $id = $_SESSION['account_id'];
                     <div class="request-card">
                         <h3 class="request-title">หัวข้อวิทยานิพนธ์: <?php echo htmlspecialchars($row["thesis_topic_thai"]); ?></h3>
                         <div class="request-info">
+                            <?php
+                            if ($is_even == 1) { ?>
+                                <p><strong>Partner Accept Status:</strong> <?php echo $partner_status; ?></p>
+                            <?php } ?>
                             <p><strong>Advisor Approval Status:</strong> <?php echo $advisor_status; ?></p>
                             <p><strong>Admin Approval Status:</strong> <?php echo $admin_status; ?></p>
                         </div>
