@@ -381,35 +381,29 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                         </div>
                                     </div>
                                 </div>
-
+                                
                                 <!-- Uploader Filters -->
                                 <div class="col-md-4">
                                     <h6 class="mb-2">Uploader</h6>
                                     <div class="d-flex flex-wrap">
                                         <?php foreach ($students as $student): ?>
-                                            <div class="form-check me-3 mb-2">
-                                                <input class="form-check-input uploader-filter" type="checkbox"
-                                                    value="<?php echo $student['student_id']; ?>"
-                                                    id="uploader<?php echo $student['student_id']; ?>">
-                                                <label class="form-check-label"
-                                                    for="uploader<?php echo $student['student_id']; ?>">
-                                                    <?php echo $student['student_first_name']; ?>
-                                                </label>
-                                            </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $student['student_id']; ?>" id="uploader<?php echo $student['student_id']; ?>">
+                                            <label class="form-check-label" for="uploader<?php echo $student['student_id']; ?>">
+                                                <?php echo $student['student_first_name']; ?>
+                                            </label>
+                                        </div>
                                         <?php endforeach; ?>
 
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input uploader-filter" type="checkbox"
-                                                value="<?php echo $thesis['advisor_id']; ?>"
-                                                id="uploader<?php echo $thesis['advisor_id']; ?>">
-                                            <label class="form-check-label"
-                                                for="uploader<?php echo $thesis['advisor_id']; ?>">
+                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $thesis['advisor_id']; ?>" id="uploader<?php echo $thesis['advisor_id']; ?>">
+                                            <label class="form-check-label" for="uploader<?php echo $thesis['advisor_id']; ?>">
                                                 <?php echo $thesis['advisor_first_name']; ?>
                                             </label>
                                         </div>
                                     </div>
                                 </div>
-
+                                
                                 <!-- Date Range Filter -->
                                 <div class="col-md-4">
                                     <h6 class="mb-2">Date Range</h6>
@@ -695,9 +689,9 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
             formData.append('thesis_id', thesisId);
 
             fetch('upload.php', {
-                method: 'POST',
-                body: formData
-            })
+                    method: 'POST',
+                    body: formData
+                })
                 .then(response => response.text())
                 .then(text => {
                     console.log('Raw response:', text);
@@ -719,12 +713,12 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
         function deleteFile(fileId) {
             if (confirm('Are you sure you want to delete this file?')) {
                 fetch('delete.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'file_id=' + fileId
-                })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'file_id=' + fileId
+                    })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
@@ -737,51 +731,51 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
         }
 
         // File filtering functionality
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const fileTypeFilters = document.querySelectorAll('.file-type-filter');
             const uploaderFilters = document.querySelectorAll('.uploader-filter');
             const dateFrom = document.getElementById('dateFrom');
             const dateTo = document.getElementById('dateTo');
             const resetFiltersBtn = document.getElementById('resetFilters');
-
+            
             // เก็บ HTML ต้นฉบับไว้
             const filesList = document.getElementById('filesList');
             const originalHTML = filesList.innerHTML;
-
+            
             // Apply filters when any filter changes
             function applyFilters() {
                 console.log("Applying filters with class toggling...");
-
+                
                 // Get selected filters
                 const selectedFileTypes = Array.from(fileTypeFilters)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
                 console.log("Selected file types:", selectedFileTypes);
-
+                
                 const selectedUploaders = Array.from(uploaderFilters)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
                 console.log("Selected uploaders:", selectedUploaders);
-
+                
                 // Get date range
                 const fromDate = dateFrom.value ? new Date(dateFrom.value) : null;
                 const toDate = dateTo.value ? new Date(dateTo.value) : null;
-
+                
                 // รับรายการไฟล์ล่าสุด (กรณีมีการเปลี่ยนแปลง DOM)
                 const fileItems = document.querySelectorAll('.file-item');
-
+                
                 // ทำการกรองแต่ละไฟล์
                 fileItems.forEach(item => {
                     // ดึงข้อมูลไฟล์
                     const fileName = item.querySelector('.fw-bold').textContent;
                     const uploaderText = item.querySelector('.text-muted').textContent;
                     const uploaderId = uploaderText.split('Uploaded by: ')[1].trim().split('\n')[0].trim();
-
+                    
                     // ดึงวันที่อัปโหลด
                     const uploadTimeText = item.querySelectorAll('.text-muted')[1].textContent;
                     const uploadDateStr = uploadTimeText.replace('Upload time:', '').trim();
                     const uploadDate = new Date(uploadDateStr);
-
+                    
                     // กำหนดประเภทไฟล์จากนามสกุล
                     let fileType = 'other';
                     const lowerFileName = fileName.toLowerCase();
@@ -791,13 +785,13 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                     else if (lowerFileName.endsWith('.xls') || lowerFileName.endsWith('.xlsx')) fileType = 'xls';
                     else if (lowerFileName.endsWith('.jpg') || lowerFileName.endsWith('.jpeg') || lowerFileName.endsWith('.png')) fileType = 'jpg';
                     else if (lowerFileName.endsWith('.zip') || lowerFileName.endsWith('.rar')) fileType = 'zip';
-
+                    
                     console.log(`File: ${fileName}, Type: ${fileType}, Uploader: ${uploaderId}`);
-
+                    
                     // ตรวจสอบว่าตรงกับตัวกรองหรือไม่
                     const matchesFileType = selectedFileTypes.length === 0 || selectedFileTypes.includes(fileType);
                     const matchesUploader = selectedUploaders.length === 0 || selectedUploaders.includes(uploaderId);
-
+                    
                     // ตรวจสอบช่วงวันที่
                     let matchesDateRange = true;
                     if (fromDate) {
@@ -808,7 +802,7 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                         adjustedToDate.setDate(adjustedToDate.getDate() + 1);
                         matchesDateRange = matchesDateRange && uploadDate < adjustedToDate;
                     }
-
+                    
                     // ซ่อน/แสดงไฟล์ด้วยคลาส
                     if (matchesFileType && matchesUploader && matchesDateRange) {
                         item.classList.remove('d-none');
@@ -818,34 +812,33 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                     }
                 });
             }
-
+            
             // Reset all filters
-            resetFiltersBtn.addEventListener('click', function () {
+            resetFiltersBtn.addEventListener('click', function() {
                 console.log("Resetting filters");
                 fileTypeFilters.forEach(checkbox => checkbox.checked = false);
                 uploaderFilters.forEach(checkbox => checkbox.checked = false);
                 dateFrom.value = '';
                 dateTo.value = '';
-
+                
                 // แสดงไฟล์ทั้งหมด
                 document.querySelectorAll('.file-item').forEach(item => {
                     item.classList.remove('d-none');
                 });
             });
-
+            
             // เพิ่ม event listeners สำหรับตัวกรองทั้งหมด
             fileTypeFilters.forEach(checkbox => {
                 checkbox.addEventListener('change', applyFilters);
             });
-
+            
             uploaderFilters.forEach(checkbox => {
                 checkbox.addEventListener('change', applyFilters);
             });
-
+            
             dateFrom.addEventListener('change', applyFilters);
             dateTo.addEventListener('change', applyFilters);
         });
     </script>
 </body>
-
 </html>
