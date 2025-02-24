@@ -70,7 +70,7 @@ if (isset($_POST['start_date'], $_POST['end_date'], $_POST['search_query'], $_PO
             }
         }
     } else {
-        $html = "<p class='text-center'>ไม่พบข้อมูลวิทยานิพนธ์</p>";
+        $html = "<p class='text-center'>ไม่พบข้อมูลวิทยานิพนธ์ในช่วงเวลาที่กำหนด</p>";
     }
 
     $response = [
