@@ -134,7 +134,7 @@ $id = $_SESSION['account_id'];
                     if ($partner_accepted == 0) {
                         $partner_status = '<span class="status waiting">Waiting</span>';
                     } elseif ($partner_accepted == 1) {
-                        $partner_status = '<span class="status approved">Approved</span>';
+                        $partner_status = '<span class="status approved">Accepted</span>';
                     } elseif ($partner_accepted == 2) {
                         $partner_status = '<span class="status rejected">Rejected</span>';
                     }
@@ -160,7 +160,7 @@ $id = $_SESSION['account_id'];
                         <div class="request-info">
                             <?php
                             if ($is_even == 1) { ?>
-                                <p><strong>Partner Approval Status:</strong> <?php echo $partner_status; ?></p>
+                                <p><strong>Partner Accept Status:</strong> <?php echo $partner_status; ?></p>
                             <?php } ?>
                             <p><strong>Advisor Approval Status:</strong> <?php echo $advisor_status; ?></p>
                             <p><strong>Admin Approval Status:</strong> <?php echo $admin_status; ?></p>
