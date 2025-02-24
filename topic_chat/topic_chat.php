@@ -3,32 +3,32 @@ session_start();
 require('../server.php');
 include('../components/navbar.php');
 
-// Handle logout
+// จัดการการออกจากระบบ
 if (isset($_POST['logout'])) {
     session_destroy();
     header('location: /AdvisorHub/login');
     exit();
 }
 
-// Check if logged in
+// ตรวจสอบว่าล็อกอินหรือยัง
 if (empty($_SESSION['username'])) {
     header('location: /AdvisorHub/login');
     exit();
 }
 
-// Redirect to profile
+// เปลี่ยนหน้าไปโปรไฟล์
 if (isset($_POST['profile'])) {
     header('location: /AdvisorHub/profile');
     exit();
 }
 
-// Validate receiver_id
+// ตรวจสอบ receiver_id
 if (empty($_SESSION['receiver_id']) || $_SESSION['receiver_id'] == $_SESSION['account_id']) {
     header('location: /AdvisorHub/advisor');
     exit();
 }
 
-// Handle profileInbox
+// จัดการ profileInbox
 if (isset($_POST['profileInbox'])) {
     $user_id = $_POST['profileInbox'];
     $_SESSION['profileInbox'] = $user_id;
@@ -45,37 +45,45 @@ if (isset($_POST['profileInbox'])) {
     exit();
 }
 
-// Fetch receiver info
-$receiver_id = $_SESSION['receiver_id'];
+// ดึงข้อมูลของ receiver
+$receiver_id = $_SESSION['receiver_id']; // ค่า advisor_id
 $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '$receiver_id' 
         UNION 
         SELECT student_first_name, student_last_name FROM student WHERE student_id = '$receiver_id'";
 $result = $conn->query($sql);
 $receiver = $result->fetch_assoc();
 
-// Check approval status
+// ตรวจสอบสถานะการอนุมัติ
 $id = $_SESSION['account_id'];
 $sql = "SELECT COUNT(*) as approved FROM advisor_request 
-        WHERE ((requester_id = '$id' AND advisor_id = '$receiver_id') 
-        OR (student_id = '$id' AND advisor_id = '$receiver_id'))
+        WHERE (
+            (JSON_CONTAINS(student_id, '\"$id\"') AND advisor_id = '$receiver_id')
+            OR 
+            (advisor_id = '$id' AND JSON_CONTAINS(student_id, '\"$receiver_id\"'))
+        ) 
         AND is_advisor_approved = 1 
         AND is_admin_approved = 1";
 $result = $conn->query($sql);
 $is_fully_approved = $result->fetch_assoc()['approved'] > 0;
 
-// Fetch approval timestamp and messages
+// ดึง timestamp การอนุมัติ
 $sql = "SELECT time_stamp FROM advisor_request 
-        WHERE ((requester_id = '$id' AND advisor_id = '$receiver_id') 
-        OR (student_id = '$id' AND advisor_id = '$receiver_id'))
+        WHERE (
+            (JSON_CONTAINS(student_id, '\"$id\"') AND advisor_id = '$receiver_id')
+            OR 
+            (advisor_id = '$id' AND JSON_CONTAINS(student_id, '\"$receiver_id\"'))
+        ) 
         AND is_advisor_approved = 1 
         AND is_admin_approved = 1 
         ORDER BY time_stamp ASC LIMIT 1";
 $result = $conn->query($sql);
 $approval_timestamp = $result->num_rows > 0 ? $result->fetch_assoc()['time_stamp'] : null;
 
+// กำหนดตัวแปรสำหรับข้อความก่อนและหลังอนุมัติ
 $before_messages = [];
 $after_messages = [];
 
+// ดึงข้อความทั้งหมด
 $sql = "
     SELECT message_title, MAX(time_stamp) AS latest_time
     FROM messages
@@ -86,11 +94,13 @@ $sql = "
 ";
 $messages_result = $conn->query($sql);
 
+// จัดกลุ่มข้อความตาม timestamp
 if ($messages_result) {
     while ($row = $messages_result->fetch_assoc()) {
         $message = [
             'title' => $row['message_title'],
             'timestamp' => $row['latest_time'],
+            // ตรวจสอบข้อความที่ยังไม่ได้อ่าน
             'unread' => $conn->query("SELECT DISTINCT is_read FROM messages 
                                     WHERE receiver_id = '$id' 
                                     AND sender_id = '$receiver_id' 
@@ -106,7 +116,7 @@ if ($messages_result) {
     }
 }
 
-// Handle delete
+// จัดการการลบข้อความ
 if (isset($_POST['delete'])) {
     $title = $conn->real_escape_string($_POST['title']);
     $sql = "DELETE FROM messages WHERE message_title = '$title' AND ((sender_id = '$id' AND receiver_id = '$receiver_id') OR (sender_id = '$receiver_id' AND receiver_id = '$id'))";
@@ -120,6 +130,7 @@ if (isset($_POST['delete'])) {
 <html lang="en">
 
 <head>
+    <!-- กำหนด meta และ link สำหรับ CSS/JS -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
@@ -129,31 +140,26 @@ if (isset($_POST['delete'])) {
     <link rel="icon" href="../Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .topic-section {
-            display: none;
-        }
-
-        .topic-section.active {
-            display: block;
-        }
-    </style>
 </head>
 
 <body>
+    <!-- แสดง Navbar -->
     <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']); ?>
 
     <div class='topic-container'>
+        <!-- หัวของหน้า chat -->
         <div class='topic-head'>
             <h2><?php echo $receiver['advisor_first_name'] . ' ' . $receiver['advisor_last_name']; ?></h2>
             <a href="topic_create.php" class="fa-solid fa-circle-plus"></a>
         </div>
 
+        <!-- ค้นหาหัวข้อ -->
         <div class="topic-search">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="search-input" placeholder="Search topic" value="" />
         </div>
 
+        <!-- แสดงสถานะก่อน/หลังอนุมัติ -->
         <div class="topic-status">
             <?php if ($is_fully_approved): ?>
                 <button class="active" data-section="after">Post-Approval</button>
@@ -165,7 +171,9 @@ if (isset($_POST['delete'])) {
 
         <div class='divider'></div>
 
+        <!-- แสดงผลลัพธ์ข้อความ -->
         <div id="search-results">
+            <!-- ข้อความหลังอนุมัติ -->
             <div class='topic-section after-approve <?php echo $is_fully_approved ? 'active' : ''; ?>' data-section="after">
                 <h3>After Becoming an Advisor</h3>
                 <?php if (empty($after_messages)): ?>
@@ -200,6 +208,7 @@ if (isset($_POST['delete'])) {
                 <?php endif; ?>
             </div>
 
+            <!-- ข้อความก่อนอนุมัติ -->
             <div class='topic-section before-approve <?php echo !$is_fully_approved ? 'active' : ''; ?>' data-section="before">
                 <h3>Before Becoming an Advisor</h3>
                 <?php if (empty($before_messages)): ?>
@@ -236,9 +245,10 @@ if (isset($_POST['delete'])) {
         </div>
     </div>
 
+    <!--  JavaScript -->
     <script>
         $(document).ready(function() {
-            // Toggle sections based on button click
+            // จัดการการคลิกปุ่มสถานะ
             $('.topic-status button').on('click', function() {
                 $('.topic-status button').removeClass('active');
                 $(this).addClass('active');
@@ -248,7 +258,7 @@ if (isset($_POST['delete'])) {
                 $(`.topic-section[data-section="${section}"]`).addClass('active');
             });
 
-            // Debounce function for search
+            // ฟังก์ชัน debounce สำหรับการค้นหา
             function debounce(func, wait) {
                 let timeout;
                 return function(...args) {
@@ -257,7 +267,7 @@ if (isset($_POST['delete'])) {
                 };
             }
 
-            // Search function
+            // จัดการการค้นหาด้วย AJAX
             const performSearch = debounce(function(searchQuery) {
                 $.ajax({
                     url: "search_topic.php",
@@ -267,7 +277,6 @@ if (isset($_POST['delete'])) {
                     },
                     success: function(response) {
                         $("#search-results").html(response);
-                        // Re-apply active section after search
                         const activeSection = $('.topic-status button.active').data('section');
                         $('.topic-section').removeClass('active');
                         $(`.topic-section[data-section="${activeSection}"]`).addClass('active');
@@ -283,7 +292,7 @@ if (isset($_POST['delete'])) {
                 performSearch(searchQuery);
             });
 
-            // Dropdown menu handling
+            // จัดการเมนูดรอปดาวน์
             $(document).on('click', '.menu-button', function() {
                 const $menuContainer = $(this).closest('.menu-container');
                 const $dropdownMenu = $menuContainer.find('.dropdown-menu');
