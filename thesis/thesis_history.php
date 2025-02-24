@@ -239,7 +239,7 @@ if (isset($_POST['chat'])) {
     <!-- Ajax -->
     <script type="text/javascript">
         $(document).ready(function() {
-            let start = moment('2000-01-01');
+            let start = moment().subtract(29, 'days');
             let end = moment();
             let viewMode = 'list';
             let searchQuery = "";

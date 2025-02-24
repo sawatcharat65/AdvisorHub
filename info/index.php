@@ -118,7 +118,7 @@ if (isset($_SESSION['advisor_info_id'])) {
                 <h3>Interests</h3>
                 <p><?= $advisor_info['advisor_interests']; ?></p>
 
-                <h3>Number of advising students: <?= $advisor_info['student_count']; ?></h3>
+                <h3>Number of advising students: <?= $advisor_info['student_count'] ?? 0; ?></h3>
             </div>
 
             <form action="" method="post" class="nav-form">

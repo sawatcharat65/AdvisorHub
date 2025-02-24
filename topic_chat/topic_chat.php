@@ -46,7 +46,7 @@ if (isset($_POST['profileInbox'])) {
 }
 
 // ดึงข้อมูลของ receiver
-$receiver_id = $_SESSION['receiver_id']; // ค่า advisor_id
+$receiver_id = $_SESSION['receiver_id'];
 $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '$receiver_id' 
         UNION 
         SELECT student_first_name, student_last_name FROM student WHERE student_id = '$receiver_id'";
@@ -79,7 +79,7 @@ $sql = "SELECT time_stamp FROM advisor_request
 $result = $conn->query($sql);
 $approval_timestamp = $result->num_rows > 0 ? $result->fetch_assoc()['time_stamp'] : null;
 
-// กำหนดตัวแปรสำหรับข้อความก่อนและหลังอนุมัติ
+$messages_per_page = 5;
 $before_messages = [];
 $after_messages = [];
 
@@ -94,13 +94,11 @@ $sql = "
 ";
 $messages_result = $conn->query($sql);
 
-// จัดกลุ่มข้อความตาม timestamp
 if ($messages_result) {
     while ($row = $messages_result->fetch_assoc()) {
         $message = [
             'title' => $row['message_title'],
             'timestamp' => $row['latest_time'],
-            // ตรวจสอบข้อความที่ยังไม่ได้อ่าน
             'unread' => $conn->query("SELECT DISTINCT is_read FROM messages 
                                     WHERE receiver_id = '$id' 
                                     AND sender_id = '$receiver_id' 
@@ -116,21 +114,16 @@ if ($messages_result) {
     }
 }
 
-// จัดการการลบข้อความ
-if (isset($_POST['delete'])) {
-    $title = $conn->real_escape_string($_POST['title']);
-    $sql = "DELETE FROM messages WHERE message_title = '$title' AND ((sender_id = '$id' AND receiver_id = '$receiver_id') OR (sender_id = '$receiver_id' AND receiver_id = '$id'))";
-    $conn->query($sql);
-    header('location: /AdvisorHub/topic_chat/topic_chat.php');
-    exit();
-}
+$before_messages_total = count($before_messages);
+$after_messages_total = count($after_messages);
+$before_messages_limited = array_slice($before_messages, 0, $messages_per_page);
+$after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <!-- กำหนด meta และ link สำหรับ CSS/JS -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
@@ -143,23 +136,19 @@ if (isset($_POST['delete'])) {
 </head>
 
 <body>
-    <!-- แสดง Navbar -->
     <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']); ?>
 
     <div class='topic-container'>
-        <!-- หัวของหน้า chat -->
         <div class='topic-head'>
             <h2><?php echo $receiver['advisor_first_name'] . ' ' . $receiver['advisor_last_name']; ?></h2>
             <a href="topic_create.php" class="fa-solid fa-circle-plus"></a>
         </div>
 
-        <!-- ค้นหาหัวข้อ -->
         <div class="topic-search">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="search-input" placeholder="Search topic" value="" />
         </div>
 
-        <!-- แสดงสถานะก่อน/หลังอนุมัติ -->
         <div class="topic-status">
             <?php if ($is_fully_approved): ?>
                 <button class="active" data-section="after">Post-Approval</button>
@@ -171,81 +160,83 @@ if (isset($_POST['delete'])) {
 
         <div class='divider'></div>
 
-        <!-- แสดงผลลัพธ์ข้อความ -->
         <div id="search-results">
             <!-- ข้อความหลังอนุมัติ -->
             <div class='topic-section after-approve <?php echo $is_fully_approved ? 'active' : ''; ?>' data-section="after">
                 <h3>After Becoming an Advisor</h3>
-                <?php if (empty($after_messages)): ?>
-                    <p>No messages found.</p>
-                <?php else: ?>
-                    <?php foreach ($after_messages as $message): ?>
-                        <div class='message'>
-                            <div>
-                                <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
-                                <div class='message-date'><?php echo $message['timestamp']; ?></div>
-                            </div>
-                            <div class="message-actions">
-                                <form action='../chat/index.php' method='post' class='form-chat'>
-                                    <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
-                                    <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
-                                    <?php if ($message['unread']): ?>
-                                        <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
-                                    <?php endif; ?>
-                                </form>
-                                <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                                    <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
-                                    <div class="dropdown-menu">
-                                        <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
-                                            <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
-                                            <button type="submit" name="delete">Delete</button>
-                                        </form>
+                <div class="message-container" data-type="after">
+                    <?php if (empty($after_messages)): ?>
+                        <p>No messages found.</p>
+                    <?php else: ?>
+                        <?php foreach ($after_messages_limited as $message): ?>
+                            <div class='message' data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                                <div>
+                                    <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
+                                    <div class='message-date'><?php echo $message['timestamp']; ?></div>
+                                </div>
+                                <div class="message-actions">
+                                    <form action='../chat/index.php' method='post' class='form-chat'>
+                                        <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
+                                        <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
+                                        <?php if ($message['unread']): ?>
+                                            <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
+                                        <?php endif; ?>
+                                    </form>
+                                    <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                                        <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
+                                        <div class="dropdown-menu">
+                                            <button type="button" class="delete-button" data-title="<?php echo htmlspecialchars($message['title']); ?>">Delete</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                        <?php endforeach; ?>
+                        <?php if ($after_messages_total > $messages_per_page): ?>
+                            <button class="view-more" data-type="after" data-offset="<?php echo $messages_per_page; ?>" data-total="<?php echo $after_messages_total; ?>">View More</button>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <!-- ข้อความก่อนอนุมัติ -->
             <div class='topic-section before-approve <?php echo !$is_fully_approved ? 'active' : ''; ?>' data-section="before">
                 <h3>Before Becoming an Advisor</h3>
-                <?php if (empty($before_messages)): ?>
-                    <p>No messages found.</p>
-                <?php else: ?>
-                    <?php foreach ($before_messages as $message): ?>
-                        <div class='message'>
-                            <div>
-                                <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
-                                <div class='message-date'><?php echo $message['timestamp']; ?></div>
-                            </div>
-                            <div class="message-actions">
-                                <form action='../chat/index.php' method='post' class='form-chat'>
-                                    <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
-                                    <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
-                                    <?php if ($message['unread']): ?>
-                                        <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
-                                    <?php endif; ?>
-                                </form>
-                                <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                                    <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
-                                    <div class="dropdown-menu">
-                                        <form action="" method="post" onsubmit="return confirm('Are you sure you want to delete this topic?');">
-                                            <input type="hidden" name="title" value="<?php echo htmlspecialchars($message['title']); ?>">
-                                            <button type="submit" name="delete">Delete</button>
-                                        </form>
+                <div class="message-container" data-type="before">
+                    <?php if (empty($before_messages)): ?>
+                        <p>No messages found.</p>
+                    <?php else: ?>
+                        <?php foreach ($before_messages_limited as $message): ?>
+                            <div class='message' data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                                <div>
+                                    <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
+                                    <div class='message-date'><?php echo $message['timestamp']; ?></div>
+                                </div>
+                                <div class="message-actions">
+                                    <form action='../chat/index.php' method='post' class='form-chat'>
+                                        <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
+                                        <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
+                                        <?php if ($message['unread']): ?>
+                                            <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
+                                        <?php endif; ?>
+                                    </form>
+                                    <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
+                                        <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
+                                        <div class="dropdown-menu">
+                                            <button type="button" class="delete-button" data-title="<?php echo htmlspecialchars($message['title']); ?>">Delete</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                        <?php endforeach; ?>
+                        <?php if ($before_messages_total > $messages_per_page): ?>
+                            <button class="view-more" data-type="before" data-offset="<?php echo $messages_per_page; ?>" data-total="<?php echo $before_messages_total; ?>">View More</button>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
 
-    <!--  JavaScript -->
     <script>
         $(document).ready(function() {
             // จัดการการคลิกปุ่มสถานะ
@@ -267,7 +258,7 @@ if (isset($_POST['delete'])) {
                 };
             }
 
-            // จัดการการค้นหาด้วย AJAX
+            // การค้นหาด้วย AJAX
             const performSearch = debounce(function(searchQuery) {
                 $.ajax({
                     url: "search_topic.php",
@@ -303,6 +294,72 @@ if (isset($_POST['delete'])) {
             $(document).on('click', function(event) {
                 if (!$(event.target).closest('.menu-container').length) {
                     $('.dropdown-menu.active').removeClass('active');
+                }
+            });
+
+            // จัดการปุ่ม View More
+            $(document).on('click', '.view-more', function() {
+                const $button = $(this);
+                const type = $button.data('type');
+                const offset = parseInt($button.data('offset'));
+                const total = parseInt($button.data('total'));
+                const receiver_id = '<?php echo $receiver_id; ?>';
+
+                $.ajax({
+                    url: 'load_more_messages.php',
+                    method: 'POST',
+                    data: {
+                        type: type,
+                        offset: offset,
+                        receiver_id: receiver_id
+                    },
+                    success: function(response) {
+                        $button.before(response);
+                        const newOffset = offset + 5;
+                        $button.data('offset', newOffset);
+                        if (newOffset >= total) {
+                            $button.remove();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error: ", status, error);
+                    }
+                });
+            });
+
+            // จัดการการลบด้วย AJAX
+            $(document).on('click', '.delete-button', function() {
+                const title = $(this).data('title');
+                const $message = $(this).closest('.message');
+                const $container = $message.closest('.message-container'); // เลือก container ของข้อความ
+                const receiver_id = '<?php echo $receiver_id; ?>';
+
+                if (confirm('Are you sure you want to delete this topic?')) {
+                    $.ajax({
+                        url: 'delete_message.php',
+                        method: 'POST',
+                        data: {
+                            title: title,
+                            receiver_id: receiver_id
+                        },
+                        success: function(response) {
+                            if (response === 'success') {
+                                $message.remove(); // ลบข้อความออกจากหน้า
+                                // ตรวจสอบว่ายังมีข้อความเหลือใน container นี้หรือไม่
+                                if ($container.find('.message').length === 0) {
+                                    $container.html('<p>No messages found.</p>');
+                                    // ถ้ามีปุ่ม View More ให้ลบออกด้วย
+                                    $container.find('.view-more').remove();
+                                }
+                            } else {
+                                alert('Failed to delete the topic.');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("AJAX Error: ", status, error);
+                            alert('An error occurred while deleting the topic.');
+                        }
+                    });
                 }
             });
         });
