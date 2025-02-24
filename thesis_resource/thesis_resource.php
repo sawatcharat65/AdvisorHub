@@ -205,6 +205,18 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
+        .file-item1 {
+            background-color: #ffffff;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-item1:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
         .upload-card {
             background-color: #f8f9fa;
             border-radius: 12px;
@@ -265,6 +277,12 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
 
         .back-btn:hover {
             background-color: #2c3e50;
+        }
+
+        .title-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 1rem;
         }
 
         @media (max-width: 768px) {
@@ -341,11 +359,12 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="section-title mb-0">Uploaded Files</h5>
-                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filterCollapse">
                             <i class="bi bi-funnel me-1"></i> Filter
                         </button>
                     </div>
-                    
+
                     <div class="collapse mb-3" id="filterCollapse">
                         <div class="card card-body">
                             <div class="row">
@@ -354,54 +373,66 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                     <h6 class="mb-2">File Type</h6>
                                     <div class="d-flex flex-wrap">
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="pdf" id="pdfFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="pdf"
+                                                id="pdfFilter">
                                             <label class="form-check-label" for="pdfFilter">PDF</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="doc" id="docFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="doc"
+                                                id="docFilter">
                                             <label class="form-check-label" for="docFilter">DOC/DOCX</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="ppt" id="pptFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="ppt"
+                                                id="pptFilter">
                                             <label class="form-check-label" for="pptFilter">PPT/PPTX</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="xls" id="xlsFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="xls"
+                                                id="xlsFilter">
                                             <label class="form-check-label" for="xlsFilter">XLS/XLSX</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="jpg" id="jpgFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="jpg"
+                                                id="jpgFilter">
                                             <label class="form-check-label" for="jpgFilter">JPEG/PNG</label>
                                         </div>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input file-type-filter" type="checkbox" value="zip" id="zipFilter">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="zip"
+                                                id="zipFilter">
                                             <label class="form-check-label" for="zipFilter">ZIP/RAR</label>
                                         </div>
                                     </div>
                                 </div>
-                                
-                              <!-- Uploader Filters -->
+
+                                <!-- Uploader Filters -->
                                 <div class="col-md-4">
                                     <h6 class="mb-2">Uploader</h6>
                                     <div class="d-flex flex-wrap">
                                         <?php foreach ($students as $student): ?>
-                                        <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $student['student_first_name']; ?>" id="uploader<?php echo $student['student_id']; ?>">
-                                            <label class="form-check-label" for="uploader<?php echo $student['student_id']; ?>">
-                                                <?php echo $student['student_first_name']; ?>
-                                            </label>
-                                        </div>
+                                            <div class="form-check me-3 mb-2">
+                                                <input class="form-check-input uploader-filter" type="checkbox"
+                                                    value="<?php echo $student['student_first_name']; ?>"
+                                                    id="uploader<?php echo $student['student_id']; ?>">
+                                                <label class="form-check-label"
+                                                    for="uploader<?php echo $student['student_id']; ?>">
+                                                    <?php echo $student['student_first_name']; ?>
+                                                </label>
+                                            </div>
                                         <?php endforeach; ?>
-                                        
+
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $thesis['advisor_first_name']; ?>" id="uploader<?php echo $thesis['advisor_id']; ?>">
-                                            <label class="form-check-label" for="uploader<?php echo $thesis['advisor_id']; ?>">
+                                            <input class="form-check-input uploader-filter" type="checkbox"
+                                                value="<?php echo $thesis['advisor_first_name']; ?>"
+                                                id="uploader<?php echo $thesis['advisor_id']; ?>">
+                                            <label class="form-check-label"
+                                                for="uploader<?php echo $thesis['advisor_id']; ?>">
                                                 <?php echo $thesis['advisor_first_name']; ?>
                                             </label>
                                         </div>
                                     </div>
-                                </div> 
-                                
+                                </div>
+
                                 <!-- Date Range Filter -->
                                 <div class="col-md-4">
                                     <h6 class="mb-2">Date Range</h6>
@@ -415,9 +446,10 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="text-end mt-3">
-                                <button id="resetFilters" class="btn btn-sm btn-outline-secondary">Reset Filters</button>
+                                <button id="resetFilters" class="btn btn-sm btn-outline-secondary">Reset
+                                    Filters</button>
                             </div>
                         </div>
                     </div>
@@ -433,9 +465,11 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                             <div class="file-item p-4 d-flex align-items-center">
                                 <i class="bi bi-file-earmark me-4 fs-3"></i>
                                 <div class="flex-grow-1">
-                                    <div class="fw-bold"><?php echo htmlspecialchars($file['thesis_resource_file_name']); ?></div>
+                                    <div class="fw-bold"><?php echo htmlspecialchars($file['thesis_resource_file_name']); ?>
+                                    </div>
                                     <small class="text-muted d-block">
-                                        Uploaded by: <?php echo htmlspecialchars($file['uploader_name'] ?: $file['uploader_id']); ?>
+                                        Uploaded by:
+                                        <?php echo htmlspecialchars($file['uploader_name'] ?: $file['uploader_id']); ?>
                                     </small>
                                     <small class="text-muted">
                                         Upload time: <?php echo date('M d, Y H:i', strtotime($file['time_stamp'])); ?>
@@ -449,7 +483,8 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                         </button>
                                     </form>
                                     <?php if ($is_owner): ?>
-                                        <button class="action-btn delete-btn" onclick="deleteFile(<?php echo $file['thesis_resource_id']; ?>)">
+                                        <button class="action-btn delete-btn"
+                                            onclick="deleteFile(<?php echo $file['thesis_resource_id']; ?>)">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     <?php endif; ?>
@@ -458,6 +493,86 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
+            </div>
+        </div>
+
+        <!-- File List -->
+        <div class="thesis-card">
+            <div class="card-body p-5">
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0">Uploaded Files From Chat</h5>
+                    </div>
+                </div>
+
+                <?php
+
+                $titles_sql = "SELECT DISTINCT message_title FROM messages WHERE (sender_id = ? OR receiver_id = ?)";
+                $stmt = $conn->prepare($titles_sql);
+                $stmt->bind_param("ii", $_SESSION['account_id'], $_SESSION['account_id']);
+                $stmt->execute();
+                $titles_result = $stmt->get_result();
+                $titles = $titles_result->fetch_all(MYSQLI_ASSOC);
+
+                ?>
+
+                <?php foreach ($titles as $title): ?>
+                    <div class="title-container p-4 align-items-center">
+                        <h5 class="section-title fs-5">Title: <?php echo htmlspecialchars($title['message_title']); ?></h5>
+                        <?php
+
+                        $message_files_sql = "SELECT messages.*, account.role,
+                                    CASE 
+                                        WHEN account.role = 'student' THEN (SELECT student_first_name FROM student WHERE student_id = messages.sender_id)
+                                        WHEN account.role = 'advisor' THEN (SELECT advisor_first_name FROM advisor WHERE advisor_id = messages.sender_id)
+                                        ELSE messages.sender_id
+                                    END AS uploader_name
+                                    FROM messages
+                                    LEFT JOIN account ON messages.sender_id = account.account_id
+                                    WHERE (messages.sender_id = ? OR messages.receiver_id = ?) AND messages.message_file_name IS NOT NULL
+                                        AND messages.message_title = ?
+                                    ORDER BY messages.time_stamp DESC";
+                        $stmt = $conn->prepare($message_files_sql);
+                        $stmt->bind_param("iis", $_SESSION['account_id'], $_SESSION['account_id'], $title['message_title']);
+                        $stmt->execute();
+                        $messages_files_result = $stmt->get_result();
+                        $messages_files = $messages_files_result->fetch_all(MYSQLI_ASSOC);
+
+                        ?>
+
+                        <?php foreach ($messages_files as $file): ?>
+                            <div class="file-item1 p-4 d-flex align-items-center w-100 mb-2 mt-2">
+                                <i class="bi bi-file-earmark me-4 fs-3"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold"><?php echo htmlspecialchars($file['message_file_name']); ?></div>
+                                    <small class="text-muted d-block">
+                                        Uploaded by:
+                                        <?php echo htmlspecialchars($file['uploader_name'] ?: $file['uploader_id']); ?>
+                                    </small>
+                                    <small class="text-muted">
+                                        Upload time: <?php echo date('M d, Y H:i', strtotime($file['time_stamp'])); ?>
+                                    </small>
+                                </div>
+                                <div class="btn-group">
+                                    <form method="POST" action="download.php" style="display: inline;">
+                                        <input type="hidden" name="is_message" value="1">
+                                        <input type="hidden" name="file_id" value="<?php echo $file['message_id']; ?>">
+                                        <button type="submit" class="action-btn download-btn">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </form>
+                                    <?php if ($is_owner): ?>
+                                        <button class="action-btn delete-btn"
+                                            onclick="deleteFile(<?php echo $file['message_id']; ?>)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
 
@@ -474,4 +589,5 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
