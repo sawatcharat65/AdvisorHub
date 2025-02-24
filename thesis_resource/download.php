@@ -8,7 +8,12 @@ if (!isset($_POST['file_id'])) {
 
 $file_id = intval($_POST['file_id']); 
 
-$sql = "SELECT thesis_resource_file_name, thesis_resource_file_data, thesis_resource_file_type FROM thesis_resource WHERE thesis_resource_id = ?";
+if (isset($_POST['is_message'])) {
+    $sql = "SELECT message_file_name, message_file_data, message_file_type FROM messages WHERE message_id = ?";
+} else {
+    $sql = "SELECT thesis_resource_file_name, thesis_resource_file_data, thesis_resource_file_type FROM thesis_resource WHERE thesis_resource_id = ?";
+}
+
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $file_id);
 $stmt->execute();
