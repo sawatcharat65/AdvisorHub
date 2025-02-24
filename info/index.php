@@ -94,7 +94,7 @@ if (isset($_SESSION['advisor_info_id'])) {
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="icon" href="../Logo.jpg">
+    <link rel="icon" href="../Logo.png">
 </head>
 
 <body>
@@ -107,7 +107,7 @@ if (isset($_SESSION['advisor_info_id'])) {
                 <img src="<?= $advisor_info['img']; ?>" alt="Advisor Image">
                 <h2><?= $advisor_info['advisor_first_name'] . " " . $advisor_info['advisor_last_name']; ?></h2>
             </div>
-            
+
             <div class="contact-info">
                 <h3>Contact</h3>
                 <p><strong>Email:</strong> <?= $advisor_info['advisor_email']; ?></p>
@@ -122,7 +122,7 @@ if (isset($_SESSION['advisor_info_id'])) {
 
                 <h3>Interests</h3>
                 <p><?= $advisor_info['advisor_interests']; ?></p>
-                
+
                 <h3>Number of advising students: <?= $advisor_info['student_count']; ?></h3>
             </div>
 
