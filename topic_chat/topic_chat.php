@@ -331,8 +331,10 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
             $(document).on('click', '.delete-button', function() {
                 const title = $(this).data('title');
                 const $message = $(this).closest('.message');
-                const $container = $message.closest('.message-container'); // เลือก container ของข้อความ
+                const $container = $message.closest('.message-container'); // Container ของข้อความ
+                const $viewMore = $container.find('.view-more'); // ปุ่ม View More
                 const receiver_id = '<?php echo $receiver_id; ?>';
+                const messagesPerPage = <?php echo $messages_per_page; ?>; // จำนวนข้อความต่อหน้า (5)
 
                 if (confirm('Are you sure you want to delete this topic?')) {
                     $.ajax({
@@ -345,11 +347,63 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
                         success: function(response) {
                             if (response === 'success') {
                                 $message.remove(); // ลบข้อความออกจากหน้า
-                                // ตรวจสอบว่ายังมีข้อความเหลือใน container นี้หรือไม่
-                                if ($container.find('.message').length === 0) {
+
+                                // จำนวนข้อความที่แสดงอยู่ใน container
+                                const remainingMessages = $container.find('.message').length;
+
+                                // ดึงจำนวนข้อความทั้งหมดจาก data-total ของ view-more หรือคำนวณจากเริ่มต้น
+                                let totalMessages = $viewMore.length ? parseInt($viewMore.data('total')) : remainingMessages + 1;
+                                totalMessages -= 1; // ลดจำนวนลง 1 หลังลบ
+
+                                // อัปเดต data-total ใน view-more ถ้ามี
+                                if ($viewMore.length) {
+                                    $viewMore.data('total', totalMessages);
+                                }
+
+                                // ถ้าจำนวนที่แสดง < 5 และยังมีข้อความเหลือในฐานข้อมูล
+                                if (remainingMessages < messagesPerPage && totalMessages > remainingMessages) {
+                                    $.ajax({
+                                        url: 'load_more_messages.php',
+                                        method: 'POST',
+                                        data: {
+                                            type: $container.data('type'),
+                                            offset: remainingMessages, // เริ่มจากตำแหน่งที่เหลือ
+                                            receiver_id: receiver_id
+                                        },
+                                        success: function(response) {
+                                            $container.find('.message').last().after(response); // เพิ่มข้อความใหม่ต่อจากข้อความสุดท้าย
+                                            // อัปเดต remainingMessages ใหม่หลังโหลด
+                                            const newRemainingMessages = $container.find('.message').length;
+
+                                            // จัดการปุ่ม View More
+                                            if (totalMessages > newRemainingMessages) {
+                                                if (!$viewMore.length) {
+                                                    $container.append(
+                                                        `<button class="view-more" data-type="${$container.data('type')}" data-offset="${newRemainingMessages}" data-total="${totalMessages}">View More</button>`
+                                                    );
+                                                }
+                                            } else {
+                                                $viewMore.remove(); // ลบปุ่มถ้าทุกข้อความแสดงหมดแล้ว
+                                            }
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error("AJAX Error: ", status, error);
+                                        }
+                                    });
+                                } else {
+                                    // จัดการปุ่ม View More ถ้าไม่ต้องโหลดเพิ่ม
+                                    if (totalMessages <= remainingMessages) {
+                                        $viewMore.remove(); // ลบปุ่มถ้าทุกข้อความแสดงหมดแล้ว
+                                    } else if (totalMessages > remainingMessages && !$viewMore.length) {
+                                        $container.append(
+                                            `<button class="view-more" data-type="${$container.data('type')}" data-offset="${remainingMessages}" data-total="${totalMessages}">View More</button>`
+                                        );
+                                    }
+                                }
+
+                                // ถ้าไม่มีข้อความเหลือ
+                                if (remainingMessages === 0) {
                                     $container.html('<p>No messages found.</p>');
-                                    // ถ้ามีปุ่ม View More ให้ลบออกด้วย
-                                    $container.find('.view-more').remove();
                                 }
                             } else {
                                 alert('Failed to delete the topic.');
