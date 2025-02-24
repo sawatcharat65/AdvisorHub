@@ -375,13 +375,13 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                     </div>
                                 </div>
                                 
-                                <!-- Uploader Filters -->
+                              <!-- Uploader Filters -->
                                 <div class="col-md-4">
                                     <h6 class="mb-2">Uploader</h6>
                                     <div class="d-flex flex-wrap">
                                         <?php foreach ($students as $student): ?>
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $student['student_id']; ?>" id="uploader<?php echo $student['student_id']; ?>">
+                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $student['student_first_name']; ?>" id="uploader<?php echo $student['student_id']; ?>">
                                             <label class="form-check-label" for="uploader<?php echo $student['student_id']; ?>">
                                                 <?php echo $student['student_first_name']; ?>
                                             </label>
@@ -389,13 +389,13 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                                         <?php endforeach; ?>
                                         
                                         <div class="form-check me-3 mb-2">
-                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $thesis['advisor_id']; ?>" id="uploader<?php echo $thesis['advisor_id']; ?>">
+                                            <input class="form-check-input uploader-filter" type="checkbox" value="<?php echo $thesis['advisor_first_name']; ?>" id="uploader<?php echo $thesis['advisor_id']; ?>">
                                             <label class="form-check-label" for="uploader<?php echo $thesis['advisor_id']; ?>">
                                                 <?php echo $thesis['advisor_first_name']; ?>
                                             </label>
                                         </div>
                                     </div>
-                                </div>
+                                </div> 
                                 
                                 <!-- Date Range Filter -->
                                 <div class="col-md-4">
