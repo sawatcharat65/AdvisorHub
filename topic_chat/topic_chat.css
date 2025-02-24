@@ -259,16 +259,8 @@ body {
     font-size: 10px; /* ขนาดเล็กเพื่อให้เหมาะสมกับปุ่ม */
 }
 
-.after-approve {
-    margin-bottom: 28px;
-}
-
 .after-approve h3 {
     margin-bottom: 12px;
-}
-
-.before-approve {
-    margin-bottom: 28px;
 }
 
 .before-approve h3 {
@@ -281,10 +273,6 @@ body {
 
 .topic-section.active {
     display: block;
-}
-
-.message-container {
-    margin-bottom: -20px;
 }
 
 /* สไตล์สำหรับปุ่ม View More */
