@@ -15,7 +15,7 @@ $action = $_POST['action'];
 if ($action === 'request') {
     // ส่งคำร้องขอลบ
     $sql = "UPDATE messages 
-            SET message_delete_request = 1, message_delete_from_id = '$id' 
+            SET message_delete_request = 1, message_delete_from_id = '$id', time_stamp = NOW()
             WHERE message_title = '$title' 
             AND ((sender_id = '$id' AND receiver_id = '$receiver_id') 
                  OR (sender_id = '$receiver_id' AND receiver_id = '$id'))";
@@ -38,7 +38,7 @@ if ($action === 'request') {
 } elseif ($action === 'reject') {
     // ปฏิเสธคำร้อง รีเซ็ตสถานะ
     $sql = "UPDATE messages 
-            SET message_delete_request = 0, message_delete_from_id = NULL 
+            SET message_delete_request = 0, message_delete_from_id = NULL, time_stamp = NOW() 
             WHERE message_title = '$title' 
             AND ((sender_id = '$id' AND receiver_id = '$receiver_id') 
                  OR (sender_id = '$receiver_id' AND receiver_id = '$id'))";
