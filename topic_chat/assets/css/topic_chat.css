@@ -1,0 +1,411 @@
+/* รีเซ็ตพื้นฐาน */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f5f7fa;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #333;
+}
+
+/* กล่องหลักของ topic */
+.topic-container {
+    max-width: 600px;
+    width: 90%;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 40px auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* หัวข้อและปุ่มเพิ่ม */
+.topic-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.topic-head h2 {
+    font-size: 30px;
+    color: #000000;
+    font-weight: 600;
+    margin: 0;
+}
+
+.topic-head a {
+    color: #a463ff;
+    font-size: 32px;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+
+.topic-head a:hover {
+    color: #7b68ee;
+}
+
+/* ช่องค้นหา */
+.topic-search {
+    display: flex;
+    align-items: center;
+    background: #f1f3f5;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.topic-search i {
+    color: #7f8c8d;
+    font-size: 18px;
+}
+
+.topic-search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    flex: 1;
+    margin-left: 12px;
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.topic-search button {
+    border: none;
+    background: #a463ff;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.topic-search button:hover {
+    background: #7b68ee;
+}
+
+.topic-search button i {
+    color: white;
+    font-size: 18px;
+}
+
+/* สถานะ */
+.topic-status {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.topic-status button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    background: #f1f3f5;
+    color: #7f8c8d;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.topic-status button:hover {
+    background: #e0e4e8;
+}
+
+.topic-status button.active {
+    background: #fe7801;
+    color: white;
+}
+
+/* เส้นแบ่ง */
+.divider {
+    height: 1px;
+    background: #e0e4e8;
+    margin: 20px 0;
+}
+
+/* ข้อความแต่ละอัน */
+.message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.message:hover {
+    background: #f4f4f4;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.sender {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.message-date {
+    font-size: 12px;
+    color: #000000;
+    font-weight: 400;
+}
+
+.message-options {
+    display: flex;
+    align-items: center; /* จัดแนวให้อยู่กึ่งกลางในแนวดิ่ง */
+    gap: 8px;
+    margin-top: 4px; /* ระยะห่างจากวันที่ */
+}
+
+.delete-status {
+    margin-top: 4px; /* ระยะห่างจาก message-options */
+    font-size: 12px; /* ขนาดเท่ากับ .message-date */
+    color: #7f8c8d; /* สีเทาเหมือน .confirm-text */
+    font-weight: 400;
+}
+
+.status-text {
+    color: #fe7801; /* สีส้มเพื่อให้เด่นขึ้น */
+    font-weight: 600; /* ทำให้สถานะหนาขึ้น */
+}
+
+.confirm-text {
+    font-size: 12px; /* ขนาดเท่ากับ .message-date */
+    color: #7f8c8d; /* สีเทาให้ดูนุ่มนวล */
+    font-weight: 400;
+    margin-right: 8px; /* ระยะห่างจากปุ่ม */
+}
+
+.approve-button, .reject-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.approve-button i {
+    color: #28a745;
+    font-size: 18px;
+}
+
+.reject-button i {
+    color: #dc3545;
+    font-size: 18px;
+}
+
+.approve-button:hover {
+    background: #e6ffe6;
+    transform: scale(1.05);
+}
+
+.reject-button:hover {
+    background: #ffe6e6;
+    transform: scale(1.05);
+}
+
+/* การจัดการปุ่มใน message-actions */
+.message-actions {
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางในแนวดิ่ง */
+    gap: 12px; /* ระยะห่างระหว่างปุ่ม */
+}
+
+.form-chat {
+    position: relative;
+    display: flex;
+    align-items: center; /* จัดกึ่งกลางในแนวดิ่งภายในฟอร์ม */
+}
+
+.menu-button {
+    border: none;
+    background: #f9f9f9;
+    border-radius: 50%;
+    width: 36px; /* ขนาดเล็กลงเพื่อให้สมดุลกับภาพ */
+    height: 36px; /* ขนาดเท่ากันทั้งสองปุ่ม */
+    cursor: pointer;
+    display: flex;
+    justify-content: center; /* จัดไอคอนกึ่งกลางแนวนอน */
+    align-items: center; /* จัดไอคอนกึ่งกลางแนวตั้ง */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* เพิ่มเงาเล็กน้อย */
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.menu-button:hover {
+    background: #e3e3e3;
+    transform: scale(1.05);;
+}
+
+.bxs-message-dots {
+    color: #000000;
+    font-size: 22px;
+}
+
+.bx-dots-vertical-rounded {
+    color: #000000;
+    font-size: 18px;
+}
+
+/* Three-dot menu styles */
+.menu-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 40px; /* ปรับตำแหน่งให้เหมาะสมกับปุ่ม */
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    min-width: 120px;
+}
+
+.dropdown-menu.active {
+    display: block;
+}
+
+.dropdown-menu button {
+    border: none;
+    background: none;
+    padding: 8px 16px;
+    color: #e74c3c;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s ease;
+}
+
+.dropdown-menu button:hover {
+    background: #f4f4f4;
+}
+
+/* ตัวบ่งชี้ข้อความที่ยังไม่ได้อ่าน */
+.unread-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bxs-circle {
+    color: #e74c3c;
+    font-size: 10px; /* ขนาดเล็กเพื่อให้เหมาะสมกับปุ่ม */
+}
+
+.after-approve h3 {
+    margin-bottom: 12px;
+}
+
+.before-approve h3 {
+    margin-bottom: 12px;
+}
+
+.topic-section {
+    display: none;
+}
+
+.topic-section.active {
+    display: block;
+}
+
+/* สไตล์สำหรับปุ่ม View More */
+.view-more {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 24px;
+    border: none;
+    background: #a463ff; /* ใช้สีหลักที่กลมกลืนกับ theme */
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 20px; /* ขอบมนแบบเดียวกับปุ่มสถานะ */
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* เงาเล็กน้อยเพื่อให้เด่นขึ้น */
+}
+
+.view-more:hover {
+    background: #7b68ee; /* สีเข้มขึ้นเมื่อ hover */
+    transform: scale(1.02); /* ขยายเล็กน้อย */
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15); /* เงาชัดขึ้น */
+}
+
+.view-more:active {
+    transform: scale(0.98); /* หดเล็กน้อยเมื่อคลิก */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* เงาลดลง */
+}
+
+.topic-head-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.thesis-btn {
+    background: none;
+    border: none;
+    color: #a463ff;
+    font-size: 30px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 0;
+}
+
+.thesis-btn:hover {
+    color: #7b68ee;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .topic-container {
+        width: 100%;
+        margin: 20px auto;
+        padding: 16px;
+    }
+
+    .topic-head h2 {
+        font-size: 20px;
+    }
+
+    .topic-search {
+        padding: 10px 12px;
+    }
+
+    .message {
+        padding: 12px;
+    }
+
+    .sender {
+        font-size: 14px;
+    }
+
+    .message-date {
+        font-size: 11px;
+    }
+}

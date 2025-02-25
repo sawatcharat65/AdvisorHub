@@ -4,6 +4,7 @@ include('../server.php');
 
 session_start();
 
+// ถ้าไม่ได้บันทึก session id ของอาจารย์ ให้กลับไปหน้า advisor
 if (empty($_SESSION['advisor_id'])) {
   header('location: /AdvisorHub/advisor');
 }
@@ -13,24 +14,35 @@ if (isset($_POST['logout'])) {
   header('location: /AdvisorHub/login');
 }
 
-if (!isset($_SESSION['username']) && !isset($_SESSION['id'])) {
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+  header('location: /AdvisorHub/advisor');
+}
+
+// ถ้าไม่ได้ล็อกอิน ให้กลับไปหน้า login
+if (!isset($_SESSION['username']) && !isset($_SESSION['account_id'])) {
   die(header("location:http://localhost/AdvisorHub/login"));
 }
 
-$id = $_SESSION['id'];
+$id = $_SESSION['account_id'];
 $username = $_SESSION['username'];
 
-$check_sql = "SELECT role FROM account WHERE id = '{$id}'";
+// sql สำหรับเช็คว่าอยู่ใน role อะไร (advisor, student, admin)
+$check_sql = "SELECT role FROM account WHERE account_id = '{$id}'";
 $check_result = mysqli_query($conn, $check_sql);
 $check_row = mysqli_fetch_array($check_result);
 
+// condition สำหรับ sql ดึงข้อมูลนิสิต
 if ($check_row['role'] == 'student') {
-  $sql = "SELECT * FROM student WHERE id = '{$id}'";
+  $sql = "SELECT * FROM student WHERE student_id = '{$id}'";
   $result = mysqli_query($conn, $sql);
   $row = mysqli_fetch_array($result);
+} else {
+  header('location: /AdvisorHub/advisor');
 }
 
-$advisor_sql = "SELECT first_name, last_name FROM advisor WHERE id = '{$_SESSION["advisor_id"]}'";
+// sql สำหรับเรียกข้อมูลอาจารย์
+$advisor_sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '{$_SESSION["advisor_id"]}'";
 $advisor_result = mysqli_query($conn, $advisor_sql);
 $advisor_row = mysqli_fetch_array($advisor_result);
 
@@ -42,50 +54,14 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>กรอกข้อมูล สมน.1</title>
+  <title>Request Form</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="../Logo.png">
 </head>
 
 <body>
-  <nav>
-    <div class="logo">
-      <img src="../CSIT.png" alt="" width="250px">
-    </div>
-    <ul>
-      <li><a href="/AdvisorHub/home">Home</a></li>
-
-      <?php
-      if (isset($_SESSION['username'])) {
-        echo
-          "
-                    <li><a href='/AdvisorHub/advisor'>Advisor</a></li>
-                    <li><a href='/AdvisorHub/inbox'>Inbox</a></li>
-                    <li><a href='/AdvisorHub/thesis/thesis.php'>Thesis</a></li>
-                    <li><a href='/AdvisorHub/statistics'>Statistics</a></li>
-                    <li><a href='/AdvisorHub/thesis_resource_list/thesis_resource_list.php'>File</a></li>
-                    ";
-      } else {
-        echo "<li><a href='/AdvisorHub/login'>Login</a></li>";
-      }
-      ?>
-    </ul>
-
-    <div class="userProfile">
-      <?php
-      if (isset($_SESSION['username'])) {
-        echo '<h2>' . $_SESSION['username'] . '<h2/>';
-        echo "<i class='bx bxs-user-circle' ></i>";
-        echo "<div class='dropdown'>
-                            <form action='' method='post'>
-                                <button name='profile'>Profile</button>
-                                <button name='logout'>Logout</button>
-                            </form>
-                        </div>";
-      }
-      ?>
-    </div>
-  </nav>
+  <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
 
   <div class="container my-5">
     <form action="advisor_request.php" method="POST">
@@ -94,7 +70,8 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 
         <div class="col-auto">
           <label for="academic_year">ปีการศึกษา:</label>
-          <input type="number" class="form-control" id="academic_year" name="academic_year" value="<?php echo date("Y")+542 ?>" style="width: 100px;">
+          <input type="number" class="form-control" id="academic_year" name="academic_year"
+            value="<?php echo date("Y") + 542 ?>" style="width: 100px;">
         </div>
 
         <div class="col-auto">
@@ -111,7 +88,7 @@ $advisor_row = mysqli_fetch_array($advisor_result);
 
       <!-- Dropdown -->
       <div class="mb-3 d-flex align-items-center">
-        <label for="thesisType">ทำวิทยานิพนธ์ประเภท:</label>
+        <label for="thesisType" class="me-2">ทำวิทยานิพนธ์ประเภท: </label>
         <select id="thesisType" name="thesisType" class="form-select w-auto" onchange="toggleFields()">
           <option value="single" selected>เดี่ยว</option>
           <option value="pair">คู่</option>
@@ -123,137 +100,64 @@ $advisor_row = mysqli_fetch_array($advisor_result);
         <h5>ข้อมูลนิสิต (ทำเดี่ยว)</h5>
 
         <div class="row align-items-center mb-3">
-          <div class="col-md-7">
-            <label for="singleName" class="form-label">ชื่อ-สกุล:</label>
-            <input type="text" class="form-control" id="singleName" name="singleName" placeholder="ไม่ต้องระบุคำนำหน้า"
-              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>">
-          </div>
-          <div class="col-md-5">
+          <div class="col-md-6">
             <label for="singleStudentID" class="form-label">รหัสนิสิต:</label>
             <input type="text" class="form-control" id="singleStudentID" name="singleStudentID"
-              value="<?php echo $row['id']; ?>">
+              value="<?php echo $row['student_id']; ?>" readonly>
           </div>
         </div>
-
-        <div class="row align-items-center mb-3">
-          <div class="col-md-4">
-            <label for="singleBranch" class="form-label">สาขา:</label>
-            <select id="singleBranch" class="form-select" name="singleBranch">
-              <option value="CS">วิทยาการคอมพิวเตอร์</option>
-              <option value="IT">เทคโนโลยีสารสนเทศ</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label for="singlePhone" class="form-label">เบอร์มือถือ:</label>
-            <input type="tel" class="form-control" id="singlePhone" name="singlePhone" placeholder="08xxxxxxxx"
-              value="<?php echo $row['tel']; ?>">
-          </div>
-          <div class="col-md-4">
-            <label for="singleEmail" class="form-label">อีเมล:</label>
-            <input type="email" class="form-control" id="singleEmail" name="singleEmail" placeholder="email@nu.ac.th"
-              value="<?php echo $row['email']; ?>">
-          </div>
-        </div>
-
-
       </div>
 
       <!-- ฟิลด์ทำคู่ -->
       <div id="pairFields" class="hidden">
-        <h5>ข้อมูลนิสิต (คนที่ 1)</h5>
-
+        <h5>ข้อมูลนิสิต (ทำคู่)</h5>
         <div class="row align-items-center mb-3">
-          <div class="col-md-7">
-            <label for="pairName1" class="form-label">ชื่อ-สกุล:</label>
-            <input type="text" class="form-control" id="pairName1" name="pairName1" placeholder="ไม่ต้องระบุคำนำหน้า"
-              value="<?php echo $row['first_name'] . ' ' . $row['last_name']; ?>">
-          </div>
-          <div class="col-md-5">
-            <label for="pairStudentID1" class="form-label">รหัสนิสิต:</label>
+          <!-- input รหัสนิสิต -->
+          <div class="col-md-6">
+            <label for="pairStudentID1" class="form-label">รหัสนิสิต[1]:</label>
             <input type="text" class="form-control" id="pairStudentID1" name="pairStudentID1"
-              value="<?php echo $row['id']; ?>">
+              value="<?php echo $row['student_id']; ?>" readonly>
           </div>
-        </div>
-
-        <div class="row align-items-center mb-3">
-          <div class="col-md-4">
-            <label for="pairBranch1" class="form-label">สาขา:</label>
-            <select id="pairBranch1" class="form-select" name="pairBranch1">
-              <option value="CS">วิทยาการคอมพิวเตอร์</option>
-              <option value="IT">เทคโนโลยีสารสนเทศ</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label for="pairPhone1" class="form-label">เบอร์มือถือ:</label>
-            <input type="tel" class="form-control" id="pairPhone1" name="pairPhone1"
-              placeholder="08xxxxxxxx" value="<?php echo $row['tel']; ?>">
-          </div>
-          <div class="col-md-4">
-            <label for="pairEmail1" class="form-label">อีเมล:</label>
-            <input type="email" class="form-control" id="pairEmail1" name="pairEmail1" placeholder="email@nu.ac.th"
-              value="<?php echo $row['email']; ?>">
-          </div>
-        </div>
-
-        <h5>ข้อมูลนิสิต (คนที่ 2)</h5>
-
-        <div class="row align-items-center mb-3">
-          <div class="col-md-7">
-            <label for="pairName2" class="form-label">ชื่อ-สกุล:</label>
-            <input type="text" class="form-control" id="pairName2" name="pairName2" placeholder="ไม่ต้องระบุคำนำหน้า">
-          </div>
-          <div class="col-md-5">
-            <label for="pairStudentID2" class="form-label">รหัสนิสิต:</label>
-            <input type="text" class="form-control" id="pairStudentID2" name="pairStudentID2">
-          </div>
-        </div>
-
-        <div class="row align-items-center mb-3">
-          <div class="col-md-4">
-            <label for="pairBranch2" class="form-label">สาขา:</label>
-            <select id="pairBranch2" class="form-select" name="pairBranch2">
-              <option value="CS">วิทยาการคอมพิวเตอร์</option>
-              <option value="IT">เทคโนโลยีสารสนเทศ</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label for="pairPhone2" class="form-label">เบอร์มือถือ:</label>
-            <input type="tel" class="form-control" id="pairPhone2" name="pairPhone2"
-              placeholder="08xxxxxxxx">
-          </div>
-          <div class="col-md-4">
-            <label for="pairEmail2" class="form-label">อีเมล:</label>
-            <input type="email" class="form-control" id="pairEmail2" name="pairEmail2" placeholder="email@nu.ac.th">
+          <div class="col-md-6">
+            <label for="pairStudentID2" class="form-label">รหัสนิสิต[2]:</label>
+            <input type="text" class="form-control" id="pairStudentID2" name="pairStudentID2" placeholder="กรุณากรอกรหัสนิสิต" onblur="fetchStudentData()">
           </div>
         </div>
       </div>
 
+      <!-- อาจารย์ที่ปรึกษา -->
       <div class="mb-3">
         <label for="advisorName" class="form-label">อาจารย์ที่ปรึกษาวิทยานิพนธ์:</label>
-        <input type="text" class="form-control" id="advisorName" name="advisorName" value="<?php echo $advisor_row['first_name'] . ' ' . $advisor_row['last_name']; ?>"
-          readonly>
+        <input type="text" class="form-control" id="advisorName" name="advisorName"
+          value="<?php echo $advisor_row['advisor_first_name'] . ' ' . $advisor_row['advisor_last_name']; ?>" readonly>
       </div>
 
-      <!-- ข้อมูล -->
+      <!-- ชื่อเรื่องไทย -->
       <div class="mb-3">
         <label for="thesisTitleThai" class="form-label">ชื่อเรื่อง (ภาษาไทย):</label>
         <input type="text" class="form-control" id="thesisTitleThai" name="thesisTitleThai" required>
       </div>
+
+      <!-- ชื่อเรื่อง eng -->
       <div class="mb-3">
         <label for="thesisTitleEnglish" class="form-label">ชื่อเรื่อง (ภาษาอังกฤษ):</label>
         <input type="text" class="form-control" id="thesisTitleEnglish" name="thesisTitleEnglish" required>
       </div>
+
+      <!-- รายละเอียดสังเขป -->
       <div class="mb-3">
         <label for="thesisDescription" class="form-label">รายละเอียดวิทยานิพนธ์โดยสังเขป:</label>
         <textarea class="form-control" id="thesisDescription" name="thesisDescription" rows="4" required></textarea>
       </div>
 
+      <!-- input เปล่า ไว้ส่ง id ของ อจ. -->
       <input type="text" hidden name="advisor_id" id="advisor_id" value="<?php echo $_SESSION['advisor_id'] ?>">
-      
+
       <!-- submit -->
       <div class="text-start mt-4">
         <button type="submit" class="btn" style="color:white; background-color: #ff9300;">ส่งคำร้อง</button>
       </div>
+
     </form>
   </div>
 
@@ -263,10 +167,13 @@ $advisor_row = mysqli_fetch_array($advisor_result);
       const singleFields = document.getElementById('singleFields');
       const pairFields = document.getElementById('pairFields');
 
+      // ถ้าเลือกทำเดี่ยว ให้แสดงฟิลด์สำหรับ ทำเดี่ยว และซ่อนฟิลด์สำหรับ ทำคู่
       if (thesisType === 'single') {
         singleFields.style.display = 'block';
         pairFields.style.display = 'none';
-      } else if (thesisType === 'pair') {
+      }
+      // ถ้าเลือกทำคู่ ให้แสดงฟิลด์สำหรับ ทำคู่ และซ่อนฟิลด์สำหรับ ทำเดี่ยว
+      else if (thesisType === 'pair') {
         singleFields.style.display = 'none';
         pairFields.style.display = 'block';
       }

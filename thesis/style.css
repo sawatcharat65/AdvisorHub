@@ -13,13 +13,7 @@ h1 {
     color: #333;
     text-align: center;
 }
-.info {
-    margin-bottom: 15px;
-}
-.info strong {
-    display: block;
-    color: #555;
-}
+
 .abstract {
     background: #eef;
     padding: 10px;
@@ -355,4 +349,123 @@ nav li:hover {
     height: 225px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+.custom-search-input {
+    height: 40px;
+    border-radius: 10px;
+}
+
+.custom-search-input:focus {
+    box-shadow: none;
+    border: 1px solid #d1d5db;
+}
+
+.text-muted {
+    color: #9ca3af !important;
+}
+
+.custom-border-start {
+    border-left: 1px solid #d1d5db;
+    padding-left: 10px;
+}
+
+/* ปรับแต่ง List View */
+.thesis-list .card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.thesis-list .card:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-5px);
+    border-color: #410690;
+    box-shadow: 0 10px 20px rgba(56, 0, 121, 0.1);
+    cursor: pointer;
+}
+
+/* ปรับแต่ง Grid View */
+.thesis-grid .card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.thesis-grid .card:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-5px);
+    border-color: #410690;
+    box-shadow: 0 10px 20px rgba(56, 0, 121, 0.1);
+    cursor: pointer;
+}
+
+#daterange {
+    min-width: 200px;
+    max-width: 250px;
+    white-space: nowrap;
+}
+
+.btn-group button {
+    padding: 6px 12px;
+}
+
+.custom-search-input {
+    min-width: 250px;
+}
+
+.thesis-item .card-body p.text-muted {
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* แสดงสูงสุด 3 บรรทัด */
+    line-clamp: 1; /* แสดงสูงสุด 3 บรรทัด */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* แสดง ... เมื่อข้อความล้น */
+    max-height: 4.5em; /* ปรับให้ตรงกับจำนวนบรรทัดที่ต้องการ */
+}
+
+.downloadf {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+.downloadf a {
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    display: inline-block; /* ให้เหมือนปุ่ม */
+    border: none;
+    text-align: center;
+}
+
+.downloadf a:hover {
+    background-color: #218838;
+}
+
+.downloadf a:focus {
+    outline: none;
+}
+
+.info {
+    display: grid;
+    grid-template-columns: 130px auto; /* คอลัมน์ซ้ายกว้าง 130px ส่วนขวายืดตามเนื้อหา */
+    align-items: start;
+    padding: 10px 0;
+    line-height: 1.5;
+    border-top: 1px solid #ddd;
+    color: #333333;
+}
+
+.info strong {
+    text-align: left;
+    font-weight: bold;
+}
+
+.info a {
+    text-decoration: none;
+    color: #428bca;
 }

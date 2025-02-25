@@ -1,0 +1,112 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: whitesmoke;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+footer {
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-top: 20px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+}
+
+footer p {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+/* new */
+
+.consultation-form-container {
+    width: 600px;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 40px auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.form-header {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
+}
+
+.form-header a {
+    position: absolute;
+    left: 0;
+    color: #a463ff;
+    font-size: 24px;
+    text-decoration: none;
+}
+
+.form-header a:hover {
+    color: #7b68ee;
+}
+
+.form-title {
+    margin: 0;
+}
+
+.form-field {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-textarea {
+    height: 100px;
+    resize: none;
+}
+
+.form-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.form-submit-btn {
+    background-color: #7a1efc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.form-submit-btn:hover {
+    background-color: #6e0bfa;
+}
+
+.bx-mail-send{
+    font-size: 30px;
+}

@@ -1,40 +1,103 @@
 <?php
-    session_start();
-    require ('../server.php');
-    include('../components/navbar.php');
-    if(isset($_POST['logout'])){
-        session_destroy();
-        header('location: /AdvisorHub/login');
+session_start();
+require('../server.php');
+include('../components/navbar.php');
+
+// Handle logout
+if (isset($_POST['logout'])) {
+    session_destroy();
+    header('location: /AdvisorHub/login');
+}
+
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+    header('location: /AdvisorHub/advisor');
+}
+// Check if session is empty
+if (empty($_SESSION['username'])) {
+    header('location: /AdvisorHub/login');
+}
+
+// Handle profile and chat redirects
+if (isset($_POST['profile'])) {
+    header('location: /AdvisorHub/profile');
+}
+
+if (isset($_POST['chat'])) {
+    $_SESSION['receiver_id'] = $_POST['chat'];
+    header('location: /AdvisorHub/topic_chat/topic_chat.php');
+}
+
+if (isset($_POST['profileInbox'])) {
+    $id = $_POST['profileInbox'];
+    $_SESSION['profileInbox'] = $id;
+    $_SESSION['advisor_info_id'] = $id;
+    $role = getUserRole($id);
+
+    if ($role == 'advisor') {
+        header('location: /AdvisorHub/info');
+    } else {
+        header('location: /AdvisorHub/student_profile');
+    }
+}
+
+// Helper function to get user role
+function getUserRole($id) {
+    global $conn;
+    $sql = "SELECT role FROM account WHERE account_id = '$id'";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+    return $row['role'];
+}
+
+// Helper function to get user information (advisor or student) with normalized keys
+function getUserInfo($id) {
+    global $conn;
+    // Check if advisor
+    $sql = "SELECT advisor_id AS id, advisor_first_name AS first_name, advisor_last_name AS last_name 
+            FROM advisor WHERE advisor_id = '$id'";
+    $result = $conn->query($sql);
+    if ($row = $result->fetch_assoc()) {
+        return $row; // Return advisor info with normalized keys
     }
 
-    if(empty($_SESSION['username'])){
-        header('location: /AdvisorHub/login');
+    // Check if student
+    $sql = "SELECT student_id AS id, student_first_name AS first_name, student_last_name AS last_name 
+            FROM student WHERE student_id = '$id'";
+    $result = $conn->query($sql);
+    if ($row = $result->fetch_assoc()) {
+        return $row; // Return student info with normalized keys
     }
 
-    if(isset($_POST['profile'])){
-        header('location: /AdvisorHub/profile');
+    return null; // Return null if no user found
+}
+
+// Helper function to check unread messages
+function checkUnreadMessages($receiver_id, $sender_id) {
+    global $conn;
+    $sql = "SELECT DISTINCT * FROM messages WHERE receiver_id = '$receiver_id' AND is_read = 0 AND sender_id = '$sender_id'";
+    $result = $conn->query($sql);
+    return $result->fetch_assoc(); // Return result if unread messages exist
+}
+
+// Function to display user details (advisor or student)
+function displayUserDetails($userInfo) {
+    if (!$userInfo) return; // Skip if no user info
+
+    echo "<div class='message'>
+            <div class='sender'>{$userInfo['first_name']} {$userInfo['last_name']}</div>
+            <form action='' method='post' class='form-chat'>
+                <button name='profileInbox' class='profileInbox' value='{$userInfo['id']}'><i class='bx bxs-user-pin'></i></button>
+                <button name='chat' class='chat-button' value='{$userInfo['id']}'><i class='bx bxs-message-dots'></i></button>";
+
+    // Check for unread messages
+    $unreadMessages = checkUnreadMessages($_SESSION['account_id'], $userInfo['id']);
+    if ($unreadMessages) {
+        echo "<i class='bx bxs-circle'></i>";
     }
 
-    if(isset($_POST['chat'])){
-        $_SESSION['receiver_id'] = $_POST['chat'];
-        header('location: /AdvisorHub/chat');
-    }
-
-    if(isset($_POST['profileInbox'])){
-        $user_id = $_POST['profileInbox'];
-        $_SESSION['profileInbox'] = $user_id;
-        
-        $sql = "SELECT role FROM advisor WHERE id = '$user_id'";
-        $result = $conn->query($sql);
-        $row = $result->fetch_assoc();
-
-        if($row['role'] == 'advisor'){
-            header('location: /ThesisAdvisorHub/advisor_profile');
-        }else{
-            header('location: /ThesisAdvisorHub/student_profile');
-        }
-
-    }
+    echo "</form></div>";
+}
 ?>
 
 <!DOCTYPE html>
@@ -50,105 +113,33 @@
 </head>
 <body>
 
-<?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams'])?>
+<?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']) ?>
     <div class="inbox-container">
         <div class="inbox-head">
             <h2>Inbox</h2>
         </div>
         <div class="inbox">
-
         <?php
-            $user_id = $_SESSION['id'];
+            $id = $_SESSION['account_id'];
 
-            $sql = "SELECT DISTINCT receiver_id FROM messages WHERE sender_id = $user_id UNION
-                    SELECT DISTINCT sender_id FROM messages WHERE receiver_id = $user_id ";
+            // Query for distinct receiver and sender ids
+            $sql = "SELECT DISTINCT receiver_id FROM messages WHERE sender_id = '$id' 
+                    UNION SELECT DISTINCT sender_id FROM messages WHERE receiver_id = '$id'";
             $result = $conn->query($sql);
 
-            while($row = $result->fetch_assoc()){
-                
-                if(isset($row['receiver_id'])){
-                    $receiver_id = $row['receiver_id'];
-                    $sql = "SELECT * FROM advisor WHERE id = '$receiver_id'";
-                    $result2 = $conn->query($sql);
-                    $row2 = $result2->fetch_assoc();
+            while ($row = $result->fetch_assoc()) {
+                $user_id = $row['receiver_id'] ?? $row['sender_id']; // Get the ID from either column
+                $userInfo = getUserInfo($user_id);
 
-                    if(empty($row2['username'])){
-                        $sql = "SELECT * FROM student WHERE id = '$receiver_id'";
-                        $result4 = $conn->query($sql);
-                        $row4 = $result4->fetch_assoc();
-
-                        $username = $row4['username'];
-                        $chat_id = $row4['id'];
-                    }else{
-                        $username = $row2['username'];
-                        $chat_id = $row2['id'];
-                    }
-                    
-                    echo 
-                    "
-                    <div class='message'>
-                        <div class='sender'>$username</div>
-                            <form action='' method='post' class='form-chat'>
-                                <button name='profileInbox' class='profileInbox' value='$chat_id'><i class='bx bxs-user-pin'></i></button>
-                                <button name='chat' class='chat-button' value='$chat_id'><i class='bx bxs-message-dots'></i></button>
-                    ";
-
-                    $sqlReadCheck = "SELECT DISTINCT * FROM messages WHERE receiver_id = '$user_id' AND is_read = 0 AND sender_id = '$chat_id'";
-                    $resultReadCheck = $conn->query($sqlReadCheck);
-                    $rowReadCheck = $resultReadCheck->fetch_assoc();
-
-                    if(isset($rowReadCheck['id'])){
-                        echo "<i class='bx bxs-circle'></i>";
-                    }
-
-                    echo 
-                    "
-                            </form>
-                        </div>
-                    ";
-
-                }elseif(isset($row['sender_id'])){
-                    $sender_id = $row['sender_id'];
-                    $sql = "SELECT * FROM student WHERE id = '$sender_id'";
-                    $result3 = $conn->query($sql);
-                    $row3 = $result3->fetch_assoc();
-
-                    $username = $row3['username'];
-                    $chat_id = $row3['id'];
-
-                    echo 
-                    "
-                    <div class='message'>
-                        <div class='sender'>$username</div>
-                            <form action='' method='post' class='form-chat'>
-                                <button name='chat' class='chat-button' value='$chat_id'><i class='bx bxs-message-dots'></i></button>
-                                <button name='profileInbox' value='$chat_id'><i class='bx bxs-user-pin'></i></button>
-                    ";
-
-                    $sqlReadCheck = "SELECT DISTINCT * FROM messages WHERE receiver_id = '$user_id' AND is_read = 0 AND sender_id = '$chat_id'";
-                    $resultReadCheck = $conn->query($sqlReadCheck);
-                    $rowReadCheck = $resultReadCheck->fetch_assoc();
-
-                    if(isset($rowReadCheck['id'])){
-                        echo "<i class='bx bxs-circle'></i>";
-                    }
-
-                    echo 
-                    "
-                            </form>
-                        </div>
-                    ";
-                    
-                }
+                // Call function to display user details
+                displayUserDetails($userInfo);
             }
-
         ?>
-        
-        
+        </div>
     </div>
-        
+
     <footer>
-        <p>&copy; 2024 Naresuan University.</p>
+        <p>© 2024 Naresuan University.</p>
     </footer>
 </body>
 </html>

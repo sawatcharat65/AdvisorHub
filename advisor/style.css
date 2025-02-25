@@ -4,64 +4,7 @@ body{
     background-color: whitesmoke;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
-nav {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    background-color: #410690;
-    padding: 10px 20px;
-}
-nav img {
-    margin: 1rem;
-}
-nav ul {
-    margin-left: 50px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    list-style: none;
-}
-nav li {
-    margin: 1rem;
-    list-style: none;
-    transition: .1s all ease;
-}
-li a {
-    text-decoration: none;
-    color: rgb(255, 255, 255);
-    font-weight: bold;
-    font-size: 22px;
-    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.115);
-    transition: .1s all ease;
-}
 
-nav li:hover {
-    transform: scale(1.04);
-}
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-    nav {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    nav ul {
-        flex-direction: column;
-        width: 100%;
-        padding: 0;
-    }
-    nav li {
-        width: 100%;
-        text-align: center;
-    }
-    li a {
-        font-size: 22px;
-    }
-}
 .userProfile {
     color: rgb(255, 255, 255);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -238,21 +181,6 @@ nav li:hover {
     font-size: 25px;
 }
 
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    margin-top: 40px;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
-}
-
-footer p {
-    color: #777;
-    font-size: 0.9rem;
-}
-
 .filter-wrap{
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     display: flex;
@@ -270,6 +198,7 @@ footer p {
 .filter-container{
     font-weight: bold;
     font-size: 18px;
+    width: 500px;
 }
 
 .filterButton{
@@ -296,4 +225,12 @@ footer p {
 .filterButton:hover{
     background-color: #410690;
     transform: scale(1.02);
+}
+
+.not-match{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+    font-size: 20px;
 }

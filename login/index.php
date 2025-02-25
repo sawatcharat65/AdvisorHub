@@ -10,36 +10,36 @@
         $username = filter_input(INPUT_POST,'username',FILTER_SANITIZE_SPECIAL_CHARS);
         $password = filter_input(INPUT_POST,'password',FILTER_SANITIZE_SPECIAL_CHARS);
 
-        $sql = "SELECT * FROM account WHERE id = '$username'";
+        $sql = "SELECT * FROM account WHERE account_id = '$username'";
         $result = $conn->query($sql);
         $row = $result->fetch_assoc();
 
-        if(isset($row['id']) && $password == $row['password']){
+        if(isset($row['account_id']) && $password == $row['password']){
             $_SESSION['role'] = $row['role'];
             //ถ้าเป็นนักศึกษาให้ไปดึงจาก student table 
             if($row['role'] == 'student'){
-                $id = $row['id'];
-                $sql = "SELECT * FROM student WHERE id = '$id'";
+                $student_id = $row['account_id'];
+                $sql = "SELECT * FROM student WHERE student_id = '$student_id'";
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
-                $_SESSION['username'] = $row['first_name'];
-                $_SESSION['id'] = $row['id'];
+                $_SESSION['username'] = $row['student_first_name'];
+                $_SESSION['account_id'] = $row['student_id'];
             //ถ้าเป็นอาจารย์ให้ไปดึง table จาก advisor
             }elseif($row['role'] == 'advisor'){
-                $id = $row['id'];
-                $sql = "SELECT * FROM advisor WHERE id = '$id'";
+                $advisor_id = $row['account_id'];
+                $sql = "SELECT * FROM advisor WHERE advisor_id = '$advisor_id'";
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
-                $_SESSION['username'] = $row['first_name'];
-                $_SESSION['id'] = $row['id'];
+                $_SESSION['username'] = $row['advisor_first_name'];
+                $_SESSION['account_id'] = $row['advisor_id'];
             //ถ้าเป็น admin ให้ไปดึง table จาก admin
             }elseif($row['role'] == 'admin'){
-                $id = $row['id'];
-                $sql = "SELECT * FROM admin WHERE id = '$id'";
+                $admin_id = $row['account_id'];
+                $sql = "SELECT * FROM admin WHERE admin_id = '$admin_id'";
                 $result = $conn->query($sql);
                 $row = $result->fetch_assoc();
-                $_SESSION['id'] = $row['id'];
-                $_SESSION['username'] = $row['first_name'];
+                $_SESSION['account_id'] = $row['admin_id'];
+                $_SESSION['username'] = $row['admin_first_name'];
             }
             header('location: /AdvisorHub/advisor');
 
@@ -47,6 +47,7 @@
         }else{
             $_SESSION['error'] = 'Username or password is incorrect';
             header('location: /AdvisorHub/login');
+            exit();
         }
 
         
@@ -68,7 +69,7 @@
 </head>
 <body>
 
-    <?php renderNavbar(['home', 'login'])?>
+    <?php renderNavbar(['home', 'login', 'advisor', 'statistics'])?>
     
     <div class="wrap">
         <form action="" method="post">
