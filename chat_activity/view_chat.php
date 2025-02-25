@@ -12,6 +12,11 @@ if (!isset($_GET['student_id']) || !isset($_GET['advisor_id'])) {
     exit();
 }
 
+if(isset($_POST['logout'])){
+    session_destroy();
+    header('location: /AdvisorHub/login');
+}
+
 $student_id = $_GET['student_id'];
 $advisor_id = $_GET['advisor_id'];
 
