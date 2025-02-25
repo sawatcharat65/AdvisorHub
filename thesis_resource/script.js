@@ -44,9 +44,9 @@ function uploadFile(file) {
     formData.append('thesis_id', thesisId);
 
     fetch('upload.php', {
-            method: 'POST',
-            body: formData
-        })
+        method: 'POST',
+        body: formData
+    })
         .then(response => response.text())
         .then(text => {
             console.log('Raw response:', text);
@@ -68,12 +68,12 @@ function uploadFile(file) {
 function deleteFile(fileId) {
     if (confirm('Are you sure you want to delete this file?')) {
         fetch('delete.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'file_id=' + fileId
-            })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'file_id=' + fileId
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -86,40 +86,38 @@ function deleteFile(fileId) {
 }
 
 // File filtering functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const fileTypeFilters = document.querySelectorAll('.file-type-filter');
     const uploaderFilters = document.querySelectorAll('.uploader-filter');
     const dateFrom = document.getElementById('dateFrom');
     const dateTo = document.getElementById('dateTo');
     const resetFiltersBtn = document.getElementById('resetFilters');
 
-    // เก็บ HTML ต้นฉบับไว้
-    const filesList = document.getElementById('filesList');
-    const originalHTML = filesList.innerHTML;
-
     // ป้องกันไม่ให้เลือกวันที่สิ้นสุดก่อนวันที่เริ่มต้น
-    dateFrom.addEventListener('change', function() {
-        if (dateFrom.value) {
-            dateTo.min = dateFrom.value; // กำหนด min ของ dateTo
-        } else {
-            dateTo.min = ''; // รีเซ็ตถ้าไม่มีค่าใน dateFrom
-        }
-        applyFilters(); // อัปเดตการกรอง
-    });
+    if (dateFrom && dateTo) {
+        dateFrom.addEventListener('change', function () {
+            if (dateFrom.value) {
+                dateTo.min = dateFrom.value; // กำหนด min ของ dateTo
+            } else {
+                dateTo.min = ''; // รีเซ็ตถ้าไม่มีค่าใน dateFrom
+            }
+            applyFilters(); // อัปเดตการกรอง
+        });
 
-    // ป้องกันไม่ให้เลือกวันที่เริ่มต้นหลังวันที่สิ้นสุด
-    dateTo.addEventListener('change', function() {
-        if (dateTo.value) {
-            dateFrom.max = dateTo.value; // กำหนด max ของ dateFrom
-        } else {
-            dateFrom.max = ''; // รีเซ็ตถ้าไม่มีค่าใน dateTo
-        }
-        applyFilters(); // อัปเดตการกรอง
-    });
+        // ป้องกันไม่ให้เลือกวันที่เริ่มต้นหลังวันที่สิ้นสุด
+        dateTo.addEventListener('change', function () {
+            if (dateTo.value) {
+                dateFrom.max = dateTo.value; // กำหนด max ของ dateFrom
+            } else {
+                dateFrom.max = ''; // รีเซ็ตถ้าไม่มีค่าใน dateTo
+            }
+            applyFilters(); // อัปเดตการกรอง
+        });
+    }
 
     // Apply filters when any filter changes
     function applyFilters() {
-        console.log("Applying filters with class toggling...");
+        console.log("Applying filters...");
 
         // Get selected filters
         const selectedFileTypes = Array.from(fileTypeFilters)
@@ -133,81 +131,127 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Selected uploaders:", selectedUploaders);
 
         // Get date range
-        const fromDate = dateFrom.value ? new Date(dateFrom.value) : null;
-        const toDate = dateTo.value ? new Date(dateTo.value) : null;
+        const fromDate = dateFrom && dateFrom.value ? new Date(dateFrom.value) : null;
+        const toDate = dateTo && dateTo.value ? new Date(dateTo.value) : null;
 
-        // รับรายการไฟล์ล่าสุด (กรณีมีการเปลี่ยนแปลง DOM)
+        // รับรายการไฟล์ล่าสุด
         const fileItems = document.querySelectorAll('.file-item');
 
         // ทำการกรองแต่ละไฟล์
         fileItems.forEach(item => {
-            // ดึงข้อมูลไฟล์
-            const fileName = item.querySelector('.fw-bold').textContent;
-            const uploaderText = item.querySelector('.text-muted').textContent;
-            // เปลี่ยนจาก uploaderId เป็น uploaderName
-            const uploaderName = uploaderText.split('Uploaded by: ')[1].trim().split('\n')[0].trim();
+            try {
+                // ดึงข้อมูลไฟล์
+                const fileName = item.querySelector('.fw-bold').textContent.trim();
 
-            // ดึงวันที่อัปโหลด
-            const uploadTimeText = item.querySelectorAll('.text-muted')[1].textContent;
-            const uploadDateStr = uploadTimeText.replace('Upload time:', '').trim();
-            const uploadDate = new Date(uploadDateStr);
+                // ดึงข้อมูลผู้อัปโหลด
+                let uploaderName = "";
 
-            // กำหนดประเภทไฟล์จากนามสกุล
-            let fileType = 'other';
-            const lowerFileName = fileName.toLowerCase();
-            if (lowerFileName.endsWith('.pdf')) fileType = 'pdf';
-            else if (lowerFileName.endsWith('.doc') || lowerFileName.endsWith('.docx')) fileType = 'doc';
-            else if (lowerFileName.endsWith('.ppt') || lowerFileName.endsWith('.pptx')) fileType = 'ppt';
-            else if (lowerFileName.endsWith('.xls') || lowerFileName.endsWith('.xlsx')) fileType = 'xls';
-            else if (lowerFileName.endsWith('.jpg') || lowerFileName.endsWith('.jpeg') || lowerFileName.endsWith('.png')) fileType = 'jpg';
-            else if (lowerFileName.endsWith('.zip') || lowerFileName.endsWith('.rar')) fileType = 'zip';
+                // ค้นหาข้อความ "Uploaded by:" ในทุกๆ small elements
+                const smallElements = item.querySelectorAll('small');
+                for (const el of smallElements) {
+                    if (el.textContent.includes('Uploaded by:')) {
+                        uploaderName = el.textContent.split('Uploaded by:')[1].trim();
+                        break;
+                    }
+                }
 
-            // เปลี่ยนจาก uploaderId เป็น uploaderName ในการแสดงผลด้วย
-            console.log(`File: ${fileName}, Type: ${fileType}, Uploader: ${uploaderName}`);
+                // ดึงวันที่อัปโหลด
+                let uploadDate = new Date();
+                for (const el of smallElements) {
+                    if (el.textContent.includes('Upload time:')) {
+                        const dateStr = el.textContent.split('Upload time:')[1].trim();
+                        uploadDate = new Date(dateStr);
+                        break;
+                    }
+                }
 
-            // ตรวจสอบว่าตรงกับตัวกรองหรือไม่
-            const matchesFileType = selectedFileTypes.length === 0 || selectedFileTypes.includes(fileType);
-            // เปลี่ยนจาก uploaderId เป็น uploaderName ในการตรวจสอบกับตัวกรอง
-            const matchesUploader = selectedUploaders.length === 0 || selectedUploaders.includes(uploaderName);
+                // ตรวจสอบประเภทไฟล์
+                let fileType = 'other';
+                const lowerFileName = fileName.toLowerCase();
 
-            // ตรวจสอบช่วงวันที่
-            let matchesDateRange = true;
-            if (fromDate) {
-                matchesDateRange = matchesDateRange && uploadDate >= fromDate;
-            }
-            if (toDate) {
-                const adjustedToDate = new Date(toDate);
-                adjustedToDate.setDate(adjustedToDate.getDate() + 1);
-                matchesDateRange = matchesDateRange && uploadDate < adjustedToDate;
-            }
+                if (lowerFileName.includes('.pdf')) fileType = 'pdf';
+                else if (lowerFileName.includes('.doc') || lowerFileName.includes('.docx')) fileType = 'doc';
+                else if (lowerFileName.includes('.ppt') || lowerFileName.includes('.pptx')) fileType = 'ppt';
+                else if (lowerFileName.includes('.xls') || lowerFileName.includes('.xlsx')) fileType = 'xls';
+                else if (lowerFileName.includes('.jpg') || lowerFileName.includes('.jpeg') || lowerFileName.includes('.png')) fileType = 'jpg';
+                else if (lowerFileName.includes('.zip') || lowerFileName.includes('.rar')) fileType = 'zip';
 
-            // ซ่อน/แสดงไฟล์ด้วยคลาส
-            if (matchesFileType && matchesUploader && matchesDateRange) {
-                item.classList.remove('d-none');
-            } else {
-                item.classList.add('d-none');
-                console.log(`Hiding file: ${fileName}`);
+                console.log(`File: ${fileName}, Type: ${fileType}, Uploader: ${uploaderName}`);
+
+                // ตรวจสอบการตรงกับตัวกรอง
+                let matchesFileType = true;
+                let matchesUploader = true;
+                let matchesDateRange = true;
+
+                // ตรวจสอบประเภทไฟล์ - ถ้ามีการเลือกประเภทไฟล์
+                if (selectedFileTypes.length > 0) {
+                    matchesFileType = selectedFileTypes.includes(fileType);
+                    console.log(`File type match: ${matchesFileType} (${fileType} in [${selectedFileTypes}])`);
+                }
+
+                // ตรวจสอบผู้อัปโหลด - ถ้ามีการเลือกผู้อัปโหลด
+                if (selectedUploaders.length > 0) {
+                    matchesUploader = selectedUploaders.includes(uploaderName);
+                    console.log(`Uploader match: ${matchesUploader} (${uploaderName} in [${selectedUploaders}])`);
+                }
+
+                // ตรวจสอบวันที่
+                if (fromDate) {
+                    const isAfterFromDate = uploadDate >= fromDate;
+                    matchesDateRange = matchesDateRange && isAfterFromDate;
+                    console.log(`Date after ${fromDate}: ${isAfterFromDate}`);
+                }
+
+                if (toDate) {
+                    const adjustedToDate = new Date(toDate);
+                    adjustedToDate.setDate(adjustedToDate.getDate() + 1);
+                    const isBeforeToDate = uploadDate < adjustedToDate;
+                    matchesDateRange = matchesDateRange && isBeforeToDate;
+                    console.log(`Date before ${adjustedToDate}: ${isBeforeToDate}`);
+                }
+
+                // ตัดสินใจว่าจะแสดงไฟล์หรือไม่
+                const showFile = matchesFileType && matchesUploader && matchesDateRange;
+                console.log(`Show file ${fileName}: ${showFile}`);
+
+                // แสดงหรือซ่อนไฟล์
+                if (showFile) {
+                    item.classList.remove('d-none');
+                    item.style.display = '';
+                } else {
+                    item.classList.add('d-none');
+                    item.style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error("Error processing file:", error);
+                // ถ้าเกิดข้อผิดพลาดให้แสดงไฟล์ไว้
+                item.style.display = '';
             }
         });
     }
 
     // Reset all filters
-    resetFiltersBtn.addEventListener('click', function() {
-        console.log("Resetting filters");
-        fileTypeFilters.forEach(checkbox => checkbox.checked = false);
-        uploaderFilters.forEach(checkbox => checkbox.checked = false);
-        dateFrom.value = '';
-        dateTo.value = '';
-        dateFrom.max = ''; // รีเซ็ต max
-        dateTo.min = ''; // รีเซ็ต min
+    if (resetFiltersBtn) {
+        resetFiltersBtn.addEventListener('click', function () {
+            console.log("Resetting filters");
+            fileTypeFilters.forEach(checkbox => checkbox.checked = false);
+            uploaderFilters.forEach(checkbox => checkbox.checked = false);
 
-        // แสดงไฟล์ทั้งหมด
-        document.querySelectorAll('.file-item').forEach(item => {
-            item.classList.remove('d-none');
+            if (dateFrom) dateFrom.value = '';
+            if (dateTo) dateTo.value = '';
+            if (dateFrom) dateFrom.max = '';
+            if (dateTo) dateTo.min = '';
+
+            // แสดงไฟล์ทั้งหมด
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.remove('d-none');
+                item.style.display = '';
+            });
         });
-    });
+    }
 
-    // เพิ่ม event listeners สำหรับตัวกรองทั้งหมด
+    // เพิ่ม event listeners
     fileTypeFilters.forEach(checkbox => {
         checkbox.addEventListener('change', applyFilters);
     });
@@ -215,7 +259,38 @@ document.addEventListener('DOMContentLoaded', function() {
     uploaderFilters.forEach(checkbox => {
         checkbox.addEventListener('change', applyFilters);
     });
-
-    dateFrom.addEventListener('change', applyFilters);
-    dateTo.addEventListener('change', applyFilters);
 });
+
+// เปิด/ปิดtoggle ไฟล์ขากแชท
+$(document).ready(function () {
+    $(".toggle-title").click(function () {
+        let target = $(this).data("target");
+        $(target).toggleClass("d-none");
+        $(this).toggleClass("open");
+    });
+});
+
+//ลบไฟล์แชท
+function deleteFileChat(message_id) {
+    if (confirm('Are you sure you want to delete this file?')) {
+        fetch('delete_file_chat.php', {
+            method: 'POST',
+            body: new URLSearchParams({
+                'message_id': message_id
+            })
+        })
+        .then(response => response.json()) // แปลงผลลัพธ์เป็น JSON
+        .then(data => {
+            if (data.success) {
+                // ลบไฟล์ออกจาก DOM ทันที
+                const fileItem = document.querySelector(`#file-item-${message_id}`);
+                if (fileItem) {
+                    fileItem.remove();
+                }
+            } else {
+                alert('Failed to delete the file: ' + data.error);
+            }
+        })
+        .catch(error => alert('Error: ' + error)); // จับข้อผิดพลาดจาก fetch
+    }
+}
