@@ -3,28 +3,6 @@ session_start();
 require('../server.php');
 include('../components/navbar.php');
 
-// ฟังก์ชันสำหรับดึง thesis_id
-function getThesisId($conn, $receiver_id, $current_user_id)
-{
-    // ถ้า receiver_id เป็น advisor และ current_user_id เป็น student
-    $sql = "SELECT advisor_request_id FROM advisor_request 
-            WHERE advisor_id = ? 
-            AND JSON_CONTAINS(student_id, ?)
-            AND is_advisor_approved = 1 
-            AND is_admin_approved = 1 
-            LIMIT 1";
-    $stmt = $conn->prepare($sql);
-    $student_id_json = json_encode($current_user_id); // แปลงเป็น JSON string
-    $stmt->bind_param("ss", $receiver_id, $student_id_json);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($row = $result->fetch_assoc()) {
-        return $row['advisor_request_id'];
-    }
-    return ''; // ถ้าไม่พบ thesis_id
-}
-
 // จัดการการออกจากระบบ
 if (isset($_POST['logout'])) {
     session_destroy();
@@ -101,45 +79,73 @@ $sql = "SELECT time_stamp FROM advisor_request
 $result = $conn->query($sql);
 $approval_timestamp = $result->num_rows > 0 ? $result->fetch_assoc()['time_stamp'] : null;
 
-$messages_per_page = 5;
-$before_messages = [];
-$after_messages = [];
+$messages_per_page = 5; // จำนวนเริ่มต้น
 
-// ดึงข้อความทั้งหมด
-$sql = "
-    SELECT message_title, MAX(time_stamp) AS latest_time
-    FROM messages
-    WHERE (sender_id = '$id' AND receiver_id = '$receiver_id') 
-    OR (sender_id = '$receiver_id' AND receiver_id = '$id')
-    GROUP BY message_title
-    ORDER BY latest_time DESC
-";
-$messages_result = $conn->query($sql);
+// ฟังก์ชันดึงข้อความ
+function fetchMessages($conn, $id, $receiver_id, $approval_timestamp, $type, $limit)
+{
+    $where_clause = "WHERE ((sender_id = '$id' AND receiver_id = '$receiver_id') 
+                    OR (sender_id = '$receiver_id' AND receiver_id = '$id'))";
 
-if ($messages_result) {
-    while ($row = $messages_result->fetch_assoc()) {
-        $message = [
-            'title' => $row['message_title'],
-            'timestamp' => $row['latest_time'],
-            'unread' => $conn->query("SELECT DISTINCT is_read FROM messages 
-                                    WHERE receiver_id = '$id' 
-                                    AND sender_id = '$receiver_id' 
-                                    AND is_read = 0 
-                                    AND message_title = '" . $conn->real_escape_string($row['message_title']) . "'")->num_rows > 0
-        ];
+    if ($type === 'before' && $approval_timestamp !== null) {
+        $where_clause .= " AND time_stamp <= '$approval_timestamp'";
+    } elseif ($type === 'after' && $approval_timestamp !== null) {
+        $where_clause .= " AND time_stamp > '$approval_timestamp'";
+    }
 
-        if ($approval_timestamp === null || $row['latest_time'] <= $approval_timestamp) {
-            $before_messages[] = $message;
-        } else {
-            $after_messages[] = $message;
+    $sql = "
+        SELECT message_title, MAX(time_stamp) AS latest_time
+        FROM messages
+        $where_clause
+        GROUP BY message_title
+        ORDER BY latest_time DESC
+        LIMIT $limit
+    ";
+    $result = $conn->query($sql);
+
+    $messages = [];
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $messages[] = [
+                'title' => $row['message_title'],
+                'timestamp' => $row['latest_time'],
+                'unread' => $conn->query("SELECT DISTINCT is_read FROM messages 
+                                        WHERE receiver_id = '$id' 
+                                        AND sender_id = '$receiver_id' 
+                                        AND is_read = 0 
+                                        AND message_title = '" . $conn->real_escape_string($row['message_title']) . "'")->num_rows > 0
+            ];
         }
     }
+    return $messages;
 }
 
-$before_messages_total = count($before_messages);
-$after_messages_total = count($after_messages);
-$before_messages_limited = array_slice($before_messages, 0, $messages_per_page);
-$after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
+// ดึงข้อความเริ่มต้น
+$before_messages = fetchMessages($conn, $id, $receiver_id, $approval_timestamp, 'before', $messages_per_page);
+$after_messages = fetchMessages($conn, $id, $receiver_id, $approval_timestamp, 'after', $messages_per_page);
+$before_messages_total = count(fetchMessages($conn, $id, $receiver_id, $approval_timestamp, 'before', 9999));
+$after_messages_total = count(fetchMessages($conn, $id, $receiver_id, $approval_timestamp, 'after', 9999));
+
+// ฟังก์ชันสำหรับดึง thesis_id เพื่อแสดงปุ่ม Teams
+function getThesisId($conn, $receiver_id, $current_user_id)
+{
+    $sql = "SELECT advisor_request_id FROM advisor_request 
+            WHERE advisor_id = ? 
+            AND JSON_CONTAINS(student_id, ?)
+            AND is_advisor_approved = 1 
+            AND is_admin_approved = 1 
+            LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $student_id_json = json_encode($current_user_id);
+    $stmt->bind_param("ss", $receiver_id, $student_id_json);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        return $row['advisor_request_id'];
+    }
+    return '';
+}
 ?>
 
 <!DOCTYPE html>
@@ -149,12 +155,17 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <link rel="stylesheet" href="topic_chat.css">
+    <link rel="stylesheet" href="assets/css/topic_chat.css">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="icon" href="../Logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // ส่งตัวแปร receiverId ไปให้ JS
+        var receiverId = '<?php echo $receiver_id; ?>';
+    </script>
+    <script src="assets/js/topic_chat.js"></script>
 </head>
 
 <body>
@@ -198,7 +209,7 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
                     <?php if (empty($after_messages)): ?>
                         <p>No messages found.</p>
                     <?php else: ?>
-                        <?php foreach ($after_messages_limited as $message): ?>
+                        <?php foreach ($after_messages as $message): ?>
                             <div class='message' data-title="<?php echo htmlspecialchars($message['title']); ?>">
                                 <div>
                                     <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
@@ -221,8 +232,8 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                        <?php if ($after_messages_total > $messages_per_page): ?>
-                            <button class="view-more" data-type="after" data-offset="<?php echo $messages_per_page; ?>" data-total="<?php echo $after_messages_total; ?>">View More</button>
+                        <?php if ($after_messages_total > count($after_messages)): ?>
+                            <button class="view-more" data-type="after" data-count="<?php echo count($after_messages); ?>" data-total="<?php echo $after_messages_total; ?>">View More</button>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
@@ -235,7 +246,7 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
                     <?php if (empty($before_messages)): ?>
                         <p>No messages found.</p>
                     <?php else: ?>
-                        <?php foreach ($before_messages_limited as $message): ?>
+                        <?php foreach ($before_messages as $message): ?>
                             <div class='message' data-title="<?php echo htmlspecialchars($message['title']); ?>">
                                 <div>
                                     <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
@@ -258,8 +269,8 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                        <?php if ($before_messages_total > $messages_per_page): ?>
-                            <button class="view-more" data-type="before" data-offset="<?php echo $messages_per_page; ?>" data-total="<?php echo $before_messages_total; ?>">View More</button>
+                        <?php if ($before_messages_total > count($before_messages)): ?>
+                            <button class="view-more" data-type="before" data-count="<?php echo count($before_messages); ?>" data-total="<?php echo $before_messages_total; ?>">View More</button>
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
@@ -267,187 +278,6 @@ $after_messages_limited = array_slice($after_messages, 0, $messages_per_page);
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            // จัดการการคลิกปุ่มสถานะ
-            $('.topic-status button').on('click', function() {
-                $('.topic-status button').removeClass('active');
-                $(this).addClass('active');
-
-                const section = $(this).data('section');
-                $('.topic-section').removeClass('active');
-                $(`.topic-section[data-section="${section}"]`).addClass('active');
-            });
-
-            // ฟังก์ชัน debounce สำหรับการค้นหา
-            function debounce(func, wait) {
-                let timeout;
-                return function(...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
-            }
-
-            // การค้นหาด้วย AJAX
-            const performSearch = debounce(function(searchQuery) {
-                $.ajax({
-                    url: "search_topic.php",
-                    method: "POST",
-                    data: {
-                        search: searchQuery
-                    },
-                    success: function(response) {
-                        $("#search-results").html(response);
-                        const activeSection = $('.topic-status button.active').data('section');
-                        $('.topic-section').removeClass('active');
-                        $(`.topic-section[data-section="${activeSection}"]`).addClass('active');
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX Error: ", status, error);
-                    }
-                });
-            }, 100);
-
-            $("#search-input").on("input", function() {
-                let searchQuery = $(this).val();
-                performSearch(searchQuery);
-            });
-
-            // จัดการเมนูดรอปดาวน์
-            $(document).on('click', '.menu-button', function() {
-                const $menuContainer = $(this).closest('.menu-container');
-                const $dropdownMenu = $menuContainer.find('.dropdown-menu');
-                $dropdownMenu.toggleClass('active');
-                $('.dropdown-menu.active').not($dropdownMenu).removeClass('active');
-            });
-
-            $(document).on('click', function(event) {
-                if (!$(event.target).closest('.menu-container').length) {
-                    $('.dropdown-menu.active').removeClass('active');
-                }
-            });
-
-            // จัดการปุ่ม View More
-            $(document).on('click', '.view-more', function() {
-                const $button = $(this);
-                const type = $button.data('type');
-                const offset = parseInt($button.data('offset'));
-                const total = parseInt($button.data('total'));
-                const receiver_id = '<?php echo $receiver_id; ?>';
-
-                $.ajax({
-                    url: 'load_more_messages.php',
-                    method: 'POST',
-                    data: {
-                        type: type,
-                        offset: offset,
-                        receiver_id: receiver_id
-                    },
-                    success: function(response) {
-                        $button.before(response);
-                        const newOffset = offset + 5;
-                        $button.data('offset', newOffset);
-                        if (newOffset >= total) {
-                            $button.remove();
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX Error: ", status, error);
-                    }
-                });
-            });
-
-            // จัดการการลบด้วย AJAX
-            $(document).on('click', '.delete-button', function() {
-                const title = $(this).data('title');
-                const $message = $(this).closest('.message');
-                const $container = $message.closest('.message-container'); // Container ของข้อความ
-                const $viewMore = $container.find('.view-more'); // ปุ่ม View More
-                const receiver_id = '<?php echo $receiver_id; ?>';
-                const messagesPerPage = <?php echo $messages_per_page; ?>; // จำนวนข้อความต่อหน้า (5)
-
-                if (confirm('Are you sure you want to delete this topic?')) {
-                    $.ajax({
-                        url: 'delete_message.php',
-                        method: 'POST',
-                        data: {
-                            title: title,
-                            receiver_id: receiver_id
-                        },
-                        success: function(response) {
-                            if (response === 'success') {
-                                $message.remove(); // ลบข้อความออกจากหน้า
-
-                                // จำนวนข้อความที่แสดงอยู่ใน container
-                                const remainingMessages = $container.find('.message').length;
-
-                                // ดึงจำนวนข้อความทั้งหมดจาก data-total ของ view-more หรือคำนวณจากเริ่มต้น
-                                let totalMessages = $viewMore.length ? parseInt($viewMore.data('total')) : remainingMessages + 1;
-                                totalMessages -= 1; // ลดจำนวนลง 1 หลังลบ
-
-                                // อัปเดต data-total ใน view-more ถ้ามี
-                                if ($viewMore.length) {
-                                    $viewMore.data('total', totalMessages);
-                                }
-
-                                // ถ้าจำนวนที่แสดง < 5 และยังมีข้อความเหลือในฐานข้อมูล
-                                if (remainingMessages < messagesPerPage && totalMessages > remainingMessages) {
-                                    $.ajax({
-                                        url: 'load_more_messages.php',
-                                        method: 'POST',
-                                        data: {
-                                            type: $container.data('type'),
-                                            offset: remainingMessages, // เริ่มจากตำแหน่งที่เหลือ
-                                            receiver_id: receiver_id
-                                        },
-                                        success: function(response) {
-                                            $container.find('.message').last().after(response); // เพิ่มข้อความใหม่ต่อจากข้อความสุดท้าย
-                                            // อัปเดต remainingMessages ใหม่หลังโหลด
-                                            const newRemainingMessages = $container.find('.message').length;
-
-                                            // จัดการปุ่ม View More
-                                            if (totalMessages > newRemainingMessages) {
-                                                if (!$viewMore.length) {
-                                                    $container.append(
-                                                        `<button class="view-more" data-type="${$container.data('type')}" data-offset="${newRemainingMessages}" data-total="${totalMessages}">View More</button>`
-                                                    );
-                                                }
-                                            } else {
-                                                $viewMore.remove(); // ลบปุ่มถ้าทุกข้อความแสดงหมดแล้ว
-                                            }
-                                        },
-                                        error: function(xhr, status, error) {
-                                            console.error("AJAX Error: ", status, error);
-                                        }
-                                    });
-                                } else {
-                                    // จัดการปุ่ม View More ถ้าไม่ต้องโหลดเพิ่ม
-                                    if (totalMessages <= remainingMessages) {
-                                        $viewMore.remove(); // ลบปุ่มถ้าทุกข้อความแสดงหมดแล้ว
-                                    } else if (totalMessages > remainingMessages && !$viewMore.length) {
-                                        $container.append(
-                                            `<button class="view-more" data-type="${$container.data('type')}" data-offset="${remainingMessages}" data-total="${totalMessages}">View More</button>`
-                                        );
-                                    }
-                                }
-
-                                // ถ้าไม่มีข้อความเหลือ
-                                if (remainingMessages === 0) {
-                                    $container.html('<p>No messages found.</p>');
-                                }
-                            } else {
-                                alert('Failed to delete the topic.');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("AJAX Error: ", status, error);
-                            alert('An error occurred while deleting the topic.');
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 </body>
 
 </html>
