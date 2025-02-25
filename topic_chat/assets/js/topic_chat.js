@@ -6,6 +6,7 @@ $(document).ready(function() {
         const section = $(this).data('section');
         $('.topic-section').removeClass('active');
         $(`.topic-section[data-section="${section}"]`).addClass('active');
+        startPolling(section); // เริ่ม polling เมื่อเปลี่ยน section
     });
 
     // จัดการเมนูดรอปดาวน์
@@ -99,7 +100,7 @@ $(document).ready(function() {
     // ฟังก์ชันรีเฟรชข้อความ
     function refreshMessages($container, type) {
         const searchTerm = $('#search-input').val();
-        const limit = $container.find('.message').length || 5; // ใช้จำนวนข้อความปัจจุบัน หรือ 5 ถ้าไม่มี
+        const limit = $container.find('.message').length || 5;
         $.ajax({
             url: 'search_topic.php',
             method: 'POST',
@@ -118,6 +119,20 @@ $(document).ready(function() {
             }
         });
     }
+
+    // ฟังก์ชัน polling เพื่ออัปเดตข้อความอัตโนมัติ
+    let pollingInterval;
+    function startPolling(type) {
+        if (pollingInterval) clearInterval(pollingInterval); // หยุด polling เดิม
+        pollingInterval = setInterval(function() {
+            const $container = $(`.message-container[data-type="${type}"]`);
+            refreshMessages($container, type);
+        }, 3000); // ตรวจสอบทุก 3 วินาที
+    }
+
+    // เริ่ม polling ครั้งแรก
+    const initialSection = $('.topic-status button.active').data('section');
+    startPolling(initialSection);
 
     // จัดการ live search
     let searchTimeout;
