@@ -79,7 +79,7 @@ try {
         echo json_encode(['success' => true]);
     } else {
         // ส่งข้อมูลดีบักกลับไปด้วย
-        throw new Exception('Permission denied: ' . json_encode($debug_info));
+        throw new Exception("OH sorry,you don't have permission to delete this file.");
     }
 
 } catch (Exception $e) {
