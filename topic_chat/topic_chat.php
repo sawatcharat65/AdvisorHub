@@ -219,6 +219,14 @@ function getThesisId($conn, $receiver_id, $current_user_id)
                                 <div>
                                     <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
                                     <div class='message-date'><?php echo $message['timestamp']; ?></div>
+                                    <div class="message-options">
+                                        <span class="confirm-text">Do you want to confirm the deletion?</span>
+                                        <button type="button" class="approve-button" data-title="<?php echo htmlspecialchars($message['title']); ?>"><i class="fa-regular fa-circle-check"></i></button>
+                                        <button type="button" class="reject-button" data-title="<?php echo htmlspecialchars($message['title']); ?>"><i class="fa-regular fa-circle-xmark"></i></button>
+                                    </div>
+                                    <div class="delete-status">
+                                        <span>Delete Status: <span class="status-text">Waiting</span></span>
+                                    </div>
                                 </div>
                                 <div class="message-actions">
                                     <form action='../chat/index.php' method='post' class='form-chat'>
@@ -256,6 +264,14 @@ function getThesisId($conn, $receiver_id, $current_user_id)
                                 <div>
                                     <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
                                     <div class='message-date'><?php echo $message['timestamp']; ?></div>
+                                    <div class="message-options">
+                                        <span class="confirm-text">Do you want to confirm the deletion?</span>
+                                        <button type="button" class="approve-button" data-title="<?php echo htmlspecialchars($message['title']); ?>"><i class="fa-regular fa-circle-check"></i></button>
+                                        <button type="button" class="reject-button" data-title="<?php echo htmlspecialchars($message['title']); ?>"><i class="fa-regular fa-circle-xmark"></i></button>
+                                    </div>
+                                    <div class="delete-status">
+                                        <span>Delete Status: <span class="status-text">Waiting</span></span>
+                                    </div>
                                 </div>
                                 <div class="message-actions">
                                     <form action='../chat/index.php' method='post' class='form-chat'>
