@@ -20,7 +20,8 @@ function renderNavbar($allowedPages)
                 "thesis" => "/AdvisorHub/thesis/thesis.php",
                 "statistics" => "/AdvisorHub/statistics",
                 "Teams" => "/AdvisorHub/thesis_resource_list/thesis_resource_list.php",
-                "login" => "/AdvisorHub/login"
+                "login" => "/AdvisorHub/login",
+                "admin_inbox" => "/AdvisorHub/inbox/admin_inbox.php",
             ];
 
             // วนลูปแสดงเฉพาะเมนูที่อยู่ใน $allowedPages
