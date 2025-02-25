@@ -163,6 +163,65 @@ body {
     font-weight: 400;
 }
 
+.message-options {
+    display: flex;
+    align-items: center; /* จัดแนวให้อยู่กึ่งกลางในแนวดิ่ง */
+    gap: 8px;
+    margin-top: 4px; /* ระยะห่างจากวันที่ */
+}
+
+.delete-status {
+    margin-top: 4px; /* ระยะห่างจาก message-options */
+    font-size: 12px; /* ขนาดเท่ากับ .message-date */
+    color: #7f8c8d; /* สีเทาเหมือน .confirm-text */
+    font-weight: 400;
+}
+
+.status-text {
+    color: #fe7801; /* สีส้มเพื่อให้เด่นขึ้น */
+    font-weight: 600; /* ทำให้สถานะหนาขึ้น */
+}
+
+.confirm-text {
+    font-size: 12px; /* ขนาดเท่ากับ .message-date */
+    color: #7f8c8d; /* สีเทาให้ดูนุ่มนวล */
+    font-weight: 400;
+    margin-right: 8px; /* ระยะห่างจากปุ่ม */
+}
+
+.approve-button, .reject-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.approve-button i {
+    color: #28a745;
+    font-size: 18px;
+}
+
+.reject-button i {
+    color: #dc3545;
+    font-size: 18px;
+}
+
+.approve-button:hover {
+    background: #e6ffe6;
+    transform: scale(1.05);
+}
+
+.reject-button:hover {
+    background: #ffe6e6;
+    transform: scale(1.05);
+}
+
 /* การจัดการปุ่มใน message-actions */
 .message-actions {
     display: flex;

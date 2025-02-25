@@ -2,6 +2,7 @@
 session_start();
 require('../server.php');
 include('../components/navbar.php');
+include('render_messages.php');
 
 // จัดการการออกจากระบบ
 if (isset($_POST['logout'])) {
@@ -45,7 +46,7 @@ if (isset($_POST['profileInbox'])) {
     exit();
 }
 
-//ไม่ให้ admin เข้าถึง
+// ไม่ให้ admin เข้าถึง
 if (isset($_SESSION['username']) && $_SESSION['role'] == 'admin') {
     header('location: /AdvisorHub/advisor');
 }
@@ -86,7 +87,7 @@ $approval_timestamp = $result->num_rows > 0 ? $result->fetch_assoc()['time_stamp
 
 $messages_per_page = 5; // จำนวนเริ่มต้น
 
-// ฟังก์ชันดึงข้อความ
+// ฟังก์ชันดึงข้อความ (เพิ่มข้อมูลสถานะการลบ)
 function fetchMessages($conn, $id, $receiver_id, $approval_timestamp, $type, $limit)
 {
     $where_clause = "WHERE ((sender_id = '$id' AND receiver_id = '$receiver_id') 
@@ -99,7 +100,9 @@ function fetchMessages($conn, $id, $receiver_id, $approval_timestamp, $type, $li
     }
 
     $sql = "
-        SELECT message_title, MAX(time_stamp) AS latest_time
+        SELECT message_title, MAX(time_stamp) AS latest_time,
+               MAX(message_delete_request) AS delete_request, 
+               MAX(message_delete_from_id) AS delete_from_id
         FROM messages
         $where_clause
         GROUP BY message_title
@@ -118,7 +121,9 @@ function fetchMessages($conn, $id, $receiver_id, $approval_timestamp, $type, $li
                                         WHERE receiver_id = '$id' 
                                         AND sender_id = '$receiver_id' 
                                         AND is_read = 0 
-                                        AND message_title = '" . $conn->real_escape_string($row['message_title']) . "'")->num_rows > 0
+                                        AND message_title = '" . $conn->real_escape_string($row['message_title']) . "'")->num_rows > 0,
+                'delete_request' => $row['delete_request'],
+                'delete_from_id' => $row['delete_from_id']
             ];
         }
     }
@@ -167,7 +172,6 @@ function getThesisId($conn, $receiver_id, $current_user_id)
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // ส่งตัวแปร receiverId ไปให้ JS
         var receiverId = '<?php echo $receiver_id; ?>';
     </script>
     <script src="assets/js/topic_chat.js"></script>
@@ -211,36 +215,7 @@ function getThesisId($conn, $receiver_id, $current_user_id)
             <div class='topic-section after-approve <?php echo $is_fully_approved ? 'active' : ''; ?>' data-section="after">
                 <h3>After Becoming an Advisor</h3>
                 <div class="message-container" data-type="after">
-                    <?php if (empty($after_messages)): ?>
-                        <p>No messages found.</p>
-                    <?php else: ?>
-                        <?php foreach ($after_messages as $message): ?>
-                            <div class='message' data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                                <div>
-                                    <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
-                                    <div class='message-date'><?php echo $message['timestamp']; ?></div>
-                                </div>
-                                <div class="message-actions">
-                                    <form action='../chat/index.php' method='post' class='form-chat'>
-                                        <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
-                                        <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
-                                        <?php if ($message['unread']): ?>
-                                            <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
-                                        <?php endif; ?>
-                                    </form>
-                                    <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                                        <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
-                                        <div class="dropdown-menu">
-                                            <button type="button" class="delete-button" data-title="<?php echo htmlspecialchars($message['title']); ?>">Delete</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                        <?php if ($after_messages_total > count($after_messages)): ?>
-                            <button class="view-more" data-type="after" data-count="<?php echo count($after_messages); ?>" data-total="<?php echo $after_messages_total; ?>">View More</button>
-                        <?php endif; ?>
-                    <?php endif; ?>
+                    <?php echo renderMessages($after_messages, $receiver_id, $after_messages_total, 0, 'after', '', $conn, $id); ?>
                 </div>
             </div>
 
@@ -248,36 +223,7 @@ function getThesisId($conn, $receiver_id, $current_user_id)
             <div class='topic-section before-approve <?php echo !$is_fully_approved ? 'active' : ''; ?>' data-section="before">
                 <h3>Before Becoming an Advisor</h3>
                 <div class="message-container" data-type="before">
-                    <?php if (empty($before_messages)): ?>
-                        <p>No messages found.</p>
-                    <?php else: ?>
-                        <?php foreach ($before_messages as $message): ?>
-                            <div class='message' data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                                <div>
-                                    <div class='sender'><?php echo htmlspecialchars($message['title']); ?></div>
-                                    <div class='message-date'><?php echo $message['timestamp']; ?></div>
-                                </div>
-                                <div class="message-actions">
-                                    <form action='../chat/index.php' method='post' class='form-chat'>
-                                        <input type='hidden' name='title' value='<?php echo htmlspecialchars($message['title']); ?>'>
-                                        <button name='chat' class='menu-button' value='<?php echo $receiver_id; ?>'><i class='bx bxs-message-dots'></i></button>
-                                        <?php if ($message['unread']): ?>
-                                            <span class='unread-indicator'><i class='bx bxs-circle'></i></span>
-                                        <?php endif; ?>
-                                    </form>
-                                    <div class="menu-container" data-title="<?php echo htmlspecialchars($message['title']); ?>">
-                                        <button type="button" class="menu-button"><i class='bx bx-dots-vertical-rounded'></i></button>
-                                        <div class="dropdown-menu">
-                                            <button type="button" class="delete-button" data-title="<?php echo htmlspecialchars($message['title']); ?>">Delete</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                        <?php if ($before_messages_total > count($before_messages)): ?>
-                            <button class="view-more" data-type="before" data-count="<?php echo count($before_messages); ?>" data-total="<?php echo $before_messages_total; ?>">View More</button>
-                        <?php endif; ?>
-                    <?php endif; ?>
+                    <?php echo renderMessages($before_messages, $receiver_id, $before_messages_total, 0, 'before', '', $conn, $id); ?>
                 </div>
             </div>
         </div>
