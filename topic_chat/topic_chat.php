@@ -140,17 +140,19 @@ $after_messages_total = count(fetchMessages($conn, $id, $receiver_id, $approval_
 function getThesisId($conn, $receiver_id, $current_user_id)
 {
     $sql = "SELECT advisor_request_id FROM advisor_request 
-            WHERE advisor_id = ? 
-            AND JSON_CONTAINS(student_id, ?)
+            WHERE (
+                (advisor_id = ? AND JSON_CONTAINS(student_id, ?))
+                OR (advisor_id = ? AND JSON_CONTAINS(student_id, ?))
+            )
             AND is_advisor_approved = 1 
             AND is_admin_approved = 1 
             LIMIT 1";
     $stmt = $conn->prepare($sql);
     $student_id_json = json_encode($current_user_id);
-    $stmt->bind_param("ss", $receiver_id, $student_id_json);
+    $receiver_id_json = json_encode($receiver_id);
+    $stmt->bind_param("ssss", $receiver_id, $student_id_json, $current_user_id, $receiver_id_json);
     $stmt->execute();
     $result = $stmt->get_result();
-
     if ($row = $result->fetch_assoc()) {
         return $row['advisor_request_id'];
     }
