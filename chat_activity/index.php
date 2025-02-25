@@ -7,6 +7,11 @@ if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin' || empty($_SESS
     exit();
 }
 
+if(isset($_POST['logout'])){
+    session_destroy();
+    header('location: /AdvisorHub/login');
+}
+
 // Query to fetch unique chat pairs with the latest timestamp
 $sql = "
     SELECT DISTINCT
