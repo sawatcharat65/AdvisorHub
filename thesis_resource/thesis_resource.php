@@ -502,6 +502,98 @@ $files = $files_result->fetch_all(MYSQLI_ASSOC);
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="section-title mb-0">Uploaded Files From Chat</h5>
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filterCollapse">
+                            <i class="bi bi-funnel me-1"></i> Filter
+                        </button>
+                    </div>
+                    <div class="collapse mb-3" id="filterCollapse">
+                        <div class="card card-body">
+                            <div class="row">
+                                <!-- File Type Filters -->
+                                <div class="col-md-4">
+                                    <h6 class="mb-2">File Type</h6>
+                                    <div class="d-flex flex-wrap">
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="pdf"
+                                                id="pdfFilter">
+                                            <label class="form-check-label" for="pdfFilter">PDF</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="doc"
+                                                id="docFilter">
+                                            <label class="form-check-label" for="docFilter">DOC/DOCX</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="ppt"
+                                                id="pptFilter">
+                                            <label class="form-check-label" for="pptFilter">PPT/PPTX</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="xls"
+                                                id="xlsFilter">
+                                            <label class="form-check-label" for="xlsFilter">XLS/XLSX</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="jpg"
+                                                id="jpgFilter">
+                                            <label class="form-check-label" for="jpgFilter">JPEG/PNG</label>
+                                        </div>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input file-type-filter" type="checkbox" value="zip"
+                                                id="zipFilter">
+                                            <label class="form-check-label" for="zipFilter">ZIP/RAR</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Uploader Filters -->
+                                <div class="col-md-4">
+                                    <h6 class="mb-2">Uploader</h6>
+                                    <div class="d-flex flex-wrap">
+                                        <?php foreach ($students as $student): ?>
+                                            <div class="form-check me-3 mb-2">
+                                                <input class="form-check-input uploader-filter" type="checkbox"
+                                                    value="<?php echo $student['student_first_name']; ?>"
+                                                    id="uploader<?php echo $student['student_id']; ?>">
+                                                <label class="form-check-label"
+                                                    for="uploader<?php echo $student['student_id']; ?>">
+                                                    <?php echo $student['student_first_name']; ?>
+                                                </label>
+                                            </div>
+                                        <?php endforeach; ?>
+
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input uploader-filter" type="checkbox"
+                                                value="<?php echo $thesis['advisor_first_name']; ?>"
+                                                id="uploader<?php echo $thesis['advisor_id']; ?>">
+                                            <label class="form-check-label"
+                                                for="uploader<?php echo $thesis['advisor_id']; ?>">
+                                                <?php echo $thesis['advisor_first_name']; ?>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Date Range Filter -->
+                                <div class="col-md-4">
+                                    <h6 class="mb-2">Date Range</h6>
+                                    <div class="input-group mb-2">
+                                        <span class="input-group-text">From</span>
+                                        <input type="date" class="form-control" id="dateFrom">
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-text">To</span>
+                                        <input type="date" class="form-control" id="dateTo">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end mt-3">
+                                <button id="resetFilters" class="btn btn-sm btn-outline-secondary">Reset
+                                    Filters</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
