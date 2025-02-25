@@ -11,7 +11,7 @@ if(isset($_POST['logout'])){
     header('location: /AdvisorHub/login');
 }
 
-// Check if POST data is received
+ // ตรวจสอบว่าข้อมูลที่ส่งผ่าน POST ถูกหรือไม่
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['selected_pairs'])) {
     die('Invalid request.');
 }
@@ -21,10 +21,10 @@ if (empty($selectedPairs)) {
     die('No pairs selected.');
 }
 
-// Prepare CSV data
+// เตรียมข้อมูล csv
 $output = fopen('php://output', 'w');
 
-// Improved headers for clarity
+// // ปรับปรุงส่วน headers เพื่อความชัดเจน
 fputcsv($output, [
     'Student Name',
     'Advisor Name',
@@ -36,12 +36,12 @@ fputcsv($output, [
     'File Type'
 ]);
 
-// Fetch and write messages for each selected pair
+// ดึงข้อมูลและเขียนข้อความสำหรับแต่ละคู่ที่เลือก
 foreach ($selectedPairs as $index => $pair) {
     $student_id = $pair['student_id'];
     $advisor_id = $pair['advisor_id'];
 
-    // Add a separator row before each pair (except the first)
+    // เพิ่มแถวคั่นแยกแต่ละคู่ (ยกเว้นคู่แรก)
     if ($index > 0) {
         fputcsv($output, ['---', '---', '---', '---', '---', '---', '---', '---']);
     }
@@ -83,7 +83,7 @@ foreach ($selectedPairs as $index => $pair) {
             $row['message_title'],
             $row['message'],
             $row['sender_name'],
-            date('d-M-Y H:i:s', strtotime($row['time_stamp'])), // Human-readable date
+            date('d-M-Y H:i:s', strtotime($row['time_stamp'])), 
             $row['message_file_name'] ?? 'None',
             $row['message_file_type'] ?? 'N/A'
         ]);
@@ -92,7 +92,7 @@ foreach ($selectedPairs as $index => $pair) {
     $stmt->close();
 }
 
-// Set headers for CSV download
+// ตั้งค่า headers สำหรับ download ไฟล์ csv
 header('Content-Type: text/csv');
 header('Content-Disposition: attachment; filename="chat_export_' . date('Y-m-d_H-i-s') . '.csv"');
 header('Cache-Control: no-cache, no-store, must-revalidate');
