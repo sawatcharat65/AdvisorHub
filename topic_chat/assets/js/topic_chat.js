@@ -8,8 +8,56 @@ $(document).ready(function() {
         $(`.topic-section[data-section="${section}"]`).addClass('active');
     });
 
+    // ฟังก์ชันรีเฟรชข้อความ
+    function refreshMessages($container, type) {
+        const searchTerm = $('#search-input').val();
+        const limit = $container.find('.message').length || 5;
+        $.ajax({
+            url: 'search_topic.php',
+            method: 'POST',
+            data: {
+                type: type,
+                offset: 0,
+                limit: limit,
+                receiver_id: receiverId,
+                search: searchTerm
+            },
+            success: function(response) {
+                $container.empty().append(response);
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: ", status, error);
+            }
+        });
+    }
+
+    // ฟังก์ชันเริ่ม polling
+    let pollingInterval;
+    let pollingTimeout;
+    function startPolling() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        pollingInterval = setInterval(function() {
+            const $beforeContainer = $('.message-container[data-type="before"]');
+            const $afterContainer = $('.message-container[data-type="after"]');
+            refreshMessages($beforeContainer, 'before');
+            refreshMessages($afterContainer, 'after');
+        }, 5000); // ตรวจสอบทุก 5 วินาที
+    }
+
+    // ฟังก์ชันหยุด polling
+    function stopPolling() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        // หากหยุดนานเกิน 15 วินาที เริ่ม polling ใหม่
+        clearTimeout(pollingTimeout);
+        pollingTimeout = setTimeout(startPolling, 15000);
+    }
+
+    // เริ่ม polling ครั้งแรก
+    startPolling();
+
     // จัดการเมนูดรอปดาวน์
     $(document).on('click', '.menu-button', function() {
+        stopPolling(); // หยุด polling เมื่อเปิดเมนู
         const $menuContainer = $(this).closest('.menu-container');
         const $dropdownMenu = $menuContainer.find('.dropdown-menu');
         $dropdownMenu.toggleClass('active');
@@ -19,6 +67,7 @@ $(document).ready(function() {
     $(document).on('click', function(event) {
         if (!$(event.target).closest('.menu-container').length) {
             $('.dropdown-menu.active').removeClass('active');
+            startPolling(); // เริ่ม polling ใหม่เมื่อปิดเมนู
         }
     });
 
@@ -95,44 +144,6 @@ $(document).ready(function() {
             }
         });
     });
-
-    // ฟังก์ชันรีเฟรชข้อความ
-    function refreshMessages($container, type) {
-        const searchTerm = $('#search-input').val();
-        const limit = $container.find('.message').length || 5;
-        $.ajax({
-            url: 'search_topic.php',
-            method: 'POST',
-            data: {
-                type: type,
-                offset: 0,
-                limit: limit,
-                receiver_id: receiverId,
-                search: searchTerm
-            },
-            success: function(response) {
-                $container.empty().append(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX Error: ", status, error);
-            }
-        });
-    }
-
-    // ฟังก์ชัน polling เพื่ออัปเดตข้อความอัตโนมัติทั้งสอง section
-    let pollingInterval;
-    function startPolling() {
-        if (pollingInterval) clearInterval(pollingInterval); // หยุด polling เดิม
-        pollingInterval = setInterval(function() {
-            const $beforeContainer = $('.message-container[data-type="before"]');
-            const $afterContainer = $('.message-container[data-type="after"]');
-            refreshMessages($beforeContainer, 'before');
-            refreshMessages($afterContainer, 'after');
-        }, 3000); // ตรวจสอบทุก 3 วินาที
-    }
-
-    // เริ่ม polling ครั้งแรก
-    startPolling();
 
     // จัดการ live search
     let searchTimeout;
