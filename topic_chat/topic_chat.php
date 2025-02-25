@@ -45,6 +45,11 @@ if (isset($_POST['profileInbox'])) {
     exit();
 }
 
+//ไม่ให้ admin เข้าถึง
+if (isset($_SESSION['username']) && $_SESSION['role'] == 'admin') {
+    header('location: /AdvisorHub/advisor');
+}
+
 // ดึงข้อมูลของ receiver
 $receiver_id = $_SESSION['receiver_id'];
 $sql = "SELECT advisor_first_name, advisor_last_name FROM advisor WHERE advisor_id = '$receiver_id' 
@@ -145,10 +150,6 @@ function getThesisId($conn, $receiver_id, $current_user_id)
         return $row['advisor_request_id'];
     }
     return '';
-}
-//ไม่ให้ admin เข้าถึง
-if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
-    header('location: /AdvisorHub/advisor');
 }
 ?>
 
