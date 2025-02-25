@@ -6,7 +6,7 @@ if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin' || empty($_SESS
     header('location: /AdvisorHub/login');
     exit();
 }
-// Ensure student_id and advisor_id are provided
+// ตรวจสอบว่า student_id และ advisor_id ถูกระบุมาหรือไม่
 if (!isset($_GET['student_id']) || !isset($_GET['advisor_id'])) {
     header("Location: admin_chat_management.php");
     exit();
@@ -20,7 +20,7 @@ if(isset($_POST['logout'])){
 $student_id = $_GET['student_id'];
 $advisor_id = $_GET['advisor_id'];
 
-// Query to fetch distinct message titles between the student and advisor
+// คำสั่งคิวรี่เพื่อดึงหัวข้อข้อความที่แตกต่างกันระหว่างนักเรียนและที่ปรึกษา
 $sql = "
     SELECT DISTINCT 
         m.message_title

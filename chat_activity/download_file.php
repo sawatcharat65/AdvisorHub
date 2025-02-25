@@ -6,12 +6,12 @@ if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin' || empty($_SESS
     exit();
 }
 
-// Check if POST request and user is logged in
+// ตรวจสอบว่ามีการร้องขอแบบ POST และผู้ใช้ล็อกอินอยู่หรือไม่
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['account_id']) && isset($_POST['message_id'])) {
     $messageId = $conn->real_escape_string($_POST['message_id']);
     $userId = $_SESSION['account_id'];
 
-    // Verify user has permission (sender or receiver)
+   // ตรวจสอบว่าผู้ใช้เป็นผู้ส่งหรือผู้รับ
     $sql = "SELECT message_file_name, message_file_data, message_file_type 
             FROM messages 
             WHERE message_id = '$messageId' ";
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['account_id']) && i
         $fileData = $row['message_file_data'];
         $fileType = $row['message_file_type'];
 
-        // Set Content-Type based on file type
+       // กำหนด Content-Type ตามประเภทของไฟล์
         switch ($fileType) {
             case 'image/jpeg':
                 header("Content-Type: image/jpeg");
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['account_id']) && i
                 header("Content-Type: application/octet-stream");
         }
 
-        // Set headers for download
+       // กำหนดส่วน headers  สำหรับการดาวน์โหลด
         header("Content-Disposition: attachment; filename=\"" . basename($fileName) . "\"");
         header("Content-Length: " . strlen($fileData));
         header("Cache-Control: private, max-age=0, must-revalidate");

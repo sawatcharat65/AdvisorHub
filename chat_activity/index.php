@@ -12,7 +12,7 @@ if(isset($_POST['logout'])){
     header('location: /AdvisorHub/login');
 }
 
-// Query to fetch unique chat pairs with the latest timestamp
+// คำสั่งคิวรี่เพื่อดึงคู่แชทที่ไม่ซ้ำกันพร้อมเวลาล่าสุด
 $sql = "
     SELECT DISTINCT
         s.student_id,
@@ -114,7 +114,7 @@ $result = mysqli_query($conn, $sql);
     </div>
 
     <script>
-        // Store original rows for resetting after filtering
+        // เก็บแถวต้นฉบับไว้สำหรับการรีเซ็ตหลังจาก filter แล้ว
         const tbody = document.getElementById('chatTable');
         const originalRows = Array.from(tbody.getElementsByTagName('tr'));
 
@@ -177,7 +177,7 @@ $result = mysqli_query($conn, $sql);
                 return;
             }
 
-            // Create a form dynamically to submit selected pairs to export script
+            // สร้างฟอร์มแบบไดนามิกเพื่อส่งคู่ที่เลือกไปยังสคริปต์ส่งออก
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = 'export_chat.php';
