@@ -44,9 +44,9 @@ function uploadFile(file) {
     formData.append('thesis_id', thesisId);
 
     fetch('upload.php', {
-            method: 'POST',
-            body: formData
-        })
+        method: 'POST',
+        body: formData
+    })
         .then(response => response.text())
         .then(text => {
             console.log('Raw response:', text);
@@ -68,12 +68,12 @@ function uploadFile(file) {
 function deleteFile(fileId) {
     if (confirm('Are you sure you want to delete this file?')) {
         fetch('delete.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'file_id=' + fileId
-            })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'file_id=' + fileId
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -86,7 +86,7 @@ function deleteFile(fileId) {
 }
 
 // File filtering functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const fileTypeFilters = document.querySelectorAll('.file-type-filter');
     const uploaderFilters = document.querySelectorAll('.uploader-filter');
     const dateFrom = document.getElementById('dateFrom');
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ป้องกันไม่ให้เลือกวันที่สิ้นสุดก่อนวันที่เริ่มต้น
     if (dateFrom && dateTo) {
-        dateFrom.addEventListener('change', function() {
+        dateFrom.addEventListener('change', function () {
             if (dateFrom.value) {
                 dateTo.min = dateFrom.value; // กำหนด min ของ dateTo
             } else {
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // ป้องกันไม่ให้เลือกวันที่เริ่มต้นหลังวันที่สิ้นสุด
-        dateTo.addEventListener('change', function() {
+        dateTo.addEventListener('change', function () {
             if (dateTo.value) {
                 dateFrom.max = dateTo.value; // กำหนด max ของ dateFrom
             } else {
@@ -136,16 +136,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // รับรายการไฟล์ล่าสุด
         const fileItems = document.querySelectorAll('.file-item');
-        
+
         // ทำการกรองแต่ละไฟล์
         fileItems.forEach(item => {
             try {
                 // ดึงข้อมูลไฟล์
                 const fileName = item.querySelector('.fw-bold').textContent.trim();
-                
+
                 // ดึงข้อมูลผู้อัปโหลด
                 let uploaderName = "";
-                
+
                 // ค้นหาข้อความ "Uploaded by:" ในทุกๆ small elements
                 const smallElements = item.querySelectorAll('small');
                 for (const el of smallElements) {
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                     }
                 }
-                
+
                 // ดึงวันที่อัปโหลด
                 let uploadDate = new Date();
                 for (const el of smallElements) {
@@ -164,44 +164,44 @@ document.addEventListener('DOMContentLoaded', function() {
                         break;
                     }
                 }
-                
+
                 // ตรวจสอบประเภทไฟล์
                 let fileType = 'other';
                 const lowerFileName = fileName.toLowerCase();
-                
+
                 if (lowerFileName.includes('.pdf')) fileType = 'pdf';
                 else if (lowerFileName.includes('.doc') || lowerFileName.includes('.docx')) fileType = 'doc';
                 else if (lowerFileName.includes('.ppt') || lowerFileName.includes('.pptx')) fileType = 'ppt';
                 else if (lowerFileName.includes('.xls') || lowerFileName.includes('.xlsx')) fileType = 'xls';
                 else if (lowerFileName.includes('.jpg') || lowerFileName.includes('.jpeg') || lowerFileName.includes('.png')) fileType = 'jpg';
                 else if (lowerFileName.includes('.zip') || lowerFileName.includes('.rar')) fileType = 'zip';
-                
+
                 console.log(`File: ${fileName}, Type: ${fileType}, Uploader: ${uploaderName}`);
-                
+
                 // ตรวจสอบการตรงกับตัวกรอง
                 let matchesFileType = true;
                 let matchesUploader = true;
                 let matchesDateRange = true;
-                
+
                 // ตรวจสอบประเภทไฟล์ - ถ้ามีการเลือกประเภทไฟล์
                 if (selectedFileTypes.length > 0) {
                     matchesFileType = selectedFileTypes.includes(fileType);
                     console.log(`File type match: ${matchesFileType} (${fileType} in [${selectedFileTypes}])`);
                 }
-                
+
                 // ตรวจสอบผู้อัปโหลด - ถ้ามีการเลือกผู้อัปโหลด
                 if (selectedUploaders.length > 0) {
                     matchesUploader = selectedUploaders.includes(uploaderName);
                     console.log(`Uploader match: ${matchesUploader} (${uploaderName} in [${selectedUploaders}])`);
                 }
-                
+
                 // ตรวจสอบวันที่
                 if (fromDate) {
                     const isAfterFromDate = uploadDate >= fromDate;
                     matchesDateRange = matchesDateRange && isAfterFromDate;
                     console.log(`Date after ${fromDate}: ${isAfterFromDate}`);
                 }
-                
+
                 if (toDate) {
                     const adjustedToDate = new Date(toDate);
                     adjustedToDate.setDate(adjustedToDate.getDate() + 1);
@@ -209,11 +209,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     matchesDateRange = matchesDateRange && isBeforeToDate;
                     console.log(`Date before ${adjustedToDate}: ${isBeforeToDate}`);
                 }
-                
+
                 // ตัดสินใจว่าจะแสดงไฟล์หรือไม่
                 const showFile = matchesFileType && matchesUploader && matchesDateRange;
                 console.log(`Show file ${fileName}: ${showFile}`);
-                
+
                 // แสดงหรือซ่อนไฟล์
                 if (showFile) {
                     item.classList.remove('d-none');
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     item.classList.add('d-none');
                     item.style.display = 'none';
                 }
-                
+
             } catch (error) {
                 console.error("Error processing file:", error);
                 // ถ้าเกิดข้อผิดพลาดให้แสดงไฟล์ไว้
@@ -233,11 +233,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Reset all filters
     if (resetFiltersBtn) {
-        resetFiltersBtn.addEventListener('click', function() {
+        resetFiltersBtn.addEventListener('click', function () {
             console.log("Resetting filters");
             fileTypeFilters.forEach(checkbox => checkbox.checked = false);
             uploaderFilters.forEach(checkbox => checkbox.checked = false);
-            
+
             if (dateFrom) dateFrom.value = '';
             if (dateTo) dateTo.value = '';
             if (dateFrom) dateFrom.max = '';
@@ -260,3 +260,37 @@ document.addEventListener('DOMContentLoaded', function() {
         checkbox.addEventListener('change', applyFilters);
     });
 });
+
+// เปิด/ปิดtoggle ไฟล์ขากแชท
+$(document).ready(function () {
+    $(".toggle-title").click(function () {
+        let target = $(this).data("target");
+        $(target).toggleClass("d-none");
+        $(this).toggleClass("open");
+    });
+});
+
+//ลบไฟล์แชท
+function deleteFileChat(message_id) {
+    if (confirm('Are you sure you want to delete this file?')) {
+        fetch('delete_file_chat.php', {
+            method: 'POST',
+            body: new URLSearchParams({
+                'message_id': message_id
+            })
+        })
+        .then(response => response.json()) // แปลงผลลัพธ์เป็น JSON
+        .then(data => {
+            if (data.success) {
+                // ลบไฟล์ออกจาก DOM ทันที
+                const fileItem = document.querySelector(`#file-item-${message_id}`);
+                if (fileItem) {
+                    fileItem.remove();
+                }
+            } else {
+                alert('Failed to delete the file: ' + data.error);
+            }
+        })
+        .catch(error => alert('Error: ' + error)); // จับข้อผิดพลาดจาก fetch
+    }
+}
