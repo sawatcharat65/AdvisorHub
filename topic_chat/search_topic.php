@@ -44,7 +44,9 @@ if (!empty($search_term)) {
 
 // ดึงข้อความ
 $sql = "
-    SELECT message_title, MAX(time_stamp) AS latest_time
+    SELECT message_title, MAX(time_stamp) AS latest_time,
+           MAX(message_delete_request) AS delete_request, 
+           MAX(message_delete_from_id) AS delete_from_id
     FROM messages
     $where_clause
     GROUP BY message_title
@@ -63,7 +65,9 @@ if ($messages_result) {
                                     WHERE receiver_id = '$id' 
                                     AND sender_id = '$receiver_id' 
                                     AND is_read = 0 
-                                    AND message_title = '" . $conn->real_escape_string($row['message_title']) . "'")->num_rows > 0
+                                    AND message_title = '" . $conn->real_escape_string($row['message_title']) . "'")->num_rows > 0,
+            'delete_request' => $row['delete_request'],
+            'delete_from_id' => $row['delete_from_id']
         ];
     }
 }
@@ -77,8 +81,8 @@ $sql_total = "
 $result_total = $conn->query($sql_total);
 $total = $result_total->fetch_assoc()['total'];
 
-// ใช้ฟังก์ชัน renderMessages
-$messages_html = renderMessages($messages, $receiver_id, $total, $offset, $type, $search_term);
+// ใช้ฟังก์ชัน renderMessages โดยส่ง $conn และ $id
+$messages_html = renderMessages($messages, $receiver_id, $total, $offset, $type, $search_term, $conn, $id);
 
 // ส่งผลลัพธ์กลับ
 header('Content-Type: text/html; charset=utf-8');
