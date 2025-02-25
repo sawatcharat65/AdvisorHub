@@ -8,6 +8,11 @@ if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin' || empty($_SESS
     exit();
 }
 
+if(isset($_POST['logout'])){
+    session_destroy();
+    header('location: /AdvisorHub/login');
+}
+
 // Ensure required parameters are provided
 if (!isset($_GET['student_id']) || !isset($_GET['advisor_id']) || !isset($_GET['title'])) {
     header("Location: view_chat.php");

@@ -6,6 +6,11 @@ if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin' || empty($_SESS
     exit();
 }
 
+if(isset($_POST['logout'])){
+    session_destroy();
+    header('location: /AdvisorHub/login');
+}
+
 // Check if POST data is received
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['selected_pairs'])) {
     die('Invalid request.');
