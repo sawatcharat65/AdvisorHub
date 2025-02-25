@@ -79,7 +79,7 @@ if (isset($_POST['chat'])) {
 </head>
 
 <body>
-    <?php renderNavbar(['home', 'advisor', 'inbox', 'statistics', 'Teams']); ?>
+    <?php renderNavbar(['home', 'advisor',  'statistics' ]); ?>
 
     <div class="container mt-5">
         <?php
@@ -191,7 +191,7 @@ if (isset($_POST['chat'])) {
                         <!-- กราฟการอ้างอิงตามกาลเวลา -->
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title mb-4">การอ้างอิงตามกาลเวลา</h4>
+                                <h4 class="card-title mb-4">ก</h4>
                                 <canvas id="citationsChart" width="400" height="200"></canvas>
                             </div>
                         </div>
