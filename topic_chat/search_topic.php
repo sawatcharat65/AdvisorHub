@@ -33,6 +33,13 @@ $where_clause = "WHERE ((sender_id = '$id' AND receiver_id = '$receiver_id')
 
 if ($type === 'before' && $approval_timestamp !== null) {
     $where_clause .= " AND time_stamp <= '$approval_timestamp'";
+    $where_clause .= " AND message_title NOT IN (
+        SELECT DISTINCT message_title 
+        FROM messages 
+        WHERE ((sender_id = '$id' AND receiver_id = '$receiver_id') 
+               OR (sender_id = '$receiver_id' AND receiver_id = '$id'))
+               AND time_stamp > '$approval_timestamp'
+    )";
 } elseif ($type === 'after' && $approval_timestamp !== null) {
     $where_clause .= " AND time_stamp > '$approval_timestamp'";
 }
