@@ -8,6 +8,10 @@ if (isset($_POST['logout'])) {
     header('location: /AdvisorHub/login');
 }
 
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+    header('location: /AdvisorHub/advisor');
+}
+
 if (empty($_SESSION['username'])) {
     header('location: /AdvisorHub/login');
 }

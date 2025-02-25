@@ -45,7 +45,16 @@ function renderNavbar($allowedPages)
                 echo "<i class='bx bxs-user-circle'></i>";
                 echo "<div class='dropdown'>
                         <form action='' method='post'>
-                            <button name='profile'>Profile</button>
+                    ";
+                
+                if($_SESSION['role'] != 'admin'){
+                    echo 
+                    "
+                        <button name='profile'>Profile</button>
+                    ";
+                }
+                echo"
+                            
                             <button name='logout'>Logout</button>
                         </form>
                       </div>";

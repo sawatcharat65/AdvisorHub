@@ -146,6 +146,10 @@ function getThesisId($conn, $receiver_id, $current_user_id)
     }
     return '';
 }
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+    header('location: /AdvisorHub/advisor');
+}
 ?>
 
 <!DOCTYPE html>

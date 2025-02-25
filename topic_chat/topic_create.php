@@ -9,6 +9,11 @@ if (empty($_SESSION['username'])) {
     exit;
 }
 
+//ไม่ให้ admin เข้าถึง
+if(isset($_SESSION['username']) && $_SESSION['role'] == 'admin'){
+    header('location: /AdvisorHub/advisor');
+}
+
 if (isset($_POST['logout'])) {
     session_destroy();
     header('location: /AdvisorHub/login');
