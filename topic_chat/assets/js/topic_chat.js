@@ -81,17 +81,53 @@ $(document).ready(function() {
         }
     });
 
+    // จัดการ live search
+    let searchTimeout;
+    $('#search-input').on('input', function() {
+        clearTimeout(searchTimeout);
+        const searchTerm = $(this).val();
+        const activeSection = $('.topic-status button.active').data('section');
+        const $container = $(`.message-container[data-type="${activeSection}"]`);
+
+        searchTimeout = setTimeout(function() {
+            $.ajax({
+                url: 'search_topic.php',
+                method: 'POST',
+                data: { 
+                    search: searchTerm,
+                    receiver_id: receiverId,
+                    type: activeSection,
+                    offset: 0,
+                    limit: 5
+                },
+                success: function(response) {
+                    $container.empty().append(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error: ", status, error);
+                }
+            });
+        }, 300);
+    });
+
     // จัดการปุ่ม View More
     $(document).on('click', '.view-more', function() {
         const $button = $(this);
         const type = $button.data('type');
         const count = parseInt($button.data('count'));
         const total = parseInt($button.data('total'));
+        const searchTerm = $button.data('search') || $('#search-input').val(); // ใช้ search จากปุ่ม หรือ input
 
         $.ajax({
-            url: 'view_more_messages.php',
+            url: 'search_topic.php',
             method: 'POST',
-            data: { type: type, offset: count, limit: 5, receiver_id: receiverId },
+            data: { 
+                type: type, 
+                offset: count, 
+                limit: 5, 
+                receiver_id: receiverId,
+                search: searchTerm // ส่ง searchTerm เสมอ
+            },
             success: function(response) {
                 $button.before(response);
                 const newCount = count + 5;
