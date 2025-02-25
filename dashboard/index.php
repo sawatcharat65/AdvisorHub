@@ -2,7 +2,14 @@
 session_start();
 include('../components/navbar.php');
 require('../server.php');
+if (isset($_POST['logout'])) {
+    session_destroy();
+    header('location: /AdvisorHub/login');
+}
 
+if (isset($_POST['profile'])) {
+    header('location: /AdvisorHub/profile');
+}
 // คำสั่ง SQL ดึงข้อมูลอาจารย์ที่ปรึกษา
 $sql = "
     SELECT 
