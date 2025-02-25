@@ -43,14 +43,14 @@ $result = $conn->query($sql);
 <body>
 
 <?php renderNavbar(['home', 'advisor',  'statistics', "Dashboard"]); ?>
-    <h2>รายชื่ออาจารย์ที่ปรึกษา เเละ จำนวนเรที่รับเป็นอาจารย์ที่ปรึกษา</h2>
+    <h2>รายชื่ออาจารย์ที่ปรึกษา เเละจำนวนที่รับเป็นอาจารย์ที่ปรึกษา</h2>
 
     <table>
         <thead>
             <tr>
                 <th>ลำดับ</th>
                 <th>รายชื่ออาจารย์ที่ปรึกษา</th>
-                <th>จำนวนนิสิตที่รับเป็นที่ปรึกษา (คน)</th>
+                <th>จำนวนนิสิตที่รับเป็นที่ปรึกษา(คน)</th>
                 <th>นิสิตทำแบบเดี่ยว (เรื่อง)</th>
                 <th>นิสิตทำแบบคู่ (เรื่อง)</th>
                 <th>จำนวนหัวข้อวิทยานิพนธ์ (เรื่อง)</th>
@@ -72,7 +72,6 @@ $result = $conn->query($sql);
                     $total = $row["total"] ?? 0;
             
                     $total_students += intval($row["students"]);
-
                     $total_single += $single;
                     $total_pair += $pair;
                     $total_thesis += $total;
@@ -90,16 +89,13 @@ $result = $conn->query($sql);
             ?>
         </tbody>
         <tfoot>
-        <tfoot>
-    <tr>
-        <td colspan="2"><strong>รวมทั้งหมด</strong></td>
-        <td class='highlight'><strong><?php echo $total_students; ?></strong></td>
-        <td><strong><?php echo $total_single; ?></strong></td>
-        <td><strong><?php echo $total_pair; ?></strong></td>
-        <td><strong><?php echo $total_thesis; ?></strong></td>
-    </tr>
-    </tfoot>
-
+            <tr>
+            <td colspan="2"><strong>รวมทั้งหมด</strong></td>
+            <td class='highlight'><strong><?php echo $total_students; ?></strong></td>
+            <td><strong><?php echo $total_single; ?></strong></td>
+            <td><strong><?php echo $total_pair; ?></strong></td>
+            <td><strong><?php echo $total_thesis; ?></strong></td>
+            </tr>
         </tfoot>
     </table>
 

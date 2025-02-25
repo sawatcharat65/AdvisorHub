@@ -87,7 +87,7 @@ $approval_timestamp = $result->num_rows > 0 ? $result->fetch_assoc()['time_stamp
 
 $messages_per_page = 5; // จำนวนเริ่มต้น
 
-// ฟังก์ชันดึงข้อความ (เพิ่มข้อมูลสถานะการลบ)
+// ฟังก์ชันดึงข้อความ (เพิ่มเงื่อนไขกรองหัวข้อที่อยู่ใน after ออกจาก before)
 function fetchMessages($conn, $id, $receiver_id, $approval_timestamp, $type, $limit)
 {
     $where_clause = "WHERE ((sender_id = '$id' AND receiver_id = '$receiver_id') 
@@ -95,6 +95,13 @@ function fetchMessages($conn, $id, $receiver_id, $approval_timestamp, $type, $li
 
     if ($type === 'before' && $approval_timestamp !== null) {
         $where_clause .= " AND time_stamp <= '$approval_timestamp'";
+        $where_clause .= " AND message_title NOT IN (
+            SELECT DISTINCT message_title 
+            FROM messages 
+            WHERE ((sender_id = '$id' AND receiver_id = '$receiver_id') 
+                   OR (sender_id = '$receiver_id' AND receiver_id = '$id'))
+                   AND time_stamp > '$approval_timestamp'
+        )";
     } elseif ($type === 'after' && $approval_timestamp !== null) {
         $where_clause .= " AND time_stamp > '$approval_timestamp'";
     }
